@@ -1,0 +1,92 @@
+/* Engagement port: floating five-tab phone bar that shrinks on scroll, plus locked quick-game tiles. */
+.mobile-nav{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+.mobile-nav button{min-width:0}
+.mobile-nav button.bx-nav-arcade svg{color:var(--bx-t1)}
+@media(max-width:900px){
+ .mobile-nav{
+  --bx-full-width:min(620px,calc(100% - 24px));
+  --bx-small-width:clamp(248px,calc((100% - 24px) * .78),484px);
+  width:calc(var(--bx-full-width) - (var(--bx-full-width) - var(--bx-small-width)) * var(--bx-nav-progress,0))!important;
+  max-width:calc(100% - 24px);box-sizing:border-box;
+  left:50%!important;right:auto!important;transform:translateX(-50%);
+  bottom:calc(10px + env(safe-area-inset-bottom))!important;
+  padding:calc(6px - 2px * var(--bx-nav-progress,0))!important;gap:2px!important;
+  border:1px solid var(--line)!important;border-radius:36px!important;
+  background:var(--panel)!important;color:var(--ink);
+  box-shadow:0 12px 34px #00000026,0 2px 5px #00000012,inset 0 1px 0 #ffffff45,inset 0 -1px 0 #ffffff12;
+  isolation:isolate;transition:none!important;
+ }
+ @supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .mobile-nav{
+   background:linear-gradient(150deg,#ffffff24 0%,#ffffff05 38%,transparent 60%,#ffffff0a 100%),color-mix(in srgb,var(--panel) 62%,transparent)!important;
+   -webkit-backdrop-filter:blur(26px) saturate(1.35);backdrop-filter:blur(26px) saturate(1.35);
+   border-color:color-mix(in srgb,var(--green) 18%,#ffffff35)!important;
+  }
+  .mobile-nav::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:inherit;background:linear-gradient(115deg,color-mix(in srgb,var(--green) 9%,transparent),color-mix(in srgb,var(--green) 3%,transparent) 55%,color-mix(in srgb,var(--green) 7%,transparent));box-shadow:inset 1px 1px 0 #ffffff24,inset -1px -1px 0 #ffffff0d}
+ }
+ .mobile-nav button{position:relative;border-radius:29px!important;min-height:calc(54px - 10px * var(--bx-nav-progress,0))!important;min-width:44px!important;gap:calc(3px * (1 - var(--bx-nav-progress,0)))!important;transition:background .2s ease,color .2s ease!important}
+ .mobile-nav button span{display:block;max-height:calc(14px * (1 - var(--bx-nav-progress,0)));line-height:14px;opacity:calc(1 - var(--bx-nav-progress,0));overflow:hidden;transition:none!important}
+ .mobile-nav button svg{transform:scale(calc(1 - .04 * var(--bx-nav-progress,0)));transition:none!important}
+ .mobile-nav button.active{background:color-mix(in srgb,var(--green) 13%,transparent)!important;box-shadow:inset 0 1px 0 #ffffff24,inset 0 0 0 1px color-mix(in srgb,var(--green) 8%,transparent)}
+ .mobile-nav button:focus-visible{outline:2px solid var(--green);outline-offset:-3px}
+ body.bx-game-page .main{padding-bottom:calc(92px + env(safe-area-inset-bottom))!important}
+ .bx-feedback:not(.is-idle){bottom:calc(88px - 16px * var(--bx-nav-progress,0) + env(safe-area-inset-bottom))!important}
+}
+@media(prefers-reduced-motion:reduce){.mobile-nav{--bx-nav-progress:0!important}.mobile-nav,.mobile-nav button,.mobile-nav button span,.mobile-nav button svg{transition:none!important}}
+body.flow-reduce-motion .mobile-nav{--bx-nav-progress:0!important}
+body.flow-reduce-motion .mobile-nav button{transition:none!important}
+@media(prefers-reduced-transparency:reduce),(prefers-contrast:more){.mobile-nav{background:var(--panel)!important;-webkit-backdrop-filter:none;backdrop-filter:none;border-color:var(--line)!important}.mobile-nav::before{display:none}}
+
+.bx-speech-live{min-height:28px;margin:8px 0;color:var(--ink);font-size:18px;overflow-wrap:anywhere}.bx-speech-live:empty{display:none}.bx-speech-live.is-pending{color:var(--muted);font-size:14px}
+.bx-dictation{width:100%;text-align:left}.bx-dictation summary{min-height:44px;display:flex;align-items:center;cursor:pointer;color:var(--muted);font-size:13px}.bx-dictation input{width:100%;min-height:48px;font-size:18px;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--panel);color:var(--ink)}.bx-dictation .btn{margin-top:8px;min-height:44px}.bx-dictation p{font-size:13px;color:var(--muted);margin:8px 0}
+.bx-status-flame:not(.is-lit){color:color-mix(in srgb,var(--green) 65%,var(--muted));background:color-mix(in srgb,var(--green) 8%,var(--panel))}
+/* Speak & Shadow: record-and-compare controls. */
+.bx-rec-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--danger);margin-right:2px}
+.bx-record.is-live{background:var(--danger)!important;color:#fff!important;animation:bx-pulse .9s ease infinite}
+.bx-game-speak .bx-speak-actions .btn{min-height:44px}
+/* Review moved into Tools: a full-width featured card. */
+.flow-tool.bx-tool-review{grid-column:1/-1}
+.bx-due-badge{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:99px;background:var(--green);color:var(--panel);font-size:11px;font-style:normal;font-weight:900;vertical-align:2px}
+/* Lean home: hero, one status row, then quests beside three games. */
+.bx-home-lean .feed-home-hero{margin-bottom:0}
+.bx-hero-alt{display:inline-flex!important;align-items:center;gap:5px;margin-top:12px;font-weight:800!important;color:var(--muted)!important;padding:0!important;text-align:left}
+.bx-hero-alt svg{width:15px;height:15px}
+.bx-hero-alt:hover{color:var(--green)!important}
+.feed-home-copy .btn.primary+.bx-hero-alt{display:flex!important}
+.bx-status-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;margin:14px 0;padding:12px 6px;border:1px solid var(--line);border-radius:var(--bx-radius);background:var(--panel);color:var(--ink);text-align:left;transition:box-shadow .15s,transform .15s}
+.bx-status-row:hover{transform:translateY(-1px);box-shadow:0 10px 26px color-mix(in srgb,var(--ink) 8%,transparent)}
+.bx-status-item{display:flex;align-items:center;gap:10px;min-width:0;padding:0 12px}
+.bx-status-item+.bx-status-item{border-left:1px solid var(--line)}
+.bx-status-copy{display:grid;gap:3px;min-width:0;flex:1}
+.bx-status-copy strong{font-size:17px;font-weight:900;line-height:1.1}
+.bx-status-copy small{font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bx-status-flame{display:grid;place-items:center;width:36px;height:36px;border-radius:11px;flex-shrink:0;background:color-mix(in srgb,var(--line) 60%,transparent);color:var(--muted)}
+.bx-status-flame.is-lit{background:linear-gradient(160deg,#ffb347,#ff5e3a);color:#fff}
+.bx-status-flame svg{width:22px;height:22px}
+.bx-status-row .bx-goal-ring{width:36px;height:36px;flex-shrink:0}
+.bx-status-row .bx-goal-ring>span{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--panel);color:var(--green)}
+.bx-status-row .bx-goal-ring svg{width:15px;height:15px}
+.bx-home-lean .bx-home-grid{margin-top:0;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.bx-quests.is-compact{padding:14px 16px 10px}
+.bx-quests.is-compact .bx-quests-head{margin-bottom:2px}
+.bx-quests.is-compact .bx-quests-head h2{font-size:16px}
+.bx-quests.is-compact .bx-quest{grid-template-columns:32px minmax(0,1fr) auto auto;gap:4px 10px;padding:8px 0}
+.bx-quests.is-compact .bx-quest-icon{width:32px;height:32px;border-radius:10px}
+.bx-quests.is-compact .bx-quest-icon svg{width:17px;height:17px}
+.bx-quests.is-compact .bx-quest-body strong{font-size:13px}
+.bx-quests.is-compact .bx-quest-go{grid-column:auto;justify-self:end}
+.bx-quests.is-compact .bx-chest{margin-top:4px;padding:7px 10px}
+.bx-home-lean .bx-quick-row{grid-template-columns:repeat(3,minmax(0,1fr))}
+.bx-home-lean .bx-quick{min-height:0;padding:12px}
+.bx-home-lean .bx-quick>span{font-size:26px}
+@media(max-width:1100px){.bx-home-lean .bx-home-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.bx-status-row{padding:10px 2px}.bx-status-item{flex-direction:column;align-items:flex-start;gap:6px;padding:0 10px}.bx-status-level .bx-level-badge{width:30px;height:30px;font-size:13px}.bx-status-copy strong{font-size:15px}.bx-status-copy small{white-space:normal;line-height:1.25}.bx-home-lean .bx-quick{padding:10px 8px}.bx-home-lean .bx-quick strong{font-size:12.5px;line-height:1.25}.bx-home-lean .bx-quick small{font-size:10.5px}}
+.bx-quick.is-locked{opacity:.6;filter:grayscale(.6)}
+.bx-quick.is-locked:hover{transform:none;box-shadow:none}
+
+/* Theme-coherent rewards: educational tone colors remain unchanged. */
+.bx-level-badge{background:linear-gradient(145deg,color-mix(in srgb,var(--green) 18%,var(--panel)),var(--soft))!important;color:var(--green)!important;border:1px solid color-mix(in srgb,var(--green) 35%,var(--line));box-shadow:inset 0 1px 0 #ffffff20,0 2px 0 color-mix(in srgb,var(--green) 30%,var(--panel))!important}
+.bx-quest-icon,.bx-chest,.bx-summary .bx-stat-tile.xp{background:color-mix(in srgb,var(--green) 10%,var(--panel));color:var(--green)}
+.bx-quest.is-done .bx-quest-icon{background:var(--soft);color:var(--green)}
+.mobile-nav button.bx-nav-arcade svg{color:inherit}
+.bx-status-row .bx-bar>span,.bx-level-ring{--bx-gold:var(--green)}

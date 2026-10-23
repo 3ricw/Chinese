@@ -1,0 +1,1 @@
+try{window.__rxReadingDesk=JSON.parse(localStorage.getItem('hanzi-reading-room-v2')||'null')?.readingDesk}catch(e){window.__rxReadingDesk=null}

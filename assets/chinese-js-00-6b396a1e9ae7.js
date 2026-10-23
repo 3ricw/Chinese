@@ -1,0 +1,1 @@
+try{window.__cwSeed=JSON.parse(localStorage.getItem('hanzi-reading-room-v2')||'null')?.commonWords}catch(e){window.__cwSeed=null}
