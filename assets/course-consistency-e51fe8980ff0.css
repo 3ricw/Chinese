@@ -1,0 +1,30 @@
+/* Shared course controls; existing animation, themes and glass navigation stay intact. */
+.course-switcher{width:min(100%,900px);margin:0 auto 18px;display:flex;justify-content:flex-end}
+.course-switcher[hidden]{display:none!important}
+.course-picker{display:inline-flex;align-items:center;gap:10px;padding:4px 12px;background:var(--soft);border:1px solid var(--line);border-radius:14px;color:var(--ink);font-size:13px;font-weight:700}
+.course-picker-label{color:var(--muted)}
+.course-picker select{min-height:40px;min-width:132px;max-width:100%;padding:8px 28px 8px 8px;border:0;border-radius:9px;background:transparent;color:var(--ink);font:inherit;cursor:pointer}
+.course-picker select:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.course-scope{margin:0 0 20px;border-bottom:1px solid var(--line);padding:0 0 16px;font-size:13px;color:var(--muted)}
+.course-scope summary{cursor:pointer;color:var(--green);font-weight:700;min-height:32px;display:list-item}
+.course-scope p{max-width:72ch;margin:10px 0 0;line-height:1.65}
+.course-polished .heading,.flow-chapter .heading{align-items:flex-start;gap:16px}
+.course-polished .course-continue-actions,.flow-chapter .flow-launch .row{flex-wrap:wrap;gap:10px}
+.course-unit-label{min-width:0}.course-unit-label strong{overflow-wrap:anywhere}
+.course-reading-note{margin:16px 0;max-width:70ch}.course-reading-note p{line-height:1.7}
+.clean-study-section summary,.quiet-details summary{min-height:36px;align-content:center}
+.rx-home-extras{align-items:start}.rx-home .rx-section-heading{align-items:center}
+.flow-course,.flow-chapter,.flow-tools,.rx-home,.flow-writing{min-width:0}
+@media(max-width:600px){
+ .course-switcher{margin:0 0 14px;justify-content:flex-start}
+ .course-picker{border-radius:12px}
+ .course-picker select{min-height:40px}
+ .course-polished .heading{gap:10px;flex-wrap:wrap}
+ .course-polished .course-continue-actions>.btn{min-height:44px}
+ .clean-study-tabs button{min-height:44px;min-width:0;padding-inline:10px}
+ .clean-study-title>div{min-width:0}
+ .flow-chapter .flow-launch{gap:14px}
+ .flow-chapter .flow-launch .row{width:100%}
+ .flow-chapter .flow-launch .row>.btn.primary{flex:1}
+ .course-unit-status{flex-shrink:0}
+}

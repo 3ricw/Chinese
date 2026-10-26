@@ -1,0 +1,42 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const {boot}=require('./runtime.cjs');
+let passed=0;const checks=[];function test(name,f){f();checks.push(name);passed++}
+(async()=>{
+ const a=boot(),r=a.run;r("state.profile.setupDone=true;onboardingStep=null;closeModal();state.profile.name='Eric';state.settings.palette='black';state.settings.theme='light';startSession('all','1',['你','我']);checkpointCurrent();switchCourse('chinese-2');openChapter('c2-14');startSession('all','c2-14',['礼','物']);checkpointCurrent();state.readingDesk.saved=['c2-14-gift'];state.readingDesk.positions['c2-14-gift']=2;state.commonWords.saved=['cw-01-01'];save()");
+ const backup=r('JSON.stringify({...state,boost:bx})'),parsed=JSON.parse(backup);
+ const target=boot();target.run("state.profile.setupDone=true;onboardingStep=null;closeModal();state.cards['你']={seen:1,streak:0,interval:0,due:0,last:0};save()");
+ const file={size:Buffer.byteLength(backup),text:async()=>backup};
+ await target.nodes.get('backup-file').onchange({target:{files:[file],value:'backup.json'}});
+ test('actual import switches active course',()=>assert.equal(target.run('selectedCourseId'),'chinese-2'));
+ test('actual import retains C1 resume',()=>assert.equal(target.run("state.courses.records['chinese-1'].resume.data.id"),'1'));
+ test('actual import retains C2 resume',()=>assert.equal(target.run('savedResume.data.id'),'c2-14'));
+ test('actual import retains reading position',()=>assert.equal(target.run("rxDesk().positions['c2-14-gift']"),2));
+ test('actual import retains common words',()=>assert.equal(target.run('cwDesk().saved[0]'),'cw-01-01'));
+ test('actual import replaces old learning',()=>assert.equal(target.run("state.cards['你']"),undefined));
+ test('actual import retains saved theme',()=>assert.equal(target.run('state.settings.theme'),'light'));
+ test('actual import retains saved palette',()=>assert.equal(target.run('state.settings.palette'),'black'));
+ test('actual import retains learner reward XP',()=>assert.equal(target.run('bx.xp'),parsed.boost.xp));
+ test('actual import has no logged errors',()=>assert.deepEqual(target.errors,[]));
+ let blob;target.ctx.URL={createObjectURL:b=>{blob=b;return 'blob:test'},revokeObjectURL(){}};target.run('exportBackup()');const exported=JSON.parse(await blob.text());
+ test('actual export includes both courses',()=>assert.equal(Object.keys(exported.courses.records).length,2));
+ test('actual export includes shared extensions',()=>assert(exported.readingDesk&&exported.commonWords&&exported.boost));
+ test('actual export preserves active session',()=>assert.equal(exported.courses.records['chinese-2'].resume.data.id,'c2-14'));
+ target.run("switchCourse('chinese-1');resumeSession()");test('imported C1 resume runs',()=>assert.equal(target.run('session.id'),'1'));
+ target.run("switchCourse('chinese-2');resumeSession()");test('imported C2 resume runs',()=>assert.equal(target.run('session.id'),'c2-14'));
+ const b=boot(),q=b.run;q("state.profile.setupDone=true;onboardingStep=null;closeModal();switchCourse('chinese-2');state.cards['片']={seen:2,streak:1,interval:1,due:Date.now()+86400000,last:Date.now()}");
+ test('Arcade top-up respects Chinese 2',()=>assert(q("bxCards().every(c=>c.lesson.startsWith('c2-'))")));
+ q("for(const c of CARDS.filter(c=>!c.lesson.startsWith('c2-')||c.lesson==='c2-11'))state.cards[c.character]={seen:3,streak:2,interval:3,due:Date.now()+86400000,last:Date.now()-86400000};bx.scope='c2-11'");
+ // Explicit chapter scope supplies that course's introduced vocabulary; previously studied characters support sentences.
+ for(const type of ['Tone','Sentence','Match','Typing','Speak','Strokes'])test('Chinese 2 '+type+' pool available',()=>assert(q('!!bxBuild'+type+'()?.length')));
+ test('Chinese 2 sentence pool stays in its content',()=>assert(q('bxBuildSentence().every(s=>Object.values(C2_CONTENT.examples).some(e=>e.sentence[0]===s.zh))')));
+ let speech=0;b.ctx.speechSynthesis.speak=()=>speech++;
+ q("navigate('home');navigate('learn');openScrollQuickAccess();navigate('arcade');bxStart('tone')");
+ test('no automatic speech on navigation or Tone Trainer',()=>assert.equal(speech,0));
+ q("navigate('home');trainCompanion('reading')");
+ test('companion reading recommendation stays in selected course',()=>assert(q("activeReading.startsWith('c2-')&&selectedCourseId==='chinese-2'")));
+ q("navigate('home');state.cards={};trainCompanion('memory')");
+ test('companion first practice stays in selected course',()=>assert.equal(q('session.id'),'c2-11'));
+ test('C2 chapter labels are human-readable',()=>assert.equal(q("lessonLabel('c2-11')"),'Lesson 11'));
+ test('invalid course switch does nothing',()=>{const id=q('selectedCourseId');q("switchCourse('not-a-course')");assert.equal(q('selectedCourseId'),id)});
+ test('repeated switch does not change rewards',()=>{const xp=q('state.companion.xp');for(let i=0;i<5;i++)q("switchCourse('chinese-1');switchCourse('chinese-2')");assert.equal(q('state.companion.xp'),xp)});
+ fs.writeFileSync(path.join(__dirname,'results','imports-pools.json'),JSON.stringify({passed,failed:0,checks},null,2));console.log(JSON.stringify({passed,failed:0}));
+})().catch(e=>{console.error(e.stack);process.exitCode=1});
