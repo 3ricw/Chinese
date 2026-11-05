@@ -21,6 +21,12 @@ class Check(HTMLParser):
   self.handle_starttag(tag,attrs)
   if self.stack and self.stack[-1]==tag:self.stack.pop()
 root=Path(__file__).parent/'results';views=json.loads((root/'views.json').read_text());failures=[];handlers=set()
+extra=root/'handwriting-views.json'
+if extra.exists():views+=json.loads(extra.read_text())
+extra=root/'practice-views.json'
+if extra.exists():views+=json.loads(extra.read_text())
+extra=root/'practice-feedback-views.json'
+if extra.exists():views+=json.loads(extra.read_text())
 for view in views:
  p=Check();p.feed(view['html']);handlers.update(p.handlers)
  if p.stack:p.errors.append('unclosed '+','.join(p.stack))
