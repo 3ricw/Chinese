@@ -1,0 +1,57 @@
+{
+  "baseCommit": "9dab241d546144d835e19d96f61f7d3b1293ebeb",
+  "release": "2026.11.06-clearer-practice",
+  "method": "Deterministic Node/DOM/media mocks and static generated HTML checks",
+  "suites": [
+    {
+      "file": "tests/regression.cjs",
+      "checks": 112,
+      "failed": 0
+    },
+    {
+      "file": "tests/import-and-pools.cjs",
+      "checks": 29,
+      "failed": 0
+    },
+    {
+      "file": "tests/handwriting.cjs",
+      "checks": 57,
+      "failed": 0
+    },
+    {
+      "file": "tests/shape-content.cjs",
+      "checks": 210,
+      "failed": 0
+    },
+    {
+      "file": "tests/practice.cjs",
+      "checks": 7358,
+      "failed": 0
+    },
+    {
+      "file": "tests/practice-feedback.cjs",
+      "checks": 1626,
+      "failed": 0
+    },
+    {
+      "file": "tests/ui-practice.cjs",
+      "checks": 56,
+      "failed": 0
+    }
+  ],
+  "totalChecks": 9448,
+  "generatedViews": 10742,
+  "structureFailures": 0,
+  "compiledScripts": 17,
+  "compiledInlineHandlers": 20321,
+  "syntaxErrors": 0,
+  "standalone": {
+    "sha256": "59be3894602af19e62972bc6298c043b1cff757253af2341244eb8c40b1f47df",
+    "bytes": 1982871,
+    "exactScriptAndStyleOrder": true,
+    "mockBootPassed": true
+  },
+  "realBrowserTesting": false,
+  "deviceTesting": false,
+  "verificationLimits": "Supported browser runtime could not start. Real layout/overflow, iPhone, stylus geometry, installed voices, and microphone permissions remain unverified."
+}

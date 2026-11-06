@@ -1,7 +1,19 @@
-# Eric's Chinese — chapter practice and adventures
+# Eric's Chinese — clearer practice and personal vocabulary
 
-This update builds on upstream `main` commit `65b68cfdf04b553de1c1fa382a6232f3645a5929` and retains the existing GitHub Pages origin. Publishing is explicitly authorized for this update; use an expected-head check.
+This update builds on upstream `main` commit `9dab241d546144d835e19d96f61f7d3b1293ebeb` and retains the existing GitHub Pages origin. Publishing is explicitly authorized for this update; use an expected-head check.
 
+
+## November 6 interface and learning update
+
+Home, Course, Tools, Reading, Writing, and Practice now share a 900px content width, a common heading/control scale, and consistent spacing. The full Home remains: greeting, next action, companion, Scroll, daily status, quests, and three games. The established themes, palette preferences, effects, glass navigation controller, and companion artwork remain intact. Full chapter practice is the main character-learning action on Home, Course, and the Practice hub. Guided small sets remain available from the chapter options.
+
+The Practice hub uses a clear chapter launch followed by three focused paths. Extra activities and camp customization are collapsed; stories give scene-specific explanations and quote the relevant Chinese evidence. Construction puzzles show enclosed parts inside the outer part, allow partial undo/reset, and display the assembled character after grading. Transformations reveal their final shape. Completion offers a direct retry of missed items, which remains helped practice. Adaptive suggestions check that an activity has material in the current course, chapter, and script. The fixed practice footer contains the answer/continue action, including typed reading checks.
+
+Personal decks support single-word entry, editing, renaming, and removal as well as bulk import/export. Legacy `w0`/`w1` IDs are preserved; deleting a word never shifts remaining IDs. Edits keep the word ID and reset only that word's checks if its Chinese, reading, or meaning changes. Every new word gets a distinct stable ID. New validated fields `learningLab.deckWords` and `learningLab.wordSeen` stay inside the existing state and backup format. Old deck choice statistics do not manufacture typed-recall familiarity.
+
+**Read & type** shows the written word and asks for its pinyin, without answer choices. Tones and spacing are optional; ü/v/u: are equivalent, while u stays distinct. Slash-separated readings are supported. This checks reading recall, not pronunciation or tones. Familiar requires unassisted typed recall on at least two separate days. Misses return a word to Learning; scheduled reviews lengthen after independent checks. Browsing or seeing feedback counts as help for 15 minutes; hints and immediate retries cannot advance familiarity. Meaning choices remain available and never grant word familiarity. Neither mode changes individual-character knowledge. Same-word credits continue to prevent reward farming across decks, scripts, and companion switches.
+
+The 30-feature set below is preserved and refined rather than replaced. No curriculum scope, hosted origin, legacy character/storage key, course achievement, theme preference, or companion reward rule is renamed by this update. The linked Instagram reel has not been viewable in this environment; no advice from it is claimed.
 
 ## Connected practice
 
@@ -14,7 +26,7 @@ There are 16 original three-scene episodes (48 scenes, 48 comprehension decision
 | # | Idea | Where and behavior |
 |---|---|---|
 | 1 | Mixed chapter runs | Practice → Chapter run alternates sound/reading, parts, checked writing, context, and a story decision. |
-| 2 | Component puzzles | Build a character from ordered clickable part tiles. |
+| 2 | Component puzzles | Spatial part previews, undo/reset, and an assembled-character explanation. |
 | 3 | Lookalike duels | Duel prioritizes the existing confusable-character families. |
 | 4 | Sound to character | Map pinyin and meaning to written forms; separate Listen & choose uses user-started audio. |
 | 5 | Story missions | Three connected original scenes per lesson with comprehension decisions. |
@@ -29,7 +41,7 @@ There are 16 original three-scene episodes (48 scenes, 48 comprehension decision
 | 14 | On-demand dictation | Press Play and write, using live stroke checks. No automatic listening. |
 | 15 | Font variety | Serif, sans, and Kai styles where installed; fonts use device fallbacks. |
 | 16 | Homophone challenges | Distinguish same-reading characters through sentence meaning. |
-| 17 | Adaptive practice | Recommend the lowest recorded independent skill and reinsert missed items. |
+| 17 | Adaptive practice | Suggest available material for the lowest recorded independent skill; reinsert misses and offer a direct retry. |
 | 18 | Personal mistake album | Wrong/assisted answers and user-saved drawings, existing memory notes, and personal images. |
 | 19 | Writing overlays | A translucent model guides spacing; no unsupported automatic freehand scoring. |
 | 20 | Handwriting replay | Replay and scrub your strokes; an optional timer measures pace without rewarding speed. |
@@ -40,7 +52,7 @@ There are 16 original three-scene episodes (48 scenes, 48 comprehension decision
 | 25 | Retention milestones | Three distinct recall days spanning a week unlock roots milestones. |
 | 26 | Useful completion summaries | Independent/assisted results, skills practiced, missed items, and a reasoned next action. |
 | 27 | Spoken Quick Find | Explicit mic button opens recognized text in editable Quick Find; unsupported/denied input has a typed fallback. |
-| 28 | Personal decks | CSV/TSV/JSON import, browse, recall, export, and deletion; up to 10 decks of 100 words. |
+| 28 | Personal decks | Single-word editing, CSV/TSV/JSON import/export, meaning choices, typed reading recall, and scheduled reviews; 10 decks of 100 words. |
 | 29 | Skill maps | Recognition, writing, listening, shapes, words, and comprehension practice accuracy are separate. |
 | 30 | Returning-learner mode | After a week away, offer four familiar items plus up to two difficult ones. |
 
@@ -86,7 +98,7 @@ Automated verification covers all chapter activities in both courses and scripts
 
 These are deterministic Node/DOM/media mocks and static HTML checks. They do not establish real browser layout, iPhone overflow, recognition geometry, stylus feel, microphone permissions, or installed speech voice quality. The supported browser QA route is unavailable in this environment. Handwriting checks use pinned Hanzi Writer geometry/order matching, not general OCR. Speech recognition supplies words, not phonetic/tone grades. All actual audio/microphone actions remain user initiated.
 
-Run `node tests/practice.cjs`, `node tests/practice-feedback.cjs`, `node tests/shape-content.cjs`, `node tests/handwriting.cjs`, `node tests/regression.cjs`, `node tests/import-and-pools.cjs`, `node tests/views.cjs`, then `python3 tests/check-html.py`. These use deterministic DOM/media mocks, not a real browser. They exercise migration, switching, resumes, real backup handlers, shared knowledge, course-local results, assisted answers, Scroll continuity, active-companion XP, replay safeguards, scripts, keyboard handlers, writing defaults and reset. The view check inspects generated HTML for nesting, duplicate IDs, broken text and leaked internal lesson IDs.
+Run `node tests/ui-practice.cjs`, `node tests/practice.cjs`, `node tests/practice-feedback.cjs`, `node tests/shape-content.cjs`, `node tests/handwriting.cjs`, `node tests/regression.cjs`, `node tests/import-and-pools.cjs`, `node tests/views.cjs`, then `python3 tests/check-html.py`. These use deterministic DOM/media mocks, not a real browser. They exercise migration, switching, resumes, real backup handlers, shared knowledge, course-local results, assisted answers, Scroll continuity, active-companion XP, replay safeguards, scripts, keyboard handlers, writing defaults and reset. The view check inspects generated HTML for nesting, duplicate IDs, broken text and leaked internal lesson IDs.
 
 Real browser layout, mobile overflow, actual device speech voices, microphone permissions and fetched stroke-order data still require device testing. The current environment did not expose the supported browser QA route. No claim of real iPhone or browser testing is made.
 
