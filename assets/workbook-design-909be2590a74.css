@@ -1,0 +1,337 @@
+
+/* ==========================================================================
+   Design layer · "Workbook" — Apple-native chrome around one signature:
+   every hero character sits in a 田字格 practice square, like the
+   Integrated Chinese character workbook. Everything else stays quiet.
+   ========================================================================== */
+html.ax{
+  --font-ui:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Segoe UI Variable Text","Segoe UI",system-ui,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --font-han:"Kaiti SC","STKaiti","KaiTi","BiauKai","TW-Kai","AR PL UKai CN","LXGW WenKai","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Microsoft YaHei",serif;
+  --font-zh:"PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Microsoft YaHei",var(--font-ui);
+  --r-sm:10px;--r-md:12px;--r-lg:18px;--r-xl:24px;
+  --fill:rgba(118,118,128,.12);--fill-strong:rgba(118,118,128,.2);
+  --sep:rgba(60,60,67,.13);
+  --elev-1:0 0 0 .5px rgba(0,0,0,.035),0 1px 2px rgba(0,0,0,.04),0 3px 10px rgba(0,0,0,.035);
+  --elev-2:0 0 0 .5px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.08),0 24px 60px rgba(0,0,0,.08);
+  --material:rgba(250,250,252,.74);--material-solid:#F9F9FB;
+  --elevated:#FFFFFF;--segment:#FFFFFF;
+  --hud:rgba(29,29,31,.9);--hud-ink:#FFFFFF;
+  --ease:cubic-bezier(.32,.72,0,1);
+  --danger:#D70015;--success:#248A3D;
+  --grid:color-mix(in srgb,var(--green) 22%,transparent);
+  --grid-edge:color-mix(in srgb,var(--green) 40%,transparent);
+  --focus:color-mix(in srgb,var(--green) 60%,transparent);
+  --shadow:var(--elev-1);
+}
+html.ax[data-theme=dark]{
+  --fill:rgba(118,118,128,.24);--fill-strong:rgba(118,118,128,.34);
+  --sep:rgba(84,84,88,.55);
+  --elev-1:0 0 0 .5px rgba(255,255,255,.07);
+  --elev-2:0 0 0 .5px rgba(255,255,255,.1),0 24px 60px rgba(0,0,0,.55);
+  --material:rgba(28,28,30,.72);--material-solid:#1C1C1E;
+  --elevated:#2C2C2E;--segment:#636366;
+  --hud:rgba(58,58,60,.92);--hud-ink:#FFFFFF;
+  --danger:#FF6961;--success:#30D158;
+}
+
+/* ---------- Base type ---------- */
+html.ax body{font-family:var(--font-ui);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;background:var(--bg);color:var(--ink)}
+html.ax button,html.ax input,html.ax select,html.ax textarea{font-family:inherit}
+html.ax [lang=zh],html.ax .zh-line,html.ax .han{font-family:var(--font-zh)}
+html.ax h1,html.ax h2,html.ax h3{text-wrap:balance;color:var(--ink)}
+html.ax p{text-wrap:pretty}
+html.ax body:not(.practice-focus) .view .heading h1,html.ax .view>.heading h1,html.ax .view h1{font-size:34px;line-height:1.12;font-weight:700;letter-spacing:-.022em}
+html.ax .view h2{letter-spacing:-.012em}
+html.ax .muted,html.ax .small.muted{color:var(--muted)}
+html.ax .eyebrow,html.ax .studio-card-label,html.ax .nav-section-label,html.ax .scroll-kicker{text-transform:none!important;letter-spacing:0!important;font-size:13px!important;font-weight:600!important;color:var(--green)}
+html.ax .scroll-kicker{color:var(--muted)}
+html.ax :is(.stat strong,.feed-home-stats strong,.bx-streak-num,.bx-xp-text,.home-stats strong,[role=progressbar]+span,.course-unit-status,#scroll-counter){font-variant-numeric:tabular-nums}
+
+/* Programmatic focus on page titles should not draw a box. */
+html.ax [tabindex="-1"]:focus{outline:none!important;box-shadow:none!important}
+html.ax :is(button,a,input,select,textarea,summary,[role=button],[tabindex="0"]):focus{outline:none}
+html.ax :is(button,a,input,select,textarea,summary,[role=button],[tabindex="0"]):focus-visible{outline:3px solid var(--focus)!important;outline-offset:2px!important}
+
+/* ---------- Sidebar (desktop) ---------- */
+html.ax .sidebar{background:var(--material)!important;-webkit-backdrop-filter:saturate(180%) blur(24px);backdrop-filter:saturate(180%) blur(24px);border-right:.5px solid var(--sep)!important;padding:22px 14px 18px!important}
+html.ax .brand.chinese-wordmark{all:unset;display:flex;align-items:center;gap:10px;padding:4px 36px 4px 6px;margin:0 0 14px;min-height:44px;cursor:default}
+html.ax .ax-app-icon{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;flex-shrink:0;font:400 24px/1 var(--font-han);color:#fff;
+  background:linear-gradient(160deg,color-mix(in srgb,var(--green) 82%,#fff),var(--green));box-shadow:inset 0 0 0 .5px rgba(255,255,255,.25),0 1px 2px rgba(0,0,0,.12)}
+html.ax[data-theme=dark] .ax-app-icon{color:#0b0b0c}
+html.ax .ax-brand-text{display:flex;flex-direction:column;min-width:0;line-height:1.25}
+html.ax .ax-brand-text>*{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html.ax .ax-brand-text strong{font-size:14px;font-weight:650;letter-spacing:-.01em;color:var(--ink)}
+html.ax .ax-brand-text small{font-size:12px;color:var(--muted)}
+html.ax .sidebar-toggle{top:14px!important;right:10px!important;color:var(--muted)}
+html.ax .sidebar .nav{gap:1px!important;display:flex;flex-direction:column}
+html.ax .sidebar .nav>button{min-height:36px!important;padding:7px 10px!important;border-radius:8px!important;gap:10px!important;font-size:14px!important;font-weight:500!important;color:var(--ink)!important;background:transparent!important;border:0!important;box-shadow:none!important}
+html.ax .sidebar .nav>button svg{width:19px!important;height:19px!important;color:var(--green);flex-shrink:0}
+html.ax .sidebar .nav>button:hover{background:var(--fill)!important}
+html.ax .sidebar .nav>button.active{background:color-mix(in srgb,var(--green) 14%,transparent)!important;color:var(--green)!important;font-weight:600!important}
+html.ax .ax-nav-label{font-size:12px;font-weight:600;color:var(--muted);padding:16px 10px 5px;letter-spacing:0}
+html.ax .sidebar .nav-companion-divider{display:none}
+html.ax .sidebar-bottom .daily-mini{background:transparent!important;border:0!important;box-shadow:none!important;padding:10px!important;border-radius:12px}
+html.ax .sidebar-bottom .daily-mini strong{font-size:13px;font-weight:600}
+html.ax .sidebar-bottom .daily-mini span{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* Course switch lives at the top of the sidebar as a segmented control. */
+html.ax .ax-course-seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:2px;padding:2px;background:var(--fill);border-radius:9px;margin:0 4px 14px}
+html.ax .ax-course-seg button{border:0;background:transparent;color:var(--ink);font-size:13px;font-weight:500;min-height:30px;border-radius:7px;padding:4px 6px;cursor:pointer;white-space:nowrap}
+html.ax .ax-course-seg button[aria-pressed=true]{background:var(--segment);font-weight:600;box-shadow:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04)}
+html.ax[data-theme=dark] .ax-course-seg button[aria-pressed=true]{color:#fff}
+@media(min-width:901px){html.ax .course-switcher{display:none!important}}
+@media(max-width:900px){html.ax .sidebar .ax-course-seg{display:none}html.ax .course-switcher{margin:2px 0 16px!important;width:100%!important}html.ax .course-switcher .ax-course-seg{margin:0;width:100%;max-width:360px}}
+
+/* ---------- Navigation bar ---------- */
+html.ax body:not(.feed-focus) .topbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 78%,transparent)!important;-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:.5px solid transparent!important;min-height:52px;height:auto!important;transition:border-color .2s}
+html.ax body.ax-scrolled:not(.feed-focus) .topbar{border-bottom-color:var(--sep)!important}
+html.ax .topbar .crumb{font-size:15px!important;font-weight:600!important;color:var(--ink)!important;letter-spacing:-.01em;transition:opacity .2s}
+html.ax body.ax-has-title:not(.ax-title-gone) .topbar .crumb{opacity:0}
+html.ax .topbar .iconbtn,html.ax .back-btn{background:transparent!important;border:0!important;box-shadow:none!important;color:var(--green)!important;border-radius:999px!important}
+html.ax .topbar .iconbtn:hover{background:var(--fill)!important}
+html.ax .back-btn:disabled{display:none!important}
+html.ax .topbar .pill{background:var(--fill)!important;border:0!important;box-shadow:none!important;color:var(--ink)!important;border-radius:999px!important;min-height:32px;font-weight:600;font-size:13px}
+html.ax .topbar .pill svg{color:var(--green)}
+html.ax .bx-streak-pill .bx-streak-num~*{opacity:.8}
+
+/* ---------- Tab bar (compact widths): floating glass capsule ---------- */
+@media(max-width:900px){
+  html.ax .mobile-nav{bottom:calc(8px + env(safe-area-inset-bottom))!important;border-radius:30px!important;padding:calc(6px - 2px * var(--bx-nav-progress,0))!important;border:0!important;
+    background:var(--material)!important;-webkit-backdrop-filter:saturate(180%) blur(24px);backdrop-filter:saturate(180%) blur(24px);box-shadow:var(--elev-2)!important}
+  html.ax .mobile-nav button{border-radius:25px!important;min-height:calc(54px - 10px * var(--bx-nav-progress,0))!important;font-size:11px!important;font-weight:500!important;color:var(--muted)!important;background:transparent!important;gap:calc(3px * (1 - var(--bx-nav-progress,0)))!important}
+  html.ax .mobile-nav button svg{width:23px!important;height:23px!important}
+  html.ax .mobile-nav button.active{color:var(--green)!important;background:color-mix(in srgb,var(--green) 13%,transparent)!important;font-weight:600!important}
+  html.ax body:not(.practice-focus) .view .heading h1,html.ax .view>.heading h1,html.ax .view h1{font-size:30px}
+}
+
+/* ---------- Surfaces: cards sit on the grouped background, no outlines ---------- */
+html.ax :is(.panel,.chapter,.story-card,.dict-card,.word-card,.course-unit,.course-continue,.flow-tool,.flow-path-summary,.flow-companion,.flow-review-main,.flow-character-browser,.feed-home-course,.studio-listening-card,.reading-folder,.learning-path,.reader-prep,.read-along-controls,.collection-card,.badge-card,.training-card,.contrast-card,.settings-accordion,.flow-profile,.companion-widget,.memory-tile,.scroll-entry,.clean-result,.resume-panel,.review-modes>*,.home-grid>*,.cw-card,.rx-card,.bx-card,.bx-game-card,.bx-quests,.bx-quick,.bx-status-row,.companion-collection,.cw-course-entry,.explore-navigation,.lab-activity,.lab-album-card,.lab-chapter-entry,.lab-complete,.lab-exercise,.lab-home-entry,.lab-paper,.lab-resume,.lab-shop-item,.lab-skill,.lab-story-scene,.rx-book,.rx-today,.stat){
+  border-color:transparent!important;box-shadow:var(--elev-1)!important;background-color:var(--panel)}
+html.ax :is(.panel,.chapter,.story-card,.course-unit,.course-continue,.flow-tool,.flow-review-main,.feed-home-course,.settings-accordion,.flow-profile,.collection-card,.badge-card,.training-card,.reading-folder){border-radius:var(--r-lg)!important}
+html.ax[data-theme=dark] :is(.panel,.chapter,.story-card,.dict-card,.word-card,.course-unit,.course-continue,.flow-tool,.feed-home-course,.settings-accordion,.flow-profile,.reading-folder){background-color:var(--panel)}
+/* Inner tiles inside cards use a fill, not another card. */
+html.ax :is(.panel,.course-unit,.settings-accordion) :is(.panel,.story-card,.dict-card,.word-card,.contrast-card,.reader-prep-item){box-shadow:none!important;background:var(--fill)!important}
+html.ax .course-unit.is-current{box-shadow:0 0 0 1.5px var(--green),var(--elev-1)!important}
+html.ax .course-roadmap:before{background:var(--sep)!important}
+
+html.ax :is(.character-example,.components,.component-tile,.memory-full,.pronunciation-context,.reader-prep-item,.shape-part,.sound-anchor,.home-goal){border-color:transparent!important;background:var(--fill)!important;box-shadow:none!important}
+html.ax :is(.rx-find-button,.rx-tools-search,.cw-search){border:0!important;background:var(--fill)!important;box-shadow:none!important}
+html.ax .rx-orbit{display:none!important}
+html.ax .bx-status-row{border-radius:var(--r-lg)!important}
+/* Hero cards: a quiet tint instead of gradients. */
+html.ax :is(.feed-home-hero,.flow-next,.home-continue,.hero){background:var(--panel)!important;border:0!important;box-shadow:var(--elev-1)!important;border-radius:var(--r-xl)!important;background-image:none!important}
+html.ax :is(.flow-next,.feed-home-hero):before{display:none!important}
+
+/* ---------- Buttons ---------- */
+html.ax .btn{border:0!important;background:var(--fill);color:var(--ink);border-radius:var(--r-md);font-weight:600;letter-spacing:-.005em;box-shadow:none;transition:background-color .15s,transform .12s var(--ease),filter .15s}
+html.ax .btn:not(:disabled):hover{background:var(--fill-strong);filter:none}
+html.ax .btn.primary,html.ax .btn.primary:not(:disabled):hover{background:var(--green)!important;color:var(--panel)!important}
+html.ax[data-theme=light] .btn.primary{color:#fff!important}
+html.ax .btn.primary:not(:disabled):hover{filter:brightness(1.06)}
+html.ax .btn.soft{background:color-mix(in srgb,var(--green) 14%,transparent)!important;color:var(--green)!important}
+html.ax .btn.danger{background:color-mix(in srgb,var(--danger) 12%,transparent)!important;color:var(--danger)!important}
+html.ax .btn:not(:disabled):active,html.ax .iconbtn:not(:disabled):active{transform:scale(.97)}
+html.ax .btn:disabled{opacity:.4}
+html.ax .iconbtn{border:0!important;background:var(--fill);color:var(--ink);box-shadow:none!important}
+html.ax .iconbtn:not(:disabled):hover{background:var(--fill-strong)}
+html.ax .textbtn{color:var(--green);font-weight:500}
+html.ax .textbtn:hover{text-decoration:none;opacity:.8}
+
+/* ---------- Segmented controls ---------- */
+html.ax :is(.tabs,.feed-mode-switch,.clean-study-tabs,.flow-chapter-tabs){background:var(--fill)!important;border:0!important;border-radius:9px!important;padding:2px!important;gap:2px!important;box-shadow:none!important}
+html.ax :is(.tabs,.feed-mode-switch,.clean-study-tabs,.flow-chapter-tabs) button{border:0!important;border-radius:7px!important;color:var(--ink)!important;font-weight:500!important;background:transparent!important;box-shadow:none!important;min-height:32px}
+html.ax :is(.tabs,.feed-mode-switch,.clean-study-tabs,.flow-chapter-tabs) button:is(.active,[aria-selected=true],[aria-current=page]){background:var(--segment)!important;font-weight:600!important;box-shadow:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04)!important;color:var(--ink)!important}
+html.ax[data-theme=dark] :is(.tabs,.feed-mode-switch,.clean-study-tabs,.flow-chapter-tabs) button:is(.active,[aria-selected=true],[aria-current=page]){color:#fff!important}
+
+/* ---------- Fields ---------- */
+html.ax :is(input.input,.input,textarea,select,input[type=search],input[type=text]){background-color:var(--fill)!important;border:0!important;border-radius:10px!important;color:var(--ink);box-shadow:none!important}
+html.ax select{-webkit-appearance:none;appearance:none;padding-right:30px!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 9l5-5 5 5M7 15l5 5 5-5'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:right 10px center!important}
+html.ax :is(input,textarea,select)::placeholder{color:var(--muted);opacity:.8}
+@media(max-width:760px){html.ax :is(input.input,.input,textarea,select,input[type=search],input[type=text]){font-size:16px}}
+
+/* Switches, iOS proportions. */
+html.ax input[type=checkbox][role=switch]{-webkit-appearance:none;appearance:none;position:relative;width:51px!important;height:31px!important;border-radius:999px!important;border:0!important;background:var(--fill-strong)!important;margin:0;cursor:pointer;flex-shrink:0;transition:background-color .2s}
+html.ax input[type=checkbox][role=switch]:before{content:'';position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.15),0 3px 1px rgba(0,0,0,.06);transition:transform .25s var(--ease)}
+html.ax input[type=checkbox][role=switch]:checked{background:var(--green)!important}
+html.ax input[type=checkbox][role=switch]:checked:before{transform:translateX(20px)}
+
+/* ---------- Progress, badges ---------- */
+html.ax .progress{background:var(--fill)!important;border-radius:999px!important;border:0!important;overflow:hidden}
+html.ax .progress>span{background:var(--green)!important;border-radius:999px!important}
+html.ax .badge{background:color-mix(in srgb,var(--green) 13%,transparent)!important;color:var(--green)!important;border:0!important;border-radius:999px!important;font-weight:600;font-size:12px}
+
+/* ---------- Sheets and HUD ---------- */
+html.ax .modal-bg{background:rgba(0,0,0,.32)!important}
+html.ax[data-theme=dark] .modal-bg{background:rgba(0,0,0,.55)!important}
+html.ax .modal{background:var(--elevated)!important;border:0!important;border-radius:22px!important;box-shadow:var(--elev-2)!important}
+html.ax .modal :is(.modal-close,[aria-label^=Close]).iconbtn,html.ax .modal-close{width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;border-radius:50%!important;background:var(--fill)!important;color:var(--muted)!important;border:0!important}
+html.ax .modal :is(.modal-close,[aria-label^=Close]) svg{width:15px;height:15px}
+html.ax .modal :is(.modal-close,[aria-label^=Close]):focus-visible{outline:2px solid var(--focus)!important;outline-offset:2px!important;box-shadow:none!important}
+@media(prefers-reduced-motion:no-preference){html.ax .modal{animation:ax-sheet .42s var(--ease) both}}
+@keyframes ax-sheet{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
+@media(max-width:760px){html.ax .modal{position:relative;padding-top:22px!important}html.ax .modal:before{content:'';position:absolute;top:7px;left:50%;width:36px;height:5px;margin-left:-18px;border-radius:3px;background:var(--fill-strong)}}
+html.ax .toast{background:var(--hud)!important;color:var(--hud-ink)!important;border-radius:999px!important;padding:11px 18px!important;font-size:14px!important;font-weight:500;-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:var(--elev-2)!important}
+
+/* ---------- Signature: the workbook square ---------- */
+html.ax .ax-tzg{font-family:var(--font-han)!important;font-weight:400!important;display:inline-grid!important;place-items:center;width:1.34em;height:1.34em;max-width:100%;line-height:1!important;margin-inline:auto;box-sizing:border-box;
+  border:1.5px solid var(--grid-edge);border-radius:.07em;
+  background-image:repeating-linear-gradient(to bottom,var(--grid) 0 .045em,transparent .045em .09em),repeating-linear-gradient(to right,var(--grid) 0 .045em,transparent .045em .09em);
+  background-size:1px 100%,100% 1px;background-position:center,center;background-repeat:no-repeat;color:var(--ink)}
+html.ax .ax-tzg.ax-tzg-word{width:auto;height:auto;padding:.08em .22em;background-image:none}
+
+/* ---------- Reading ---------- */
+html.ax .unfamiliar-char{background:transparent!important;text-decoration:underline dotted color-mix(in srgb,var(--green) 70%,transparent)!important;text-decoration-thickness:2px!important;text-underline-offset:.32em!important}
+html.ax .char-tap:hover,html.ax .char-tap:focus-visible{background:color-mix(in srgb,var(--green) 12%,transparent)!important;color:inherit!important;border-radius:6px}
+html.ax .reader-line{border-color:var(--sep)!important}
+html.ax .reader-line .zh-line{line-height:1.95!important}
+html.ax .reader-line.reading-spoken{background:color-mix(in srgb,var(--green) 8%,transparent)!important;box-shadow:inset 3px 0 0 var(--green)!important}
+
+/* ---------- Practice ---------- */
+html.ax :is(.focus-card,.studio-card,.flashcard,.scroll-frame-card,.focus-quiz-card){background:var(--panel)!important;border:0!important;box-shadow:var(--elev-1)!important;border-radius:var(--r-xl)!important;background-image:none!important}
+html.ax .pinyin,html.ax .scroll-reading{color:var(--green);font-weight:600;letter-spacing:-.01em}
+html.ax .quiz-choice{background:var(--panel)!important;border:0!important;box-shadow:var(--elev-1)!important;border-radius:16px!important}
+html.ax .quiz-choice:not(:disabled):hover{box-shadow:0 0 0 1.5px var(--green),var(--elev-1)!important}
+html.ax .rate-row .btn.danger{background:color-mix(in srgb,var(--danger) 12%,transparent)!important}
+html.ax .studio-actions .rate-row .btn{border-radius:14px}
+html.ax .study-aid-dock .btn{background:var(--fill)!important}
+
+/* ---------- Settings: grouped list ---------- */
+html.ax .setting-row{border-color:var(--sep)!important}
+html.ax .settings-accordion>summary{font-weight:600}
+html.ax .palette-options{display:flex!important;flex-wrap:wrap;gap:6px 4px!important}
+html.ax .palette-choice{background:transparent!important;border:0!important;box-shadow:none!important;display:flex!important;flex-direction:column;align-items:center;gap:6px!important;min-width:64px;padding:6px 4px!important;font-size:12px;color:var(--muted)}
+html.ax .palette-choice .palette-dot{width:30px!important;height:30px!important;border-radius:50%!important;border:0!important;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.15)}
+html.ax .palette-choice.selected{color:var(--ink);font-weight:600}
+html.ax .palette-choice.selected .palette-dot{box-shadow:0 0 0 2px var(--panel),0 0 0 4px currentColor!important;color:var(--ax-dot,var(--green))}
+
+/* ---------- Motion ---------- */
+@media(prefers-reduced-motion:reduce){html.ax .modal,html.ax .btn,html.ax input[role=switch]:before{animation:none!important;transition:none!important}}
+
+/* Home hero glyph: crisp, in the workbook square. */
+html.ax .rx-quiet-glyph.ax-tzg{opacity:1!important;color:var(--green)!important;font-size:118px!important;filter:none!important;-webkit-text-stroke:0!important}
+@media(max-width:540px){html.ax .rx-quiet-glyph.ax-tzg{font-size:58px!important}}
+
+/* Practice keeps a slim bar aligned with the card. */
+html.ax body.practice-focus:not(.feed-focus) .topbar{width:min(100%,700px);margin-inline:auto;justify-content:space-between;background:transparent!important;-webkit-backdrop-filter:none;backdrop-filter:none;border:0!important}
+
+/* ==========================================================================
+   v2 · Color system
+   Surfaces: tinted neutrals (≈60%), text and fills (≈30%), one accent (≈10%).
+   Dark is the primary appearance: base → elevated → sheet, lighter as they rise.
+   ========================================================================== */
+html.ax{
+  --fill:color-mix(in srgb,var(--muted) 14%,transparent);
+  --fill-strong:color-mix(in srgb,var(--muted) 24%,transparent);
+  --sep:color-mix(in srgb,var(--ink) 11%,transparent);
+  --glow-a:color-mix(in srgb,var(--green) 9%,transparent);
+  --glow-b:color-mix(in srgb,var(--accent) 5%,transparent);
+  --hero-a:color-mix(in srgb,var(--green) 16%,transparent);
+  --hero-b:color-mix(in srgb,var(--accent) 9%,transparent);
+  --rim:inset 0 0 0 .5px color-mix(in srgb,var(--ink) 6%,transparent);
+  --glass:color-mix(in srgb,var(--panel) 70%,transparent);
+  --glass-rim:inset 0 1px 0 rgba(255,255,255,.55),inset 0 0 0 .5px rgba(0,0,0,.06);
+}
+html.ax[data-theme=dark]{
+  --fill:color-mix(in srgb,var(--muted) 17%,transparent);
+  --fill-strong:color-mix(in srgb,var(--muted) 27%,transparent);
+  --sep:color-mix(in srgb,var(--ink) 12%,transparent);
+  --glow-a:color-mix(in srgb,var(--green) 13%,transparent);
+  --glow-b:color-mix(in srgb,var(--accent) 7%,transparent);
+  --hero-a:color-mix(in srgb,var(--green) 24%,transparent);
+  --hero-b:color-mix(in srgb,var(--accent) 12%,transparent);
+  --rim:inset 0 .5px 0 rgba(255,255,255,.07),inset 0 0 0 .5px rgba(255,255,255,.035);
+  --elev-1:var(--rim);
+  --elev-2:inset 0 .5px 0 rgba(255,255,255,.1),0 0 0 .5px rgba(255,255,255,.08),0 24px 60px rgba(0,0,0,.6);
+  --glass:color-mix(in srgb,var(--elevated) 64%,transparent);
+  --glass-rim:inset 0 1px 0 rgba(255,255,255,.14),inset 0 -1px 0 rgba(0,0,0,.25),inset 0 0 0 .5px rgba(255,255,255,.08);
+}
+/* A faint wash of the theme behind everything (content layer, never behind text directly). */
+html.ax body{background:radial-gradient(1100px 620px at 88% -12%,var(--glow-a),transparent 62%),radial-gradient(900px 560px at -12% 112%,var(--glow-b),transparent 60%),var(--bg) fixed!important;background-attachment:fixed!important}
+html.ax[data-theme=dark] body{color-scheme:dark}
+/* Elevated content in dark sits on lighter surfaces, not shadows. */
+html.ax[data-theme=dark] .modal{background:var(--elevated)!important}
+html.ax[data-theme=dark] :is(.focus-card,.studio-card,.flashcard,.scroll-frame-card,.focus-quiz-card,.quiz-choice){box-shadow:var(--rim)!important}
+
+/* Home hero: the theme's two hues as a soft mesh. */
+html.ax :is(.rx-hero,.feed-home-hero){background:radial-gradient(120% 140% at 100% 0%,var(--hero-a),transparent 58%),radial-gradient(90% 120% at 0% 115%,var(--hero-b),transparent 55%),var(--panel)!important}
+html.ax .rx-hero .feed-home-copy .eyebrow{color:var(--green)}
+
+/* Navigation glass: tab bar and sidebar only. */
+@media(max-width:900px){
+  html.ax .mobile-nav{background:var(--glass)!important;box-shadow:var(--glass-rim),0 10px 30px rgba(0,0,0,.28)!important}
+  html.ax .mobile-nav button.active{background:color-mix(in srgb,var(--green) 18%,transparent)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12)!important}
+}
+html.ax .sidebar{background:color-mix(in srgb,var(--sidebar) 78%,transparent)!important}
+html.ax body:not(.feed-focus) .topbar{background:color-mix(in srgb,var(--bg) 72%,transparent)!important}
+html.ax .topbar .pill{background:var(--fill)!important}
+html.ax .bx-streak-pill svg{color:var(--accent)!important}
+
+/* Grouped inset list, as in Settings. */
+html.ax .ax-list{background:var(--panel);border-radius:var(--r-lg);box-shadow:var(--elev-1);overflow:hidden;margin:0 0 22px}
+html.ax .ax-row{display:flex;align-items:center;gap:14px;width:100%;min-height:60px;padding:10px 14px 10px 14px;border:0;background:transparent;color:var(--ink);text-align:left;position:relative;cursor:pointer}
+html.ax .ax-row+.ax-row:before{content:'';position:absolute;top:0;left:62px;right:0;height:.5px;background:var(--sep)}
+html.ax .ax-row:hover{background:var(--fill)}
+html.ax .ax-row:active{background:var(--fill-strong)}
+html.ax .ax-row-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+html.ax .ax-row-text strong{font-size:16px;font-weight:600;letter-spacing:-.01em}
+html.ax .ax-row-text small{font-size:13px;color:var(--muted)}
+html.ax .ax-row-value{font-size:15px;color:var(--muted);font-variant-numeric:tabular-nums}
+html.ax .ax-chev{width:16px;height:16px;flex-shrink:0;fill:none;stroke:color-mix(in srgb,var(--muted) 70%,transparent);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+
+/* Settings-style icon tiles: white symbols on a system color. */
+html.ax .ax-tile{width:32px!important;height:32px!important;min-width:32px;border-radius:8px!important;display:grid!important;place-items:center;color:#fff!important;flex-shrink:0;box-shadow:inset 0 .5px 0 rgba(255,255,255,.25)}
+html.ax .ax-tile svg{width:19px!important;height:19px!important;fill:none;stroke:#fff!important;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+html.ax .ax-blue{background:#0A84FF!important}html.ax .ax-indigo{background:#5E5CE6!important}html.ax .ax-orange{background:#FF9F0A!important}
+html.ax .ax-pink{background:#FF375F!important}html.ax .ax-teal{background:#30B0C7!important}html.ax .ax-purple{background:#BF5AF2!important}
+html.ax .ax-red{background:#FF453A!important}html.ax .ax-gray{background:#8E8E93!important}html.ax .ax-green{background:#30D158!important}
+html.ax .ax-yellow{background:#FFC50A!important}html.ax .ax-mint{background:#00C7BE!important}
+html.ax[data-theme=light] .ax-blue{background:#007AFF!important}html.ax[data-theme=light] .ax-green{background:#34C759!important}
+
+/* Tools: one grouped list instead of a wall of cards. */
+html.ax .flow-tool-grid{display:block!important;max-width:760px;background:var(--panel);border-radius:var(--r-lg);box-shadow:var(--elev-1);overflow:hidden}
+html.ax .flow-tool-grid>.flow-tool{display:grid!important;grid-template-columns:32px minmax(0,1fr) 16px;grid-template-rows:auto auto;column-gap:14px;row-gap:1px;align-items:center;width:100%;min-height:62px;padding:11px 14px!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;position:relative;text-align:left}
+html.ax .flow-tool-grid>.flow-tool+.flow-tool:before{content:'';position:absolute;top:0;left:60px;right:0;height:.5px;background:var(--sep)}
+html.ax .flow-tool-grid>.flow-tool>.ax-tile{grid-row:1/3;grid-column:1;margin:0!important}
+html.ax .flow-tool-grid>.flow-tool>strong{grid-column:2;grid-row:1;font-size:16px!important;font-weight:600;margin:0!important}
+html.ax .flow-tool-grid>.flow-tool>small{grid-column:2;grid-row:2;font-size:13px!important;color:var(--muted);margin:0!important}
+html.ax .flow-tool-grid>.flow-tool>.ax-chev{grid-column:3;grid-row:1/3}
+html.ax .flow-tool-grid>.flow-tool:after,html.ax .flow-tool-grid>.flow-tool>svg:not(.ax-chev){display:none!important}
+html.ax .flow-tool-grid>.flow-tool:hover{background:var(--fill)!important;transform:none!important}
+
+/* Palette picker: each swatch previews the theme's surface and accent. */
+html.ax .palette-choice .ax-hanzi{font-size:11px;color:var(--muted);margin-top:-4px;font-family:var(--font-zh)}
+html.ax .palette-choice .palette-dot{width:34px!important;height:34px!important;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.12),0 1px 3px rgba(0,0,0,.25)!important}
+
+/* Increased contrast: separators and secondary text step up, glass becomes solid. */
+@media(prefers-contrast:more){
+  html.ax{--muted:color-mix(in srgb,var(--ink) 82%,var(--bg))!important;--sep:color-mix(in srgb,var(--ink) 30%,transparent);--fill:color-mix(in srgb,var(--ink) 18%,transparent)}
+  html.ax .mobile-nav,html.ax .sidebar,html.ax body .topbar{background:var(--panel)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+  html.ax :is(.panel,.ax-list,.flow-tool-grid,.course-unit){box-shadow:0 0 0 1px var(--sep)!important}
+}
+html.ax label{min-width:0}
+html.ax select{max-width:100%;min-width:0;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
+html.ax :is(.bx-mobile-streak,.bx-status-flame) svg{color:var(--accent)!important}
+/* Answer choices sit inside a card, so they use a fill rather than another card. */
+html.ax :is(.focus-quiz-card,.focus-card,.studio-card,.listening-quiz-card) .quiz-choice{background:var(--fill)!important;box-shadow:none!important}
+html.ax :is(.focus-quiz-card,.focus-card,.studio-card,.listening-quiz-card) .quiz-choice:not(:disabled):hover{background:var(--fill-strong)!important}
+
+
+/* Compatibility: outcome cues win over the neutral practice fills in either theme. */
+html.ax .quiz-choice:is(.correct,.right){background:color-mix(in srgb,var(--success) 12%,var(--panel))!important;box-shadow:inset 0 0 0 2px var(--success)!important}
+html.ax .quiz-choice:is(.wrong,.incorrect){background:color-mix(in srgb,var(--danger) 12%,var(--panel))!important;box-shadow:inset 0 0 0 2px var(--danger)!important}
+/* Colored icons stay legible on the brighter system tiles. */
+html.ax :is(.ax-orange,.ax-yellow,.ax-green,.ax-mint,.ax-teal){color:#161E19!important}
+html.ax :is(.ax-orange,.ax-yellow,.ax-green,.ax-mint,.ax-teal) svg{stroke:#161E19!important}
+@media(max-width:900px){html.ax .ax-course-seg button,html.ax :is(.tabs,.feed-mode-switch,.clean-study-tabs,.flow-chapter-tabs) button{min-height:44px!important}}
+@media(max-width:600px){
+ html.ax .top-actions{gap:2px}
+ html.ax #streak-pill{display:none}
+ html.ax .topbar .iconbtn{width:44px;height:44px;min-width:44px;min-height:44px}
+}
+/* Apply these after every glass/motion rule, including when only the app setting is off. */
+html.ax body.flow-reduce-motion :is(.modal,.btn,.iconbtn,.topbar,.crumb),html.ax body.flow-reduce-motion input[role=switch]:before{animation:none!important;transition:none!important}
+@media(prefers-reduced-transparency:reduce),(prefers-contrast:more){
+ html.ax .sidebar,html.ax .mobile-nav,html.ax body .topbar{background:var(--panel)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+ html.ax .mobile-nav::before{display:none!important}
+ html.ax .toast{background:var(--hud)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+}

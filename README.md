@@ -1,7 +1,15 @@
-# Eric's Chinese — clearer practice and personal vocabulary
+# Eric's Chinese — workbook design and chapter practice
 
-This update builds on upstream `main` commit `9dab241d546144d835e19d96f61f7d3b1293ebeb` and retains the existing GitHub Pages origin. Publishing is explicitly authorized for this update; use an expected-head check.
+This update builds on upstream `main` commit `bf366b44aef7d746ddf467adb7b1fb2d18ee1a9f` and retains the existing GitHub Pages origin. Publishing is explicitly authorized for this update; use an expected-head check.
 
+
+## November 8 workbook redesign review
+
+Integrates the supplied Claude redesign as ordered versioned presentation assets. All 25 existing CSS/JavaScript assets remain byte-for-byte unchanged: the learning engine, curriculum, validators, progress keys, backups, and reward rules retain their tested implementations. The redesign adds nine coordinated pigment palettes, tinted dark surfaces, grouped Tools rows, a course segment control, large-to-small title behavior, and a workbook square for single Chinese forms. Existing palette IDs, including Black, remain stable; saved light/dark/system choices are respected. It adds visual polish and clearer organization, without adding curriculum or a new learning algorithm.
+
+Review fixes preserve the established fuller Home and restore its visible quests and three quick games. Theme/mute controls and Back remain accessible. Course selection stays available on browsing pages and hidden during active practice. Navigation padding/height again follow the existing single frame easing controller. Correct/incorrect answer cues now win over neutral/dark fill rules. Reduced-transparency, increased-contrast, and the in-app motion preference override the new effects correctly. Mobile tabs and modal close controls keep 44px hit areas; workbook guides have a width limit. A stale title observer cannot alter a new page, and decoration scans are limited to live content and the open sheet.
+
+`tests/workbook-design.cjs` checks these behaviors with DOM/observer fixtures, numeric contrast checks for all nine palettes in both appearances, and targeted stylesheet cascade checks. The original uploaded redesign fails 17 of those assertions; the reviewed version passes. That is a set of repeated assertions across several regressions, not 17 separate defects. `tests/browser-redesign.py` retains and adapts the supplied Playwright suite for future browser QA, including restored Home/control expectations and parsing of modern CSS colors. It was **not run** here: the supported managed browser route is unavailable. No real browser, iPhone, stylus, microphone, or rendered-pixel contrast verification is claimed.
 
 ## November 6 interface and learning update
 
@@ -98,7 +106,7 @@ Automated verification covers all chapter activities in both courses and scripts
 
 These are deterministic Node/DOM/media mocks and static HTML checks. They do not establish real browser layout, iPhone overflow, recognition geometry, stylus feel, microphone permissions, or installed speech voice quality. The supported browser QA route is unavailable in this environment. Handwriting checks use pinned Hanzi Writer geometry/order matching, not general OCR. Speech recognition supplies words, not phonetic/tone grades. All actual audio/microphone actions remain user initiated.
 
-Run `node tests/ui-practice.cjs`, `node tests/practice.cjs`, `node tests/practice-feedback.cjs`, `node tests/shape-content.cjs`, `node tests/handwriting.cjs`, `node tests/regression.cjs`, `node tests/import-and-pools.cjs`, `node tests/views.cjs`, then `python3 tests/check-html.py`. These use deterministic DOM/media mocks, not a real browser. They exercise migration, switching, resumes, real backup handlers, shared knowledge, course-local results, assisted answers, Scroll continuity, active-companion XP, replay safeguards, scripts, keyboard handlers, writing defaults and reset. The view check inspects generated HTML for nesting, duplicate IDs, broken text and leaked internal lesson IDs.
+Run `node tests/workbook-design.cjs`, `node tests/ui-practice.cjs`, `node tests/practice.cjs`, `node tests/practice-feedback.cjs`, `node tests/shape-content.cjs`, `node tests/handwriting.cjs`, `node tests/regression.cjs`, `node tests/import-and-pools.cjs`, `node tests/views.cjs`, then `python3 tests/check-html.py`. These use deterministic DOM/media mocks, not a real browser. They exercise migration, switching, resumes, real backup handlers, shared knowledge, course-local results, assisted answers, Scroll continuity, active-companion XP, replay safeguards, scripts, keyboard handlers, writing defaults and reset. The view check inspects generated HTML for nesting, duplicate IDs, broken text and leaked internal lesson IDs.
 
 Real browser layout, mobile overflow, actual device speech voices, microphone permissions and fetched stroke-order data still require device testing. The current environment did not expose the supported browser QA route. No claim of real iPhone or browser testing is made.
 
