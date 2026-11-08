@@ -1,0 +1,67 @@
+{
+  "baseCommit": "33c5be196070ab359ef197dba39a9e86d8f675ec",
+  "release": "2026.11.08-grouped-learning",
+  "source": "claude2.zip Gestalt presentation changes combined with the reviewed published workbook design",
+  "method": "Node DOM/media/observer mocks, numeric color checks, static cascade and generated HTML checks",
+  "previousReferencedAssetsUnchanged": 24,
+  "orderedScripts": 18,
+  "orderedStylesheets": 9,
+  "suites": [
+    {
+      "file": "tests/regression.cjs",
+      "checks": 112,
+      "failed": 0
+    },
+    {
+      "file": "tests/import-and-pools.cjs",
+      "checks": 29,
+      "failed": 0
+    },
+    {
+      "file": "tests/handwriting.cjs",
+      "checks": 57,
+      "failed": 0
+    },
+    {
+      "file": "tests/shape-content.cjs",
+      "checks": 210,
+      "failed": 0
+    },
+    {
+      "file": "tests/practice.cjs",
+      "checks": 7358,
+      "failed": 0
+    },
+    {
+      "file": "tests/practice-feedback.cjs",
+      "checks": 1626,
+      "failed": 0
+    },
+    {
+      "file": "tests/ui-practice.cjs",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "file": "tests/workbook-design.cjs",
+      "checks": 143,
+      "failed": 0
+    }
+  ],
+  "totalChecks": 9591,
+  "generatedViews": 10746,
+  "structureFailures": 0,
+  "compiledScripts": 18,
+  "compiledInlineHandlers": 20335,
+  "syntaxErrors": 0,
+  "standalone": {
+    "sha256": "5aae2cb228abecb464e8f61c37759ec7e40c30a50aa7f28fafadf333a0e1d546",
+    "bytes": 2035388,
+    "exactScriptAndStyleOrder": true,
+    "mockBootPassed": true
+  },
+  "realBrowserTesting": false,
+  "deviceTesting": false,
+  "includedBrowserSuite": "tests/browser-redesign.py; adapted and Python syntax checked, not executed",
+  "verificationLimits": "Supported managed browser control route unavailable. Actual browser/mobile overflow, iPhone, stylus, microphone, speech voices, native keyboard rendering, and rendered-pixel contrast remain unverified."
+}

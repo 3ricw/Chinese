@@ -1,6 +1,18 @@
 # Eric's Chinese — workbook design and chapter practice
 
-This update builds on upstream `main` commit `bf366b44aef7d746ddf467adb7b1fb2d18ee1a9f` and retains the existing GitHub Pages origin. Publishing is explicitly authorized for this update; use an expected-head check.
+This update builds on upstream `main` commit `33c5be196070ab359ef197dba39a9e86d8f675ec` and retains the existing GitHub Pages origin. Publishing is explicitly authorized for this update; use an expected-head check.
+
+## November 8 grouping and component cues
+
+Combines the reviewed workbook redesign with the supplied `claude2.zip` Gestalt version. The upload retains all 27 published assets and appends a small color/spacing layer. Its useful changes are integrated into the existing design assets, preserving the 18-script / 9-stylesheet execution order and avoiding a second decoration observer. The previous post-render Home replacement is removed: the effective Home renderer now produces its complete hierarchy directly.
+
+Home puts one next action and the interactive companion above an attached streak/level/goal strip. Quests and all three Quick games share a second surface. Scroll remains directly available; stories, shapes, writing, Review, weekly missions, and the skill map sit in a native, keyboard-accessible **More ways to practice** disclosure. Progress and save status stay visible. Consistent spacing and fewer nested card surfaces distinguish the groups without removing those learning paths. Fuller Home content, the glass navigation controller, theme/mute controls, Back, and course selection remain intact.
+
+The linked [Gestalt design article](https://www.merveilleux.design/en/blog/article/gestalt-psychology-laws) informed proximity, similarity, common-region grouping, and sheet/background separation. Labels and generic badges are quieter; pinyin uses the complementary theme color. Sheet blur retains reduced-transparency and increased-contrast fallbacks, and disclosure motion respects both the system and app settings. These are design decisions, not evidence of measured learning or retention gains.
+
+Twelve explicit component-form groups now use consistent colors in visual-memory diagrams, labeled keys, and introductions, including simplified/traditional variants such as 讠/訁, 钅/釒, and 纟/糹. Existing Chinese forms, part names, accessible labels, and clickable lookups remain available without relying on color. Ambiguous forms such as 月 and 阝 stay neutral; unrelated forms are not bundled into broad semantic families. A short explanation distinguishes a visual association from the component's role in a particular character. Decoration does not alter knowledge, schedules, or reward records.
+
+Only the effective Home markup and the two presentation assets change. All other 24 previously referenced assets remain byte-identical, including curriculum, learning/scoring functions, storage validators, handwriting checks, and course migration. `tests/workbook-design.cjs` now covers both courses' Home hierarchy, native disclosure markup, form equivalence, neutral ambiguous shapes, reused-node updates, idempotent notes, and unchanged progress/rewards. Numeric contrast checks cover pinyin and component tokens across every palette and both appearances. The complete automated suite and exact standalone reconstruction are recorded in `tests/verification-2026-11-08-grouping.json`. The updated Playwright suite is included but was not run; supported managed browser control is unavailable, so actual mobile layout, keyboard focus rendering, device audio, and stylus behavior remain unverified.
 
 
 ## November 8 workbook redesign review

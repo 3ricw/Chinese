@@ -13,17 +13,37 @@ r("startSession('all','1')");check('course selector stays hidden during recall',
 designViews.push({name:'workbook/course-selector-1',html:r('axCourseSeg()')});
 check('segmented control reports the actual selected course',()=>assert(r("axCourseSeg().includes('aria-pressed=\"true\"')&&axCourseSeg().includes('Chinese 2')")));
 r("axSwitchCourse('chinese-2')");designViews.push({name:'workbook/course-selector-2',html:r('axCourseSeg()')});check('course switch keeps Home when started there',()=>assert(r("selectedCourseId==='chinese-2'&&currentView==='home'")));r("navigate('read');axSwitchCourse('chinese-1')");check('course switch returns another browsing view to its course',()=>assert(r("selectedCourseId==='chinese-1'&&currentView==='learn'")));
-// Exercise the real home transformation against minimal DOM fixtures.
-const view=app.nodes.get('view'),originalQuery=view.querySelector.bind(view);let inserted='',hasList=false,removed=0;
-const extras={hidden:false,style:{display:''}},lab={insertAdjacentHTML(where,html){assert.equal(where,'beforebegin');inserted+=html;hasList=true},remove(){removed++}};
-r("navigate('home')");const homeHTML=app.html();view.querySelector=sel=>sel==='.rx-home'?{}:sel==='.ax-list'?(hasList?{}:null):sel==='.lab-home-entry'?lab:sel==='.rx-home-extras'?extras:sel==='#bx-quests-title'?{textContent:'0 of 3 daily quests'}:originalQuery(sel);
-try{r("typeof axHomeLinks==='function'?axHomeLinks():axSimplifyHome()")}catch(e){failures.push({name:'Home transformation runs',error:e.message})}
-check('home transformation retains visible interactive quests and games',()=>assert(!extras.hidden&&extras.style.display!=='none'));
-check('full Home still contains three quick-game actions',()=>assert.equal((homeHTML.match(/data-game=/g)||[]).length,3));
-check('home grouped links retain a real chapter-practice action',()=>assert(inserted.includes("navigate('lab')")));
-check('home grouped links retain a real Review action',()=>assert(inserted.includes("navigate('review')")));
-designViews.push({name:'workbook/home-links',html:inserted});const insertedOnce=inserted;try{r("typeof axHomeLinks==='function'?axHomeLinks():axSimplifyHome()")}catch{}
-check('home decoration is idempotent',()=>{assert.equal(inserted,insertedOnce);assert.equal(removed,1)});view.querySelector=originalQuery;
+// Home renders the hierarchy directly; essential actions need no observer pass.
+for(const course of ['chinese-1','chinese-2']){
+ r(`switchCourse('${course}');navigate('home')`);const home=app.html(),more=r('rxHomeMoreMarkup()');
+ designViews.push({name:'workbook/home-'+course,html:home});
+ check(course+' Home has one primary next step',()=>assert.equal((home.match(/class="btn primary"/g)||[]).length,1));
+ check(course+' primary action matches its current course',()=>assert(home.includes('onclick="'+r('rxNextAction().action')+'"')));
+ check(course+' greeting, companion and Scroll remain visible',()=>{for(const token of ['rx-greeting','rx-companion-scene','openScrollQuickAccess()'])assert(home.includes(token));assert(home.indexOf('rx-companion-scene')<home.indexOf('<details class="rx-home-more"'))});
+ check(course+' daily status stays with the next action',()=>assert(/<div class="rx-home-start">[\s\S]*?<section[^>]*rx-hero[\s\S]*?<button class="bx-status-row"[\s\S]*?<\/button><\/div>\s*<div class="rx-home-extras">/.test(home)));
+ check(course+' three quests and three quick games stay outside disclosure',()=>{const first=home.slice(0,home.indexOf('<details class="rx-home-more"'));assert.equal((first.match(/data-game=/g)||[]).length,3);assert(first.includes('id="bx-quests"'));assert(first.includes('All games'))});
+ check(course+' more practice uses closed native details',()=>{assert(more.startsWith('<details class="rx-home-more"><summary>'));assert(!/<details[^>]*\bopen\b/.test(more));assert(!/<summary[^>]*onclick/.test(more))});
+ check(course+' secondary learning paths remain available',()=>{for(const action of ["navigate('lab')","navigate('review')","labOpenWeekly()","navigate('labskills')"])assert(more.includes('onclick="'+action+'"'))});
+ r('renderHome();renderHome()');check(course+' repeated Home renders do not duplicate links',()=>{assert.equal((app.html().match(/class="rx-home-more"/g)||[]).length,1);assert.equal((app.html().match(/class="ax-row"/g)||[]).length,2)});
+}
+// Related component forms use one color without changing labels, actions, or knowledge.
+const familyNodes=[];function component(glyph,klass='memory-piece'){
+ const e=new app.ctx.Element(),span=new app.ctx.Element();span.textContent=glyph;e.classList.add(klass);e.querySelector=s=>s==='[lang=zh]'?span:null;
+ e.setAttribute('onclick',`openComponentCard('${glyph}')`);e.setAttribute('aria-label','Explore '+glyph);e.title='Existing explanation';e.glyph=span;familyNodes.push(e);return e;
+}
+const water=component('氵'),water2=component('水','memory-part-chip'),speech=component('讠'),traditional=component('訁','memory-inline-part'),unknown=component('月'),ambiguous=component('阝'),compound=component('木 + 木');
+const partsBefore=r('JSON.stringify({cards:state.cards,learningLab:state.learningLab,xp:bx.xp})');
+app.ctx.familyFixture={querySelectorAll:selector=>selector.includes('.memory-piece')?familyNodes:[]};r('axFamily(familyFixture);axFamily(familyFixture)');
+check('water form and its side form share a visual cue',()=>assert(water.dataset.family==='water'&&water2.dataset.family==='water'));
+check('traditional and simplified speech components share a cue',()=>assert(speech.dataset.family==='speech'&&traditional.dataset.family==='speech'));
+check('ambiguous and composite components stay neutral',()=>{for(const e of [unknown,ambiguous,compound])assert(!e.dataset.family)});
+check('color preserves names, accessible labels and real lookups',()=>{assert.equal(water.getAttribute('onclick'),"openComponentCard('氵')");assert.equal(water.getAttribute('aria-label'),'Explore 氵');assert.equal(water.title,'Existing explanation')});
+check('decorating creates no character knowledge or rewards',()=>assert.equal(r('JSON.stringify({cards:state.cards,learningLab:state.learningLab,xp:bx.xp})'),partsBefore));
+water.glyph.textContent='木';r('axFamily(familyFixture)');check('a reused component updates its cue',()=>assert.equal(water.dataset.family,'wood'));
+water.glyph.textContent='月';r('axFamily(familyFixture)');check('an unknown replacement clears a stale cue',()=>assert(!water.dataset.family));
+let notes=0;const legend={dataset:{},querySelector:s=>s==='[data-family]'?water2:null,insertAdjacentHTML(where,html){assert.equal(where,'afterend');assert(html.includes('roles vary'));notes++}};
+app.ctx.familyLegendFixture={querySelectorAll:s=>s==='.memory-part-legend'?[legend]:[]};r('axFamily(familyLegendFixture);axFamily(familyLegendFixture)');check('component explanation is added only once',()=>assert.equal(notes,1));
+check('family colors are based on explicit forms, without guessing a word meaning',()=>{for(const [id,forms]of Object.entries(r('AX_FAMILIES')))for(const form of forms)assert.equal(r('AX_FAMILY_OF['+JSON.stringify(form)+']'),id);assert.equal(r("AX_FAMILY_OF['__proto__']"),undefined)});
 // Observer callbacks from detached page titles must not update a new page's header.
 const originalAll=app.ctx.document.querySelectorAll;let currentTitle=new app.ctx.Element();currentTitle.textContent='Old page';currentTitle.offsetParent={};const observers=[];
 app.ctx.IntersectionObserver=class{constructor(cb){this.cb=cb;observers.push(this)}observe(node){this.node=node}disconnect(){this.disconnected=true}};
@@ -32,7 +52,7 @@ r('axObservedTitle=null;axSyncTitle()');const firstObserver=observers.at(-1),fir
 check('old title observer disconnects on a new page',()=>assert(firstObserver.disconnected));firstObserver.cb([{target:firstTitle,isIntersecting:false}]);check('stale observer cannot hide the new large title',()=>assert(!app.ctx.document.body.classList.contains('ax-title-gone')));
 const currentObserver=observers.at(-1);currentObserver.cb([{target:currentTitle,isIntersecting:false}]);check('current observer hands the title to the bar',()=>assert(app.ctx.document.body.classList.contains('ax-title-gone')));currentObserver.cb([{target:currentTitle,isIntersecting:true}]);check('returning title restores the large-title state',()=>assert(!app.ctx.document.body.classList.contains('ax-title-gone')));app.ctx.document.querySelectorAll=originalAll;
 // Single forms receive the workbook guide; multi-character words and existing artwork keep their structure.
-const han=new app.ctx.Element(),word=new app.ctx.Element(),art=new app.ctx.Element();han.textContent='好';word.textContent='你好';art.textContent='好';art.children.push({});app.ctx.workbookFixture={querySelectorAll:s=>s.includes('palette-choice')?[]:[han,word,art]};
+const han=new app.ctx.Element(),word=new app.ctx.Element(),art=new app.ctx.Element();han.textContent='好';word.textContent='你好';art.textContent='好';art.children.push({});app.ctx.workbookFixture={querySelectorAll:s=>s===r('AX_HERO')?[han,word,art]:[]};
 r('axDecorate(workbookFixture);axDecorate(workbookFixture)');check('one Chinese form receives the square',()=>assert(han.classList.contains('ax-tzg')));check('words are not squeezed into a single square',()=>assert(!word.classList.contains('ax-tzg')));check('existing companion/character artwork is preserved',()=>assert(!art.classList.contains('ax-tzg')));
 // Compare fresh and rich restored profiles; UI initialization cannot migrate away their records.
 r("state.cards['你']={seen:9,streak:4,interval:7,due:Date.now()+86400000,last:Date.now(),memoryStage:2};state.bookmarks=['你'];state.memoryNotes['你']='My saved visual cue';state.settings.palette='black';state.settings.theme='light';labImportDeck('Chinese,pinyin,English\\n朋友,péngyou,friend\\n学校,xuéxiào,school','Saved class');labData().stamps=11;save()");
@@ -48,6 +68,14 @@ for(const [id,p]of Object.entries(r('PALETTES')))for(const mode of ['light','dar
 }
 // Source-level cascade checks catch the exact rules that defeated existing controls/fallbacks.
 const index=fs.readFileSync(target,'utf8'),ref=index.match(/<link[^>]+href="([^"]+)"[^>]+id="ax-design"/),css=ref?fs.readFileSync(path.join(path.dirname(target),ref[1]),'utf8'):index.match(/<style[^>]+id="ax-design"[^>]*>([\s\S]*?)<\/style>/)[1];
+const familyTokens=[...css.matchAll(/html\.ax(?:\[data-theme=dark\])?\{--fam-water:[^}]+\}/g)].map(m=>Object.fromEntries([...m[0].matchAll(/--fam-([a-z]+):(#[a-fA-F0-9]{6})/g)].map(x=>[x[1],x[2]])));
+check('family themes provide every used color in both appearances',()=>{assert.equal(familyTokens.length,2);for(const row of familyTokens)for(const id of Object.keys(r('AX_FAMILIES')))assert(row[id],id)});
+for(const [id,p]of Object.entries(r('PALETTES')))for(const [i,mode] of ['light','dark'].entries()){
+ check(id+'/'+mode+' pronunciation text remains legible',()=>{for(const surface of ['bg','panel','elevated'])assert(contrast(rgb(p[mode].accent),rgb(p[mode][surface]))>=4.5)});
+ check(id+'/'+mode+' component glyphs remain legible on tinted surfaces',()=>{for(const [family,c]of Object.entries(familyTokens[i]||{}))for(const surface of ['panel','elevated'])assert(contrast(rgb(c),over(rgb(c),rgb(p[mode][surface]),.08))>=4.5,family+'/'+surface)});
+}
+check('modal blur has reduced-transparency and high-contrast fallbacks',()=>assert(css.lastIndexOf('html.ax .modal-bg{background:rgba(0,0,0,.6)')>css.indexOf('backdrop-filter:blur(6px)')));
+check('family cues preserve a noncolor path through original glyphs and labels',()=>assert(css.includes('.memory-piece:not([data-family])')&&css.includes('.memory-part-chip,.memory-inline-part')));
 check('theme and sound controls are not removed by the stylesheet',()=>assert(!/#theme-btn[^{}]*#sound-btn\s*\{[^}]*display\s*:\s*none/.test(css)));
 check('root pages retain a usable Back control',()=>assert(!/ax-root\s+\.back-btn\s*\{[^}]*display\s*:\s*none/.test(css)));
 check('navigation height and padding follow the single easing controller',()=>{const nav=css.match(/html\.ax \.mobile-nav\{bottom:[^}]+\}/)?.[0]||'';assert(nav.includes('--bx-nav-progress'));const button=css.match(/html\.ax \.mobile-nav button\{border-radius:[^}]+\}/)?.[0]||'';assert(button.includes('--bx-nav-progress'))});
