@@ -1,6 +1,16 @@
 # Eric's Chinese — workbook design and chapter practice
 
-This update builds on upstream `main` commit `33c5be196070ab359ef197dba39a9e86d8f675ec` and retains the existing GitHub Pages origin. Publishing is explicitly authorized for this update; use an expected-head check.
+This update builds on upstream `main` commit `7c6d1db169e76d1ee9659b953b796eca0af36417` and retains the existing GitHub Pages origin. Publishing is explicitly authorized for this update; use an expected-head check.
+
+## November 10 alignment, motion, and study flow
+
+Tools now shares a full 900px content width across its heading, search, grouped list, and footer. Rows use one icon/text/chevron grid, descriptions use the available width, and old mobile absolute positioning is cleared. Arcade uses the same page width, responsive equal card columns, smaller glyph tiles, consistent Play positions, and a full-width quest section below the games. Existing activities, filters, effects, and rewards remain available.
+
+The theme button adapts the attached recording's light/dark ink reveal using native browser snapshots and an original rippled edge. It applies the selected preference once, guards rapid clicks and stale callbacks, cleans up animations, and switches immediately for reduced motion or unsupported APIs. The bounded animation lasts 380 ms; this is not a claim about measured device latency. Saved palettes and system/light/dark preferences remain compatible.
+
+Quick Find now has five result scopes, keyboard selection with Arrow keys/Enter, result feedback, a reset, and course-aware reading suggestions. Chinese forms, pinyin, English, shared common words, and activities remain searchable. Marked ü, v, and u: are equivalent in word search while u remains distinct. The original assistance accounting still runs before lookup. Optional setup shows its two existing steps; completion highlights actual finished steps and independent/helped results, offers retry or Done for now, and keeps the suggested next activity collapsed. Neither browsing nor a completion animation adds learning credit.
+
+[The design review](docs/design-review-2026-11-10.md) records all ten requested reference sites, the video adaptation, and how the requested UX principles were applied. `tests/study-flow.cjs` adds interaction and deferred-animation regressions. `tests/verification-2026-11-10.json` records automated results and their limits. Real browser/iPhone visual, animation, audio, microphone, and stylus testing remain unverified because supported browser control is unavailable in this environment.
 
 ## November 8 grouping and component cues
 
@@ -118,7 +128,7 @@ Automated verification covers all chapter activities in both courses and scripts
 
 These are deterministic Node/DOM/media mocks and static HTML checks. They do not establish real browser layout, iPhone overflow, recognition geometry, stylus feel, microphone permissions, or installed speech voice quality. The supported browser QA route is unavailable in this environment. Handwriting checks use pinned Hanzi Writer geometry/order matching, not general OCR. Speech recognition supplies words, not phonetic/tone grades. All actual audio/microphone actions remain user initiated.
 
-Run `node tests/workbook-design.cjs`, `node tests/ui-practice.cjs`, `node tests/practice.cjs`, `node tests/practice-feedback.cjs`, `node tests/shape-content.cjs`, `node tests/handwriting.cjs`, `node tests/regression.cjs`, `node tests/import-and-pools.cjs`, `node tests/views.cjs`, then `python3 tests/check-html.py`. These use deterministic DOM/media mocks, not a real browser. They exercise migration, switching, resumes, real backup handlers, shared knowledge, course-local results, assisted answers, Scroll continuity, active-companion XP, replay safeguards, scripts, keyboard handlers, writing defaults and reset. The view check inspects generated HTML for nesting, duplicate IDs, broken text and leaked internal lesson IDs.
+Run `node tests/study-flow.cjs`, `node tests/workbook-design.cjs`, `node tests/ui-practice.cjs`, `node tests/practice.cjs`, `node tests/practice-feedback.cjs`, `node tests/shape-content.cjs`, `node tests/handwriting.cjs`, `node tests/regression.cjs`, `node tests/import-and-pools.cjs`, `node tests/views.cjs`, then `python3 tests/check-html.py`. These use deterministic DOM/media mocks, not a real browser. They exercise migration, switching, resumes, real backup handlers, shared knowledge, course-local results, assisted answers, Scroll continuity, active-companion XP, replay safeguards, scripts, keyboard handlers, writing defaults and reset. The view check inspects generated HTML for nesting, duplicate IDs, broken text and leaked internal lesson IDs.
 
 Real browser layout, mobile overflow, actual device speech voices, microphone permissions and fetched stroke-order data still require device testing. The current environment did not expose the supported browser QA route. No claim of real iPhone or browser testing is made.
 

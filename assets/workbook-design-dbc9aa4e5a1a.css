@@ -1,0 +1,506 @@
+
+/* ==========================================================================
+   Design layer · "Workbook" — Apple-native chrome around one signature:
+   every hero character sits in a 田字格 practice square, like the
+   Integrated Chinese character workbook. Everything else stays quiet.
+   ========================================================================== */
+html.ax{
+  --font-ui:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Segoe UI Variable Text","Segoe UI",system-ui,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --font-han:"Kaiti SC","STKaiti","KaiTi","BiauKai","TW-Kai","AR PL UKai CN","LXGW WenKai","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Microsoft YaHei",serif;
+  --font-zh:"PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Microsoft YaHei",var(--font-ui);
+  --r-sm:10px;--r-md:12px;--r-lg:18px;--r-xl:24px;
+  --fill:rgba(118,118,128,.12);--fill-strong:rgba(118,118,128,.2);
+  --sep:rgba(60,60,67,.13);
+  --elev-1:0 0 0 .5px rgba(0,0,0,.035),0 1px 2px rgba(0,0,0,.04),0 3px 10px rgba(0,0,0,.035);
+  --elev-2:0 0 0 .5px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.08),0 24px 60px rgba(0,0,0,.08);
+  --material:rgba(250,250,252,.74);--material-solid:#F9F9FB;
+  --elevated:#FFFFFF;--segment:#FFFFFF;
+  --hud:rgba(29,29,31,.9);--hud-ink:#FFFFFF;
+  --ease:cubic-bezier(.32,.72,0,1);
+  --danger:#D70015;--success:#248A3D;
+  --grid:color-mix(in srgb,var(--green) 22%,transparent);
+  --grid-edge:color-mix(in srgb,var(--green) 40%,transparent);
+  --focus:color-mix(in srgb,var(--green) 60%,transparent);
+  --shadow:var(--elev-1);
+  --gap-group:24px;--gap-related:8px;
+}
+html.ax[data-theme=dark]{
+  --fill:rgba(118,118,128,.24);--fill-strong:rgba(118,118,128,.34);
+  --sep:rgba(84,84,88,.55);
+  --elev-1:0 0 0 .5px rgba(255,255,255,.07);
+  --elev-2:0 0 0 .5px rgba(255,255,255,.1),0 24px 60px rgba(0,0,0,.55);
+  --material:rgba(28,28,30,.72);--material-solid:#1C1C1E;
+  --elevated:#2C2C2E;--segment:#636366;
+  --hud:rgba(58,58,60,.92);--hud-ink:#FFFFFF;
+  --danger:#FF6961;--success:#30D158;
+}
+
+/* ---------- Base type ---------- */
+html.ax body{font-family:var(--font-ui);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;background:var(--bg);color:var(--ink)}
+html.ax button,html.ax input,html.ax select,html.ax textarea{font-family:inherit}
+html.ax [lang=zh],html.ax .zh-line,html.ax .han{font-family:var(--font-zh)}
+html.ax h1,html.ax h2,html.ax h3{text-wrap:balance;color:var(--ink)}
+html.ax p{text-wrap:pretty}
+html.ax body:not(.practice-focus) .view .heading h1,html.ax .view>.heading h1,html.ax .view h1{font-size:34px;line-height:1.12;font-weight:700;letter-spacing:-.022em}
+html.ax .view h2{letter-spacing:-.012em}
+html.ax .muted,html.ax .small.muted{color:var(--muted)}
+html.ax .eyebrow,html.ax .studio-card-label,html.ax .nav-section-label,html.ax .scroll-kicker{text-transform:none!important;letter-spacing:0!important;font-size:13px!important;font-weight:600!important;color:var(--muted)!important}
+html.ax .scroll-kicker{color:var(--muted)}
+html.ax :is(.stat strong,.feed-home-stats strong,.bx-streak-num,.bx-xp-text,.home-stats strong,[role=progressbar]+span,.course-unit-status,#scroll-counter){font-variant-numeric:tabular-nums}
+
+/* Programmatic focus on page titles should not draw a box. */
+html.ax [tabindex="-1"]:focus{outline:none!important;box-shadow:none!important}
+html.ax :is(button,a,input,select,textarea,summary,[role=button],[tabindex="0"]):focus{outline:none}
+html.ax :is(button,a,input,select,textarea,summary,[role=button],[tabindex="0"]):focus-visible{outline:3px solid var(--focus)!important;outline-offset:2px!important}
+
+/* ---------- Sidebar (desktop) ---------- */
+html.ax .sidebar{background:var(--material)!important;-webkit-backdrop-filter:saturate(180%) blur(24px);backdrop-filter:saturate(180%) blur(24px);border-right:.5px solid var(--sep)!important;padding:22px 14px 18px!important}
+html.ax .brand.chinese-wordmark{all:unset;display:flex;align-items:center;gap:10px;padding:4px 36px 4px 6px;margin:0 0 14px;min-height:44px;cursor:default}
+html.ax .ax-app-icon{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;flex-shrink:0;font:400 24px/1 var(--font-han);color:#fff;
+  background:linear-gradient(160deg,color-mix(in srgb,var(--green) 82%,#fff),var(--green));box-shadow:inset 0 0 0 .5px rgba(255,255,255,.25),0 1px 2px rgba(0,0,0,.12)}
+html.ax[data-theme=dark] .ax-app-icon{color:#0b0b0c}
+html.ax .ax-brand-text{display:flex;flex-direction:column;min-width:0;line-height:1.25}
+html.ax .ax-brand-text>*{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html.ax .ax-brand-text strong{font-size:14px;font-weight:650;letter-spacing:-.01em;color:var(--ink)}
+html.ax .ax-brand-text small{font-size:12px;color:var(--muted)}
+html.ax .sidebar-toggle{top:14px!important;right:10px!important;color:var(--muted)}
+html.ax .sidebar .nav{gap:1px!important;display:flex;flex-direction:column}
+html.ax .sidebar .nav>button{min-height:36px!important;padding:7px 10px!important;border-radius:8px!important;gap:10px!important;font-size:14px!important;font-weight:500!important;color:var(--ink)!important;background:transparent!important;border:0!important;box-shadow:none!important}
+html.ax .sidebar .nav>button svg{width:19px!important;height:19px!important;color:var(--green);flex-shrink:0}
+html.ax .sidebar .nav>button:hover{background:var(--fill)!important}
+html.ax .sidebar .nav>button.active{background:color-mix(in srgb,var(--green) 14%,transparent)!important;color:var(--green)!important;font-weight:600!important}
+html.ax .ax-nav-label{font-size:12px;font-weight:600;color:var(--muted);padding:16px 10px 5px;letter-spacing:0}
+html.ax .sidebar .nav-companion-divider{display:none}
+html.ax .sidebar-bottom .daily-mini{background:transparent!important;border:0!important;box-shadow:none!important;padding:10px!important;border-radius:12px}
+html.ax .sidebar-bottom .daily-mini strong{font-size:13px;font-weight:600}
+html.ax .sidebar-bottom .daily-mini span{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* Course switch lives at the top of the sidebar as a segmented control. */
+html.ax .ax-course-seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:2px;padding:2px;background:var(--fill);border-radius:9px;margin:0 4px 14px}
+html.ax .ax-course-seg button{border:0;background:transparent;color:var(--ink);font-size:13px;font-weight:500;min-height:30px;border-radius:7px;padding:4px 6px;cursor:pointer;white-space:nowrap}
+html.ax .ax-course-seg button[aria-pressed=true]{background:var(--segment);font-weight:600;box-shadow:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04)}
+html.ax[data-theme=dark] .ax-course-seg button[aria-pressed=true]{color:#fff}
+@media(min-width:901px){html.ax .course-switcher{display:none!important}}
+@media(max-width:900px){html.ax .sidebar .ax-course-seg{display:none}html.ax .course-switcher{margin:2px 0 16px!important;width:100%!important}html.ax .course-switcher .ax-course-seg{margin:0;width:100%;max-width:360px}}
+
+/* ---------- Navigation bar ---------- */
+html.ax body:not(.feed-focus) .topbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 78%,transparent)!important;-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:.5px solid transparent!important;min-height:52px;height:auto!important;transition:border-color .2s}
+html.ax body.ax-scrolled:not(.feed-focus) .topbar{border-bottom-color:var(--sep)!important}
+html.ax .topbar .crumb{font-size:15px!important;font-weight:600!important;color:var(--ink)!important;letter-spacing:-.01em;transition:opacity .2s}
+html.ax body.ax-has-title:not(.ax-title-gone) .topbar .crumb{opacity:0}
+html.ax .topbar .iconbtn,html.ax .back-btn{background:transparent!important;border:0!important;box-shadow:none!important;color:var(--green)!important;border-radius:999px!important}
+html.ax .topbar .iconbtn:hover{background:var(--fill)!important}
+html.ax .back-btn:disabled{display:none!important}
+html.ax .topbar .pill{background:var(--fill)!important;border:0!important;box-shadow:none!important;color:var(--ink)!important;border-radius:999px!important;min-height:32px;font-weight:600;font-size:13px}
+html.ax .topbar .pill svg{color:var(--green)}
+html.ax .bx-streak-pill .bx-streak-num~*{opacity:.8}
+
+/* ---------- Tab bar (compact widths): floating glass capsule ---------- */
+@media(max-width:900px){
+  html.ax .mobile-nav{bottom:calc(8px + env(safe-area-inset-bottom))!important;border-radius:30px!important;padding:calc(6px - 2px * var(--bx-nav-progress,0))!important;border:0!important;
+    background:var(--material)!important;-webkit-backdrop-filter:saturate(180%) blur(24px);backdrop-filter:saturate(180%) blur(24px);box-shadow:var(--elev-2)!important}
+  html.ax .mobile-nav button{border-radius:25px!important;min-height:calc(54px - 10px * var(--bx-nav-progress,0))!important;font-size:11px!important;font-weight:500!important;color:var(--muted)!important;background:transparent!important;gap:calc(3px * (1 - var(--bx-nav-progress,0)))!important}
+  html.ax .mobile-nav button svg{width:23px!important;height:23px!important}
+  html.ax .mobile-nav button.active{color:var(--green)!important;background:color-mix(in srgb,var(--green) 13%,transparent)!important;font-weight:600!important}
+  html.ax body:not(.practice-focus) .view .heading h1,html.ax .view>.heading h1,html.ax .view h1{font-size:30px}
+}
+
+/* ---------- Surfaces: cards sit on the grouped background, no outlines ---------- */
+html.ax :is(.panel,.chapter,.story-card,.dict-card,.word-card,.course-unit,.course-continue,.flow-tool,.flow-path-summary,.flow-companion,.flow-review-main,.flow-character-browser,.feed-home-course,.studio-listening-card,.reading-folder,.learning-path,.reader-prep,.read-along-controls,.collection-card,.badge-card,.training-card,.contrast-card,.settings-accordion,.flow-profile,.companion-widget,.memory-tile,.scroll-entry,.clean-result,.resume-panel,.review-modes>*,.home-grid>*,.cw-card,.rx-card,.bx-card,.bx-game-card,.bx-quests,.bx-quick,.bx-status-row,.companion-collection,.cw-course-entry,.explore-navigation,.lab-activity,.lab-album-card,.lab-chapter-entry,.lab-complete,.lab-exercise,.lab-home-entry,.lab-paper,.lab-resume,.lab-shop-item,.lab-skill,.lab-story-scene,.rx-book,.rx-today,.stat){
+  border-color:transparent!important;box-shadow:var(--elev-1)!important;background-color:var(--panel)}
+html.ax :is(.panel,.chapter,.story-card,.course-unit,.course-continue,.flow-tool,.flow-review-main,.feed-home-course,.settings-accordion,.flow-profile,.collection-card,.badge-card,.training-card,.reading-folder){border-radius:var(--r-lg)!important}
+html.ax[data-theme=dark] :is(.panel,.chapter,.story-card,.dict-card,.word-card,.course-unit,.course-continue,.flow-tool,.feed-home-course,.settings-accordion,.flow-profile,.reading-folder){background-color:var(--panel)}
+/* Inner tiles inside cards use a fill, not another card. */
+html.ax :is(.panel,.course-unit,.settings-accordion) :is(.panel,.story-card,.dict-card,.word-card,.contrast-card,.reader-prep-item){box-shadow:none!important;background:var(--fill)!important}
+html.ax .course-unit.is-current{box-shadow:0 0 0 1.5px var(--green),var(--elev-1)!important}
+html.ax .course-roadmap:before{background:var(--sep)!important}
+
+html.ax :is(.character-example,.components,.component-tile,.memory-full,.pronunciation-context,.reader-prep-item,.shape-part,.sound-anchor,.home-goal){border-color:transparent!important;background:var(--fill)!important;box-shadow:none!important}
+html.ax :is(.rx-find-button,.rx-tools-search,.cw-search){border:0!important;background:var(--fill)!important;box-shadow:none!important}
+html.ax .rx-orbit{display:none!important}
+html.ax .bx-status-row{border-radius:var(--r-lg)!important}
+/* Hero cards: a quiet tint instead of gradients. */
+html.ax :is(.feed-home-hero,.flow-next,.home-continue,.hero){background:var(--panel)!important;border:0!important;box-shadow:var(--elev-1)!important;border-radius:var(--r-xl)!important;background-image:none!important}
+html.ax :is(.flow-next,.feed-home-hero):before{display:none!important}
+
+/* ---------- Buttons ---------- */
+html.ax .btn{border:0!important;background:var(--fill);color:var(--ink);border-radius:var(--r-md);font-weight:600;letter-spacing:-.005em;box-shadow:none;transition:background-color .15s,transform .12s var(--ease),filter .15s}
+html.ax .btn:not(:disabled):hover{background:var(--fill-strong);filter:none}
+html.ax .btn.primary,html.ax .btn.primary:not(:disabled):hover{background:var(--green)!important;color:var(--panel)!important}
+html.ax[data-theme=light] .btn.primary{color:#fff!important}
+html.ax .btn.primary:not(:disabled):hover{filter:brightness(1.06)}
+html.ax .btn.soft{background:color-mix(in srgb,var(--green) 14%,transparent)!important;color:var(--green)!important}
+html.ax .btn.danger{background:color-mix(in srgb,var(--danger) 12%,transparent)!important;color:var(--danger)!important}
+html.ax .btn:not(:disabled):active,html.ax .iconbtn:not(:disabled):active{transform:scale(.97)}
+html.ax .btn:disabled{opacity:.4}
+html.ax .iconbtn{border:0!important;background:var(--fill);color:var(--ink);box-shadow:none!important}
+html.ax .iconbtn:not(:disabled):hover{background:var(--fill-strong)}
+html.ax .textbtn{color:var(--green);font-weight:500}
+html.ax .textbtn:hover{text-decoration:none;opacity:.8}
+
+/* ---------- Segmented controls ---------- */
+html.ax :is(.tabs,.feed-mode-switch,.clean-study-tabs,.flow-chapter-tabs){background:var(--fill)!important;border:0!important;border-radius:9px!important;padding:2px!important;gap:2px!important;box-shadow:none!important}
+html.ax :is(.tabs,.feed-mode-switch,.clean-study-tabs,.flow-chapter-tabs) button{border:0!important;border-radius:7px!important;color:var(--ink)!important;font-weight:500!important;background:transparent!important;box-shadow:none!important;min-height:32px}
+html.ax :is(.tabs,.feed-mode-switch,.clean-study-tabs,.flow-chapter-tabs) button:is(.active,[aria-selected=true],[aria-current=page]){background:var(--segment)!important;font-weight:600!important;box-shadow:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04)!important;color:var(--ink)!important}
+html.ax[data-theme=dark] :is(.tabs,.feed-mode-switch,.clean-study-tabs,.flow-chapter-tabs) button:is(.active,[aria-selected=true],[aria-current=page]){color:#fff!important}
+
+/* ---------- Fields ---------- */
+html.ax :is(input.input,.input,textarea,select,input[type=search],input[type=text]){background-color:var(--fill)!important;border:0!important;border-radius:10px!important;color:var(--ink);box-shadow:none!important}
+html.ax select{-webkit-appearance:none;appearance:none;padding-right:30px!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 9l5-5 5 5M7 15l5 5 5-5'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:right 10px center!important}
+html.ax :is(input,textarea,select)::placeholder{color:var(--muted);opacity:.8}
+@media(max-width:760px){html.ax :is(input.input,.input,textarea,select,input[type=search],input[type=text]){font-size:16px}}
+
+/* Switches, iOS proportions. */
+html.ax input[type=checkbox][role=switch]{-webkit-appearance:none;appearance:none;position:relative;width:51px!important;height:31px!important;border-radius:999px!important;border:0!important;background:var(--fill-strong)!important;margin:0;cursor:pointer;flex-shrink:0;transition:background-color .2s}
+html.ax input[type=checkbox][role=switch]:before{content:'';position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.15),0 3px 1px rgba(0,0,0,.06);transition:transform .25s var(--ease)}
+html.ax input[type=checkbox][role=switch]:checked{background:var(--green)!important}
+html.ax input[type=checkbox][role=switch]:checked:before{transform:translateX(20px)}
+
+/* ---------- Progress, badges ---------- */
+html.ax .progress{background:var(--fill)!important;border-radius:999px!important;border:0!important;overflow:hidden}
+html.ax .progress>span{background:var(--green)!important;border-radius:999px!important}
+html.ax .badge{background:var(--fill)!important;color:var(--ink)!important;border:0!important;border-radius:999px!important;font-weight:600;font-size:12px}
+html.ax :is(.clean-study-title h2,.example-pinyin){color:var(--accent)!important}
+
+/* ---------- Sheets and HUD ---------- */
+html.ax .modal-bg{background:rgba(0,0,0,.32)!important;-webkit-backdrop-filter:blur(6px) saturate(120%);backdrop-filter:blur(6px) saturate(120%)}
+html.ax[data-theme=dark] .modal-bg{background:rgba(0,0,0,.55)!important}
+html.ax .modal{background:var(--elevated)!important;border:0!important;border-radius:22px!important;box-shadow:var(--elev-2)!important}
+html.ax .modal :is(.modal-close,[aria-label^=Close]).iconbtn,html.ax .modal-close{width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;border-radius:50%!important;background:var(--fill)!important;color:var(--muted)!important;border:0!important}
+html.ax .modal :is(.modal-close,[aria-label^=Close]) svg{width:15px;height:15px}
+html.ax .modal :is(.modal-close,[aria-label^=Close]):focus-visible{outline:2px solid var(--focus)!important;outline-offset:2px!important;box-shadow:none!important}
+@media(prefers-reduced-motion:no-preference){html.ax .modal{animation:ax-sheet .42s var(--ease) both}}
+@keyframes ax-sheet{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
+@media(max-width:760px){html.ax .modal{position:relative;padding-top:22px!important}html.ax .modal:before{content:'';position:absolute;top:7px;left:50%;width:36px;height:5px;margin-left:-18px;border-radius:3px;background:var(--fill-strong)}}
+html.ax .toast{background:var(--hud)!important;color:var(--hud-ink)!important;border-radius:999px!important;padding:11px 18px!important;font-size:14px!important;font-weight:500;-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:var(--elev-2)!important}
+
+/* ---------- Signature: the workbook square ---------- */
+html.ax .ax-tzg{font-family:var(--font-han)!important;font-weight:400!important;display:inline-grid!important;place-items:center;width:1.34em;height:1.34em;max-width:100%;line-height:1!important;margin-inline:auto;box-sizing:border-box;
+  border:1.5px solid var(--grid-edge);border-radius:.07em;
+  background-image:repeating-linear-gradient(to bottom,var(--grid) 0 .045em,transparent .045em .09em),repeating-linear-gradient(to right,var(--grid) 0 .045em,transparent .045em .09em);
+  background-size:1px 100%,100% 1px;background-position:center,center;background-repeat:no-repeat;color:var(--ink)}
+html.ax .ax-tzg.ax-tzg-word{width:auto;height:auto;padding:.08em .22em;background-image:none}
+
+/* ---------- Reading ---------- */
+html.ax .unfamiliar-char{background:transparent!important;text-decoration:underline dotted color-mix(in srgb,var(--green) 70%,transparent)!important;text-decoration-thickness:2px!important;text-underline-offset:.32em!important}
+html.ax .char-tap:hover,html.ax .char-tap:focus-visible{background:color-mix(in srgb,var(--green) 12%,transparent)!important;color:inherit!important;border-radius:6px}
+html.ax .reader-line{border-color:var(--sep)!important}
+html.ax .reader-line .zh-line{line-height:1.95!important}
+html.ax .reader-line.reading-spoken{background:color-mix(in srgb,var(--green) 8%,transparent)!important;box-shadow:inset 3px 0 0 var(--green)!important}
+
+/* ---------- Practice ---------- */
+html.ax :is(.focus-card,.studio-card,.flashcard,.scroll-frame-card,.focus-quiz-card){background:var(--panel)!important;border:0!important;box-shadow:var(--elev-1)!important;border-radius:var(--r-xl)!important;background-image:none!important}
+html.ax .pinyin,html.ax .scroll-reading{color:var(--accent)!important;font-weight:600;letter-spacing:-.01em}
+html.ax .quiz-choice{background:var(--panel)!important;border:0!important;box-shadow:var(--elev-1)!important;border-radius:16px!important}
+html.ax .quiz-choice:not(:disabled):hover{box-shadow:0 0 0 1.5px var(--green),var(--elev-1)!important}
+html.ax .rate-row .btn.danger{background:color-mix(in srgb,var(--danger) 12%,transparent)!important}
+html.ax .studio-actions .rate-row .btn{border-radius:14px}
+html.ax .study-aid-dock .btn{background:var(--fill)!important}
+
+/* ---------- Settings: grouped list ---------- */
+html.ax .setting-row{border-color:var(--sep)!important}
+html.ax .settings-accordion>summary{font-weight:600}
+html.ax .palette-options{display:flex!important;flex-wrap:wrap;gap:6px 4px!important}
+html.ax .palette-choice{background:transparent!important;border:0!important;box-shadow:none!important;display:flex!important;flex-direction:column;align-items:center;gap:6px!important;min-width:64px;padding:6px 4px!important;font-size:12px;color:var(--muted)}
+html.ax .palette-choice .palette-dot{width:30px!important;height:30px!important;border-radius:50%!important;border:0!important;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.15)}
+html.ax .palette-choice.selected{color:var(--ink);font-weight:600}
+html.ax .palette-choice.selected .palette-dot{box-shadow:0 0 0 2px var(--panel),0 0 0 4px currentColor!important;color:var(--ax-dot,var(--green))}
+
+/* ---------- Motion ---------- */
+@media(prefers-reduced-motion:reduce){html.ax .modal,html.ax .btn,html.ax input[role=switch]:before{animation:none!important;transition:none!important}}
+
+/* Home hero glyph: crisp, in the workbook square. */
+html.ax .rx-quiet-glyph.ax-tzg{opacity:1!important;color:var(--green)!important;font-size:118px!important;filter:none!important;-webkit-text-stroke:0!important}
+@media(max-width:540px){html.ax .rx-quiet-glyph.ax-tzg{font-size:58px!important}}
+
+/* Practice keeps a slim bar aligned with the card. */
+html.ax body.practice-focus:not(.feed-focus) .topbar{width:min(100%,700px);margin-inline:auto;justify-content:space-between;background:transparent!important;-webkit-backdrop-filter:none;backdrop-filter:none;border:0!important}
+
+/* ==========================================================================
+   v2 · Color system
+   Surfaces: tinted neutrals (≈60%), text and fills (≈30%), one accent (≈10%).
+   Dark is the primary appearance: base → elevated → sheet, lighter as they rise.
+   ========================================================================== */
+html.ax{
+  --fill:color-mix(in srgb,var(--muted) 14%,transparent);
+  --fill-strong:color-mix(in srgb,var(--muted) 24%,transparent);
+  --sep:color-mix(in srgb,var(--ink) 11%,transparent);
+  --glow-a:color-mix(in srgb,var(--green) 9%,transparent);
+  --glow-b:color-mix(in srgb,var(--accent) 5%,transparent);
+  --hero-a:color-mix(in srgb,var(--green) 16%,transparent);
+  --hero-b:color-mix(in srgb,var(--accent) 9%,transparent);
+  --rim:inset 0 0 0 .5px color-mix(in srgb,var(--ink) 6%,transparent);
+  --glass:color-mix(in srgb,var(--panel) 70%,transparent);
+  --glass-rim:inset 0 1px 0 rgba(255,255,255,.55),inset 0 0 0 .5px rgba(0,0,0,.06);
+}
+html.ax[data-theme=dark]{
+  --fill:color-mix(in srgb,var(--muted) 17%,transparent);
+  --fill-strong:color-mix(in srgb,var(--muted) 27%,transparent);
+  --sep:color-mix(in srgb,var(--ink) 12%,transparent);
+  --glow-a:color-mix(in srgb,var(--green) 13%,transparent);
+  --glow-b:color-mix(in srgb,var(--accent) 7%,transparent);
+  --hero-a:color-mix(in srgb,var(--green) 24%,transparent);
+  --hero-b:color-mix(in srgb,var(--accent) 12%,transparent);
+  --rim:inset 0 .5px 0 rgba(255,255,255,.07),inset 0 0 0 .5px rgba(255,255,255,.035);
+  --elev-1:var(--rim);
+  --elev-2:inset 0 .5px 0 rgba(255,255,255,.1),0 0 0 .5px rgba(255,255,255,.08),0 24px 60px rgba(0,0,0,.6);
+  --glass:color-mix(in srgb,var(--elevated) 64%,transparent);
+  --glass-rim:inset 0 1px 0 rgba(255,255,255,.14),inset 0 -1px 0 rgba(0,0,0,.25),inset 0 0 0 .5px rgba(255,255,255,.08);
+}
+/* A faint wash of the theme behind everything (content layer, never behind text directly). */
+html.ax body{background:radial-gradient(1100px 620px at 88% -12%,var(--glow-a),transparent 62%),radial-gradient(900px 560px at -12% 112%,var(--glow-b),transparent 60%),var(--bg) fixed!important;background-attachment:fixed!important}
+html.ax[data-theme=dark] body{color-scheme:dark}
+/* Elevated content in dark sits on lighter surfaces, not shadows. */
+html.ax[data-theme=dark] .modal{background:var(--elevated)!important}
+html.ax[data-theme=dark] :is(.focus-card,.studio-card,.flashcard,.scroll-frame-card,.focus-quiz-card,.quiz-choice){box-shadow:var(--rim)!important}
+
+/* Home hero: the theme's two hues as a soft mesh. */
+html.ax :is(.rx-hero,.feed-home-hero){background:radial-gradient(120% 140% at 100% 0%,var(--hero-a),transparent 58%),radial-gradient(90% 120% at 0% 115%,var(--hero-b),transparent 55%),var(--panel)!important}
+html.ax .rx-hero .feed-home-copy .eyebrow{color:var(--muted)}
+
+/* Home: proximity connects the next action with daily progress; shared surfaces
+   group quests and games. Secondary paths use a native keyboard disclosure. */
+html.ax #view .rx-home{display:flex;flex-direction:column;gap:var(--gap-group)}
+html.ax #view .rx-home>*{margin-block:0!important;min-width:0}
+html.ax .rx-home-start{background:var(--panel);border-radius:var(--r-xl);box-shadow:var(--elev-1);min-width:0}
+html.ax .rx-home-start .rx-hero{border-radius:var(--r-xl) var(--r-xl) 0 0!important;box-shadow:none!important}
+html.ax .rx-home-start .bx-status-row{margin:0!important;border:0!important;border-top:1px solid var(--sep)!important;border-radius:0 0 var(--r-xl) var(--r-xl)!important;box-shadow:none!important;background:transparent!important}
+html.ax .rx-home .rx-home-extras{background:var(--panel);border-radius:var(--r-xl);box-shadow:var(--elev-1);padding:24px;gap:24px;align-items:start}
+html.ax .rx-home-extras .bx-quests{padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
+html.ax .rx-home-extras .rx-games{border-left:1px solid var(--sep);padding-left:24px}
+html.ax .rx-home .rx-games .rx-section-heading{min-height:44px;margin:0 0 12px;gap:8px;flex-wrap:wrap}
+html.ax .rx-home .bx-quick{background:var(--fill)!important;box-shadow:none!important;min-height:132px;padding:14px 10px;overflow-wrap:anywhere}
+html.ax .rx-home-extras .bx-quest-go{min-height:44px;min-width:44px}
+html.ax .rx-home-more{border-radius:var(--r-lg);background:var(--panel);box-shadow:var(--elev-1)}
+html.ax .rx-home-more>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px;padding:14px 18px;cursor:pointer;border-radius:inherit}
+html.ax .rx-home-more>summary::-webkit-details-marker{display:none}
+html.ax .rx-home-more>summary>span{display:flex;flex-direction:column;gap:3px;min-width:0}
+html.ax .rx-home-more>summary strong{font-size:15px;font-weight:600}
+html.ax .rx-home-more>summary small{font-size:12px;color:var(--muted)}
+html.ax .rx-home-more>summary>svg{width:18px;height:18px;flex-shrink:0;color:var(--muted);transition:transform .18s var(--ease)}
+html.ax .rx-home-more[open]>summary>svg{transform:rotate(90deg)}
+html.ax .rx-home-more>summary:hover{background:var(--fill)}
+html.ax .rx-home-more-body{padding:0 4px 12px;border-top:1px solid var(--sep)}
+html.ax .rx-home-more-body .ax-list{margin:0;border-radius:0;background:transparent;box-shadow:none;overflow:visible}
+html.ax .rx-home-more .ax-row>svg{width:16px;height:16px;flex-shrink:0;color:var(--muted)}
+html.ax .rx-home-more .lab-inline{padding:4px 14px 0;gap:var(--gap-related);flex-wrap:wrap}
+html.ax .rx-home-more .lab-inline button{min-height:44px}
+html.ax .rx-home .flow-home-footer{padding-top:0;border-top:0;align-items:center;flex-wrap:wrap}
+html.ax .rx-home .flow-home-footer .textbtn{min-height:44px}
+@media(max-width:1100px){
+ html.ax .rx-home .rx-home-extras{grid-template-columns:1fr;gap:20px}
+ html.ax .rx-home-extras .rx-games{border-left:0;padding-left:0;border-top:1px solid var(--sep);padding-top:20px}
+}
+@media(max-width:600px){
+ html.ax #view .rx-home{gap:20px}
+ html.ax .rx-home .rx-home-extras{padding:18px}
+ html.ax .rx-home .bx-quick-row{gap:8px}
+ html.ax .rx-home .bx-quick{min-height:120px;padding:12px 8px}
+ html.ax .rx-home .flow-home-footer{flex-direction:row;justify-content:space-between}
+}
+
+/* Component colors are visual associations, never correctness or mastery cues.
+   The written form and existing name remain visible, including without color. */
+html.ax{--fam-water:#185AC4;--fam-people:#A74600;--fam-speech:#8D249C;--fam-hand:#B21448;--fam-heart:#B91624;--fam-wood:#536B1E;--fam-plant:#006E29;--fam-move:#006776;--fam-metal:#5140B5;--fam-home:#006B5B;--fam-silk:#77519A;--fam-cloth:#00658D}
+html.ax[data-theme=dark]{--fam-water:#5CB8FF;--fam-people:#FFA056;--fam-speech:#EA8DFF;--fam-hand:#FF8AC4;--fam-heart:#FF777A;--fam-wood:#C4D97A;--fam-plant:#4AD968;--fam-move:#3BDDEC;--fam-metal:#A7AAFF;--fam-home:#54DFCB;--fam-silk:#C6A3EF;--fam-cloth:#6DD9FF}
+html.ax [data-family=water]{--fam:var(--fam-water)}html.ax [data-family=people]{--fam:var(--fam-people)}html.ax [data-family=speech]{--fam:var(--fam-speech)}
+html.ax [data-family=hand]{--fam:var(--fam-hand)}html.ax [data-family=heart]{--fam:var(--fam-heart)}html.ax [data-family=wood]{--fam:var(--fam-wood)}
+html.ax [data-family=plant]{--fam:var(--fam-plant)}html.ax [data-family=move]{--fam:var(--fam-move)}html.ax [data-family=metal]{--fam:var(--fam-metal)}
+html.ax [data-family=home]{--fam:var(--fam-home)}html.ax [data-family=silk]{--fam:var(--fam-silk)}html.ax [data-family=cloth]{--fam:var(--fam-cloth)}
+html.ax .memory-piece[data-family]{color:var(--fam)!important;background:color-mix(in srgb,var(--fam) 8%,var(--panel))!important;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fam) 35%,transparent)!important}
+html.ax :is(.memory-part-chip,.memory-inline-part)[data-family]>span[lang=zh]{color:var(--fam)!important;background:color-mix(in srgb,var(--fam) 8%,var(--panel))!important}
+html.ax .memory-piece:not([data-family]){color:var(--ink)!important;background:var(--fill)!important;box-shadow:none!important}
+html.ax :is(.memory-part-chip,.memory-inline-part):not([data-family])>span[lang=zh]{color:var(--ink)!important;background:var(--fill)!important}
+html.ax .ax-family-note{font-size:12px;line-height:1.6;color:var(--muted);margin:var(--gap-related) 0}
+
+/* Navigation glass: tab bar and sidebar only. */
+@media(max-width:900px){
+  html.ax .mobile-nav{background:var(--glass)!important;box-shadow:var(--glass-rim),0 10px 30px rgba(0,0,0,.28)!important}
+  html.ax .mobile-nav button.active{background:color-mix(in srgb,var(--green) 18%,transparent)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12)!important}
+}
+html.ax .sidebar{background:color-mix(in srgb,var(--sidebar) 78%,transparent)!important}
+html.ax body:not(.feed-focus) .topbar{background:color-mix(in srgb,var(--bg) 72%,transparent)!important}
+html.ax .topbar .pill{background:var(--fill)!important}
+html.ax .bx-streak-pill svg{color:var(--accent)!important}
+
+/* Grouped inset list, as in Settings. */
+html.ax .ax-list{background:var(--panel);border-radius:var(--r-lg);box-shadow:var(--elev-1);overflow:hidden;margin:0 0 22px}
+html.ax .ax-row{display:flex;align-items:center;gap:14px;width:100%;min-height:60px;padding:10px 14px 10px 14px;border:0;background:transparent;color:var(--ink);text-align:left;position:relative;cursor:pointer}
+html.ax .ax-row+.ax-row:before{content:'';position:absolute;top:0;left:62px;right:0;height:.5px;background:var(--sep)}
+html.ax .ax-row:hover{background:var(--fill)}
+html.ax .ax-row:active{background:var(--fill-strong)}
+html.ax .ax-row-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+html.ax .ax-row-text strong{font-size:16px;font-weight:600;letter-spacing:-.01em}
+html.ax .ax-row-text small{font-size:13px;color:var(--muted)}
+html.ax .ax-row-value{font-size:15px;color:var(--muted);font-variant-numeric:tabular-nums}
+html.ax .ax-chev{width:16px;height:16px;flex-shrink:0;fill:none;stroke:color-mix(in srgb,var(--muted) 70%,transparent);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+
+/* Settings-style icon tiles: white symbols on a system color. */
+html.ax .ax-tile{width:32px!important;height:32px!important;min-width:32px;border-radius:8px!important;display:grid!important;place-items:center;color:#fff!important;flex-shrink:0;box-shadow:inset 0 .5px 0 rgba(255,255,255,.25)}
+html.ax .ax-tile svg{width:19px!important;height:19px!important;fill:none;stroke:#fff!important;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+html.ax .ax-blue{background:#0A84FF!important}html.ax .ax-indigo{background:#5E5CE6!important}html.ax .ax-orange{background:#FF9F0A!important}
+html.ax .ax-pink{background:#FF375F!important}html.ax .ax-teal{background:#30B0C7!important}html.ax .ax-purple{background:#BF5AF2!important}
+html.ax .ax-red{background:#FF453A!important}html.ax .ax-gray{background:#8E8E93!important}html.ax .ax-green{background:#30D158!important}
+html.ax .ax-yellow{background:#FFC50A!important}html.ax .ax-mint{background:#00C7BE!important}
+html.ax[data-theme=light] .ax-blue{background:#007AFF!important}html.ax[data-theme=light] .ax-green{background:#34C759!important}
+
+/* Tools: one grouped list instead of a wall of cards. */
+html.ax .flow-tool-grid{display:block!important;width:100%;max-width:none;background:var(--panel);border-radius:var(--r-lg);box-shadow:var(--elev-1);overflow:hidden}
+html.ax .flow-tool-grid>.flow-tool{display:grid!important;grid-template-columns:32px minmax(0,1fr) 16px;grid-template-rows:auto auto;column-gap:14px;row-gap:3px;align-items:center;align-content:center;width:100%;min-height:76px;padding:14px 20px!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;position:relative;text-align:left}
+html.ax .flow-tool-grid>.flow-tool+.flow-tool:before{content:'';position:absolute;top:0;left:66px;right:20px;height:.5px;background:var(--sep)}
+html.ax .flow-tool-grid>.flow-tool>.ax-tile{grid-row:1/3;grid-column:1;position:static;inset:auto;transform:none;margin:0!important;align-self:center;justify-self:start}
+html.ax .flow-tool-grid>.flow-tool>strong{grid-column:2;grid-row:1;min-width:0;max-width:none;font-size:16px!important;font-weight:600;line-height:1.4;margin:0!important;overflow-wrap:anywhere}
+html.ax .flow-tool-grid>.flow-tool>small{grid-column:2;grid-row:2;min-width:0;max-width:none;font-size:13px!important;line-height:1.5;color:var(--muted);padding:0;margin:0!important;overflow-wrap:anywhere}
+html.ax .flow-tool-grid>.flow-tool>.ax-chev{grid-column:3;grid-row:1/3;position:static;inset:auto;transform:none;align-self:center;justify-self:center;margin:0}
+html.ax .flow-tool-grid>.flow-tool:after,html.ax .flow-tool-grid>.flow-tool>svg:not(.ax-chev){display:none!important}
+html.ax .flow-tool-grid>.flow-tool:hover{background:var(--fill)!important;transform:none!important}
+html.ax .flow-tools .rx-tools-search{padding:14px 20px;gap:14px;min-height:56px;align-items:center}
+html.ax .flow-tools .rx-tools-search>svg{width:32px;height:22px;flex:0 0 32px}
+html.ax .flow-tools .rx-tools-search>span{min-width:0;flex:1;text-align:left;overflow-wrap:anywhere}
+
+/* Arcade uses the same page edges as Tools. Game cards share columns and
+   bottom actions; quests occupy a full-width section instead of squeezing them. */
+html.ax .bx-arcade{width:100%;max-width:var(--study-width,900px);min-width:0;margin-inline:auto}
+html.ax .bx-arcade .heading{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:start;margin:0 0 24px}
+html.ax .bx-arcade .heading h1{margin:5px 0 0;line-height:1.2}
+html.ax .bx-arcade .heading p{max-width:60ch;font-size:14px;line-height:1.65;margin:10px 0 0}
+html.ax .bx-arcade .bx-level-chip{align-self:start;max-width:100%;min-height:44px;margin-top:4px}
+html.ax .bx-arcade .bx-level-chip strong{font-size:14px;font-weight:650}
+html.ax .bx-arcade .bx-level-chip small{font-size:12px;font-weight:500}
+html.ax .bx-arcade-controls,html.ax .bx-arcade .bx-game-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px;min-width:0}
+html.ax .bx-arcade-controls{margin:0 0 20px;align-items:end}
+html.ax .bx-arcade-controls label{min-width:0;gap:8px;font-size:12px;font-weight:600}
+html.ax .bx-arcade-controls select{width:100%;min-width:0;min-height:46px;margin:0}
+html.ax .bx-arcade-layout{grid-template-columns:minmax(0,1fr);gap:24px;min-width:0}
+html.ax .bx-arcade .bx-game-grid{grid-auto-rows:1fr;align-items:stretch}
+html.ax .bx-arcade .bx-game-tile{grid-template-columns:56px minmax(0,1fr);grid-template-rows:1fr auto;gap:16px;align-items:start;min-width:0;min-height:208px;padding:20px;border-radius:var(--r-lg)}
+html.ax .bx-arcade .bx-game-glyph{grid-column:1;grid-row:1;width:56px;height:56px;min-width:0;border-radius:16px;font-size:32px;line-height:1;align-self:start}
+html.ax .bx-arcade .bx-game-copy{grid-column:2;grid-row:1;min-width:0;gap:6px;align-content:start}
+html.ax .bx-arcade .bx-game-skill{min-height:18px;font-size:11px;line-height:1.45;letter-spacing:0;text-transform:none;align-items:center;gap:5px}
+html.ax .bx-arcade .bx-game-skill svg{flex:0 0 15px}
+html.ax .bx-arcade .bx-game-copy strong{font-size:18px;line-height:1.35;font-weight:650;overflow-wrap:anywhere}
+html.ax .bx-arcade .bx-game-copy small{font-size:13px;line-height:1.55;overflow-wrap:anywhere}
+html.ax .bx-arcade .bx-game-copy em{font-size:12px;line-height:1.5;font-weight:500;opacity:1}
+html.ax .bx-arcade .bx-game-play{grid-column:1/-1;grid-row:2;min-height:44px;align-self:end;gap:12px;flex-wrap:wrap}
+html.ax .bx-arcade .bx-play-btn{min-height:44px;padding:10px 16px;justify-content:center;box-sizing:border-box;font-weight:650;line-height:1.4}
+html.ax .bx-arcade-layout>.bx-quests{width:100%;min-width:0;margin:0;padding:20px;border-radius:var(--r-lg);box-sizing:border-box}
+html.ax .bx-arcade-layout>.bx-quests .bx-quest-go{min-width:44px;min-height:44px}
+@media(max-width:600px){
+ html.ax .bx-arcade .heading{grid-template-columns:minmax(0,1fr);gap:14px}
+ html.ax .bx-arcade .bx-level-chip{justify-self:start;margin:0}
+ html.ax .bx-arcade .bx-game-tile{grid-template-columns:48px minmax(0,1fr);padding:18px;gap:14px;min-height:196px}
+ html.ax .bx-arcade .bx-game-glyph{width:48px;height:48px;font-size:28px;border-radius:14px}
+ html.ax .bx-arcade .bx-game-copy strong{font-size:17px}
+}
+
+/* Study chrome: stable text hierarchy and targets without crowding the glyph. */
+html.ax .sidebar .nav>button{min-height:44px!important}
+html.ax .topbar .iconbtn{width:44px;height:44px;min-width:44px;min-height:44px}
+html.ax .ax-course-seg button{min-height:44px}
+html.ax :is(.flow-tools,.bx-arcade,.lab-page) p{line-height:1.65}
+html.ax .lab-finish-progress{width:100%;max-width:430px;display:grid;grid-template-columns:1fr auto;gap:8px 16px;text-align:left;margin:0 auto 20px;font-size:12px;color:var(--muted)}
+html.ax .lab-finish-progress strong{font-weight:600;color:var(--ink)}
+html.ax .lab-finish-progress .progress{grid-column:1/-1;height:6px}
+html.ax .lab-complete{max-width:700px;margin-inline:auto}
+html.ax .lab-complete h2{font-size:clamp(24px,3.6vw,32px);line-height:1.2}
+html.ax .lab-completion-facts{max-width:430px;margin-inline:auto;gap:16px}
+html.ax .lab-completion-facts>div{background:var(--fill);border:0;box-shadow:none;border-radius:var(--r-md);padding:14px}
+html.ax .lab-complete-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-block:24px}
+html.ax .lab-complete-actions>.btn{min-height:48px;min-width:180px}
+html.ax .lab-complete .lab-more{text-align:left;margin-block:16px}
+html.ax .lab-complete .lab-more>summary{min-height:44px;display:list-item;align-content:center}
+html.ax .lab-complete .textbtn{min-height:44px}
+html.ax .lab-feedback-heading>svg{flex-shrink:0}
+@media(prefers-reduced-motion:no-preference){
+ html.ax body:not(.flow-reduce-motion) .lab-answer-feedback.correct .lab-feedback-heading>svg{animation:ax-confirm .22s var(--ease)}
+}
+@keyframes ax-confirm{from{transform:scale(.75);opacity:.3}to{transform:scale(1);opacity:1}}
+@media(max-width:480px){html.ax .lab-complete-actions>.btn{width:100%;min-width:0}html.ax .lab-finish-progress{grid-template-columns:1fr;gap:6px}}
+
+/* Quick Find behaves like a compact command palette: one field, five scopes,
+   a visible selection, and a reversible reset. Chinese remains the main cue. */
+html.ax .practice-detail-modal:has(#flow-lookup-input){width:min(720px,100%);padding:24px!important}
+html.ax .flow-lookup-search{display:grid;gap:8px;margin:16px 0 12px}
+html.ax #flow-lookup-input{min-height:50px;font-size:16px;line-height:1.4}
+html.ax .rx-find-filters{display:flex;gap:6px;flex-wrap:wrap;margin:0;padding:4px 0}
+html.ax .rx-find-filters button{min-height:44px;min-width:44px;padding:9px 12px;border:0;border-radius:999px;background:var(--fill);color:var(--ink);font-size:13px;font-weight:500;cursor:pointer}
+html.ax .rx-find-filters button[aria-pressed=true]{background:var(--soft);color:var(--green);box-shadow:inset 0 0 0 1px var(--green);font-weight:650}
+html.ax .rx-find-status-row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
+html.ax .rx-find-status{margin:0;font-size:12px;color:var(--muted)}
+html.ax .rx-find-status-row .textbtn{min-height:44px;padding:8px}
+html.ax .rx-find-list{display:grid;gap:18px;max-height:min(42dvh,420px);min-height:0;overflow-y:auto;overscroll-behavior:contain;scroll-padding-block:4px;padding:2px}
+html.ax .rx-find-group{min-width:0}
+html.ax .rx-find-group-heading{position:sticky;top:0;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 10px;font-size:12px;color:var(--muted);background:var(--elevated)}
+html.ax .rx-find-result{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;min-height:66px;padding:12px;border:0;border-radius:var(--r-md);text-align:left;background:transparent;color:var(--ink);cursor:pointer}
+html.ax .rx-find-result+.rx-find-result{margin-top:2px}
+html.ax .rx-find-result:is(:hover,[aria-selected=true]),html.ax .rx-find-more:is(:hover,[aria-selected=true]){background:var(--fill);box-shadow:inset 3px 0 0 var(--green)}
+html.ax .rx-find-copy{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0;overflow-wrap:anywhere}
+html.ax .rx-find-copy strong{font-size:15px;font-weight:600;line-height:1.35}
+html.ax .rx-find-copy strong[lang=zh]{font-size:27px;font-weight:500;line-height:1.35}
+html.ax .rx-find-copy small{font-size:13px;line-height:1.5;color:var(--muted)}
+html.ax .rx-find-reading{font-size:13px;line-height:1.5;color:var(--accent)}
+html.ax .rx-find-result>svg,html.ax .rx-find-more>svg{width:18px;height:18px;flex-shrink:0;color:var(--muted)}
+html.ax .rx-find-more{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;border:0;border-radius:var(--r-md);padding:10px 12px;color:var(--green);background:transparent;text-align:left;cursor:pointer;font-size:13px}
+html.ax .rx-find-empty{padding:24px 12px;text-align:center}
+html.ax .rx-find-empty p{font-size:13px;color:var(--muted)}
+html.ax .rx-find-keyboard{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding-top:16px;margin:16px 0 0;border-top:1px solid var(--sep);font-size:11px;color:var(--muted)}
+@media(max-width:600px){html.ax .practice-detail-modal:has(#flow-lookup-input){padding:20px 16px!important}html.ax .rx-find-filters{gap:4px}html.ax .rx-find-filters button{padding:9px 10px;font-size:12px}html.ax .rx-find-keyboard{display:none}}
+
+/* Optional setup is a two-step sequence, with the same controls in each step. */
+html.ax .ax-setup-progress{margin-bottom:24px;font-size:12px;color:var(--muted)}
+html.ax .ax-setup-progress>span{display:block;margin-bottom:12px}
+html.ax .ax-setup-progress ol{display:grid;grid-template-columns:1fr 1fr;gap:16px;list-style:none;margin:0;padding:0}
+html.ax .ax-setup-progress li{display:flex;align-items:center;gap:8px;padding-bottom:12px;border-bottom:3px solid var(--fill);min-width:0}
+html.ax .ax-setup-progress li>span{display:grid;place-items:center;width:24px;height:24px;flex-shrink:0;border-radius:50%;background:var(--fill);font-weight:600}
+html.ax .ax-setup-progress li:is([aria-current=step],.is-complete){color:var(--ink);border-bottom-color:var(--green)}
+html.ax .ax-setup-progress li:is([aria-current=step],.is-complete)>span{background:var(--soft);color:var(--green)}
+html.ax .onboarding-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+html.ax .onboarding-actions>.btn{min-height:48px;min-width:120px}
+@media(max-width:480px){html.ax .onboarding-actions>.btn{flex:1 1 120px}}
+
+/* Native snapshots reveal the selected appearance through a rippled ink edge.
+   The fallback changes the theme immediately; no network or canvas is needed. */
+html[data-ax-ink-transition=active]::view-transition-group(root),html[data-ax-ink-transition=active]::view-transition-old(root),html[data-ax-ink-transition=active]::view-transition-new(root){animation:none;mix-blend-mode:normal}
+html[data-ax-ink-transition=active]::view-transition-old(root){z-index:1}
+html[data-ax-ink-transition=active]::view-transition-new(root){z-index:2}
+html[data-ax-ink-transition=active]::view-transition{pointer-events:none}
+
+/* Palette picker: each swatch previews the theme's surface and accent. */
+html.ax .palette-choice .ax-hanzi{font-size:11px;color:var(--muted);margin-top:-4px;font-family:var(--font-zh)}
+html.ax .palette-choice .palette-dot{width:34px!important;height:34px!important;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.12),0 1px 3px rgba(0,0,0,.25)!important}
+
+/* Increased contrast: separators and secondary text step up, glass becomes solid. */
+@media(prefers-contrast:more){
+  html.ax{--muted:color-mix(in srgb,var(--ink) 82%,var(--bg))!important;--sep:color-mix(in srgb,var(--ink) 30%,transparent);--fill:color-mix(in srgb,var(--ink) 18%,transparent)}
+  html.ax .mobile-nav,html.ax .sidebar,html.ax body .topbar{background:var(--panel)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+  html.ax :is(.panel,.ax-list,.flow-tool-grid,.course-unit){box-shadow:0 0 0 1px var(--sep)!important}
+}
+html.ax label{min-width:0}
+html.ax select{max-width:100%;min-width:0;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
+html.ax :is(.bx-mobile-streak,.bx-status-flame) svg{color:var(--accent)!important}
+/* Answer choices sit inside a card, so they use a fill rather than another card. */
+html.ax :is(.focus-quiz-card,.focus-card,.studio-card,.listening-quiz-card) .quiz-choice{background:var(--fill)!important;box-shadow:none!important}
+html.ax :is(.focus-quiz-card,.focus-card,.studio-card,.listening-quiz-card) .quiz-choice:not(:disabled):hover{background:var(--fill-strong)!important}
+
+
+/* Compatibility: outcome cues win over the neutral practice fills in either theme. */
+html.ax .quiz-choice:is(.correct,.right){background:color-mix(in srgb,var(--success) 12%,var(--panel))!important;box-shadow:inset 0 0 0 2px var(--success)!important}
+html.ax .quiz-choice:is(.wrong,.incorrect){background:color-mix(in srgb,var(--danger) 12%,var(--panel))!important;box-shadow:inset 0 0 0 2px var(--danger)!important}
+/* Colored icons stay legible on the brighter system tiles. */
+html.ax :is(.ax-orange,.ax-yellow,.ax-green,.ax-mint,.ax-teal){color:#161E19!important}
+html.ax :is(.ax-orange,.ax-yellow,.ax-green,.ax-mint,.ax-teal) svg{stroke:#161E19!important}
+@media(max-width:900px){html.ax .ax-course-seg button,html.ax :is(.tabs,.feed-mode-switch,.clean-study-tabs,.flow-chapter-tabs) button{min-height:44px!important}}
+@media(max-width:600px){
+ html.ax .top-actions{gap:2px}
+ html.ax #streak-pill{display:none}
+ html.ax .topbar .iconbtn{width:44px;height:44px;min-width:44px;min-height:44px}
+}
+/* Apply these after every glass/motion rule, including when only the app setting is off. */
+html.ax body.flow-reduce-motion :is(.modal,.btn,.iconbtn,.topbar,.crumb,.rx-home-more>summary>svg),html.ax body.flow-reduce-motion input[role=switch]:before{animation:none!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){html.ax .rx-home-more>summary>svg{transition:none!important}}
+@media(prefers-reduced-transparency:reduce),(prefers-contrast:more){
+ html.ax .modal-bg{background:rgba(0,0,0,.6)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+ html.ax .sidebar,html.ax .mobile-nav,html.ax body .topbar{background:var(--panel)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+ html.ax .mobile-nav::before{display:none!important}
+ html.ax .toast{background:var(--hud)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+}

@@ -1,0 +1,77 @@
+{
+  "baseCommit": "7c6d1db169e76d1ee9659b953b796eca0af36417",
+  "release": "2026.11.10-study-flow",
+  "method": "Node DOM/media/observer mocks, deferred native-animation mocks, numeric color checks, static cascade and generated HTML checks",
+  "suites": [
+    {
+      "file": "tests/regression.cjs",
+      "checks": 112,
+      "failed": 0
+    },
+    {
+      "file": "tests/import-and-pools.cjs",
+      "checks": 29,
+      "failed": 0
+    },
+    {
+      "file": "tests/handwriting.cjs",
+      "checks": 57,
+      "failed": 0
+    },
+    {
+      "file": "tests/shape-content.cjs",
+      "checks": 210,
+      "failed": 0
+    },
+    {
+      "file": "tests/practice.cjs",
+      "checks": 7358,
+      "failed": 0
+    },
+    {
+      "file": "tests/practice-feedback.cjs",
+      "checks": 1626,
+      "failed": 0
+    },
+    {
+      "file": "tests/ui-practice.cjs",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "file": "tests/workbook-design.cjs",
+      "checks": 143,
+      "failed": 0
+    },
+    {
+      "file": "tests/study-flow.cjs",
+      "checks": 60,
+      "failed": 0
+    }
+  ],
+  "totalChecks": 9651,
+  "generatedViews": 10750,
+  "structureFailures": 0,
+  "compiledScripts": 18,
+  "compiledInlineHandlers": 20334,
+  "syntaxErrors": 0,
+  "orderedScripts": 18,
+  "orderedStylesheets": 9,
+  "previousReferencedAssetsUnchanged": 22,
+  "searchTiming": {
+    "medianMs": 1.14,
+    "p95Ms": 1.7,
+    "maxMs": 2.43,
+    "method": "80 Node DOM-mock searches; no device/browser latency claim"
+  },
+  "standalone": {
+    "sha256": "6e303e8cb3ed11ce4c74fccc280576df4173f9f6f342ebe74b191c2f0553771e",
+    "bytes": 2056408,
+    "exactScriptAndStyleOrder": true,
+    "mockBootPassed": true
+  },
+  "realBrowserTesting": false,
+  "deviceTesting": false,
+  "includedBrowserSuite": "tests/browser-redesign.py; expanded and Python syntax checked, not executed",
+  "verificationLimits": "Supported managed browser route unavailable. Actual rendered alignment, touch targets, native ink reveal, assistive-technology announcements, device performance, iPhone/stylus/audio/microphone behavior remain unverified."
+}

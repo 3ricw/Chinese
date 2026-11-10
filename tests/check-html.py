@@ -31,6 +31,8 @@ extra=root/'ui-views.json'
 if extra.exists():views+=json.loads(extra.read_text())
 extra=root/'workbook-views.json'
 if extra.exists():views+=json.loads(extra.read_text())
+extra=root/'study-flow-views.json'
+if extra.exists():views+=json.loads(extra.read_text())
 for view in views:
  p=Check();p.feed(view['html']);handlers.update(p.handlers)
  if p.stack:p.errors.append('unclosed '+','.join(p.stack))
