@@ -1,0 +1,101 @@
+{
+  "baseCommit": "92dbe09a016bc6ce4dcc26ce8639b9be83226bad",
+  "release": "2026.11.10-visual-studio",
+  "method": "Node DOM/media/observer mocks, connected-element fixtures, deferred native-animation mocks, numeric color checks, static cascade and generated HTML checks",
+  "suites": [
+    {
+      "file": "tests/regression.cjs",
+      "checks": 112,
+      "failed": 0
+    },
+    {
+      "file": "tests/import-and-pools.cjs",
+      "checks": 29,
+      "failed": 0
+    },
+    {
+      "file": "tests/handwriting.cjs",
+      "checks": 57,
+      "failed": 0
+    },
+    {
+      "file": "tests/shape-content.cjs",
+      "checks": 210,
+      "failed": 0
+    },
+    {
+      "file": "tests/practice.cjs",
+      "checks": 7358,
+      "failed": 0
+    },
+    {
+      "file": "tests/practice-feedback.cjs",
+      "checks": 1626,
+      "failed": 0
+    },
+    {
+      "file": "tests/ui-practice.cjs",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "file": "tests/workbook-design.cjs",
+      "checks": 143,
+      "failed": 0
+    },
+    {
+      "file": "tests/study-flow.cjs",
+      "checks": 62,
+      "failed": 0
+    },
+    {
+      "file": "tests/visual-memory.cjs",
+      "checks": 165,
+      "failed": 0
+    }
+  ],
+  "totalChecks": 9818,
+  "generatedViews": 10880,
+  "structureFailures": 0,
+  "compiledScripts": 19,
+  "compiledInlineHandlers": 20792,
+  "syntaxErrors": 0,
+  "orderedScripts": 19,
+  "orderedStylesheets": 9,
+  "previousReferencedAssetsUnchanged": 23,
+  "previousReferencedAssets": 27,
+  "visualCues": {
+    "total": 59,
+    "allFoundationsCovered": 50,
+    "scripts": [
+      "simplified",
+      "traditional"
+    ],
+    "artwork": "Original inline SVG; actual glyph from existing canonical record",
+    "rasterizedAndVisuallyInspected": 8,
+    "rasterizer": "librsvg and Cairo; illustration inspection, not UI screenshots"
+  },
+  "themeReveal": {
+    "durationMs": 640,
+    "lifecycleRegression": "Animation.finished leaves the reveal filled; ViewTransition.finished performs cleanup",
+    "motionQualityMeasuredOnDevice": false
+  },
+  "searchTiming": {
+    "medianMs": 1.74,
+    "p95Ms": 2.58,
+    "maxMs": 3.96,
+    "method": "80 Node DOM-mock searches; no device/browser latency claim"
+  },
+  "standalone": {
+    "sha256": "d5d1012144b2f27893a87bab3f9a513153a39298ca038076d67f6a8f14b3a3ff",
+    "bytes": 2090202,
+    "exactScriptAndStyleOrder": true,
+    "mockBootPassed": true,
+    "additionalWorkbookDesignChecks": 143,
+    "additionalWorkbookDesignFailures": 0
+  },
+  "realBrowserTesting": false,
+  "deviceTesting": false,
+  "includedBrowserSuite": "tests/browser-redesign.py; expanded and Python syntax checked, not executed",
+  "verificationLimits": "Supported managed browser route unavailable. Actual rendered alignment, mobile overflow, native transition smoothness, assistive-technology behavior, device performance, iPhone/stylus/audio/microphone behavior remain unverified. Illustrations were rasterized for visual review; no browser UI screenshots were produced."
+}

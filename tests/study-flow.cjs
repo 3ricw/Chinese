@@ -86,10 +86,10 @@ r('skipCompanionSetup()');check('companion setup can still be skipped',()=>asser
 // Animation success, failures, unsupported APIs, preferences, and races.
 let m=motionApp();m.r('axToggleTheme()');check('native snapshot captures the old appearance first',()=>assert.equal(m.r('state.settings.theme'),'dark'));m.transitions[0].apply();await flush();
 check('theme callback saves the requested appearance',()=>assert.equal(m.r('state.settings.theme'),'light'));
-check('the wipe targets the new snapshot within 380ms',()=>assert.equal(m.animations[0].options.pseudoElement,'::view-transition-new(root)'));
-check('theme animation duration remains bounded',()=>assert.equal(m.animations[0].options.duration,380));
+check('the wipe targets the new snapshot',()=>assert.equal(m.animations[0].options.pseudoElement,'::view-transition-new(root)'));
+check('theme reveal uses the slower 640ms timing',()=>assert.equal(m.animations[0].options.duration,640));
 check('ink polygons have compatible point counts',()=>assert(m.animations[0].frames.clipPath.every(s=>s.split(',').length===96)));
-m.animations[0].finish();await flush();m.transitions[0].finish();await flush();check('finished effects remove their animation and transient flag',()=>assert(m.animations[0].canceled>0&&!m.app.ctx.document.documentElement.dataset.axInkTransition));
+m.animations[0].finish();await flush();check('completed reveal stays filled until native snapshots are removed',()=>assert(m.app.ctx.document.documentElement.dataset.axInkTransition==='active'&&m.animations[0].canceled===0));m.transitions[0].finish();await flush();check('finished effects remove their animation and transient flag',()=>assert(m.animations[0].canceled>0&&!m.app.ctx.document.documentElement.dataset.axInkTransition));
 m=motionApp();m.r('axToggleTheme();axToggleTheme()');m.transitions[1].apply();await flush();m.transitions[0].apply();m.transitions[0].finish();await flush();
 check('rapid clicks preserve the latest requested appearance',()=>assert.equal(m.r('state.settings.theme'),'dark'));
 check('old transition is skipped and cannot start a stale animation',()=>{assert(m.transitions[0].skipped);assert.equal(m.animations.length,1)});m.animations[0].finish();m.transitions[1].finish();await flush();
@@ -100,9 +100,9 @@ m=motionApp();m.app.ctx.matchMedia=()=>({matches:true});m.r('axToggleTheme()');c
 m=motionApp();delete m.app.ctx.document.startViewTransition;m.r('axToggleTheme()');check('older browsers retain a working theme button',()=>assert.equal(m.r('state.settings.theme'),'light'));
 m=motionApp();delete m.app.ctx.KeyframeEffect;m.r('axToggleTheme()');check('missing pseudo-element animation support gets an immediate fallback',()=>assert(m.r("state.settings.theme==='light'")&&m.transitions.length===0));
 m=motionApp();m.r('axToggleTheme()');m.transitions[0].apply();await flush();m.r('state.settings.animations=false;chrome()');
-check('turning off motion during a reveal cancels the effect and keeps the preference',()=>assert(m.animations[0].canceled>0&&!m.app.ctx.document.documentElement.dataset.axInkTransition&&m.r("state.settings.theme==='light'")));m.transitions[0].finish();await flush();
+check('turning off motion during a reveal cancels the effect and keeps the preference',()=>assert(m.animations[0].canceled>0&&m.transitions[0].skipped>0&&m.r("state.settings.theme==='light'")));m.transitions[0].finish();await flush();
 m=motionApp();m.app.ctx.document.documentElement.animate=()=>{throw Error('animation unsupported')};m.r('axToggleTheme()');m.transitions[0].apply();await flush();
-check('native animation failure leaves the applied theme usable',()=>assert(m.r("state.settings.theme==='light'")&&!m.app.ctx.document.documentElement.dataset.axInkTransition));m.transitions[0].finish();await flush();
+check('native animation failure leaves the applied theme usable',()=>assert(m.r("state.settings.theme==='light'")&&m.transitions[0].skipped>0));m.transitions[0].finish();await flush();check('failed animation cleans up only after the native transition finishes',()=>assert(!m.app.ctx.document.documentElement.dataset.axInkTransition));
 check('new interactions have no logged runtime errors',()=>equal(app.errors,[]));
 const result={checks,failed:failures.length,failures,searchTiming:timing,method:'Node DOM/media mocks and deferred native-animation mocks',browserTested:false};
 fs.mkdirSync(path.join(__dirname,'results'),{recursive:true});fs.writeFileSync(path.join(__dirname,'results/study-flow.json'),JSON.stringify(result,null,2));fs.writeFileSync(path.join(__dirname,'results/study-flow-views.json'),JSON.stringify(views));

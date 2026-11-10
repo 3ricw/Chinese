@@ -1,6 +1,20 @@
 # Eric's Chinese — workbook design and chapter practice
 
-This update builds on upstream `main` commit `7c6d1db169e76d1ee9659b953b796eca0af36417` and retains the existing GitHub Pages origin. Publishing is explicitly authorized for this update; use an expected-head check.
+This update builds on upstream `main` commit `92dbe09a016bc6ce4dcc26ce8639b9be83226bad` and retains the existing GitHub Pages origin. Publishing is explicitly authorized for this update; use an expected-head check.
+
+## November 10 visual studio
+
+The newly supplied dashboard recording informs Home's aligned two-column composition: a colored next-action card and companion, attached daily status, and a quieter glass panel with actual seven-day activity and a course-relevant visual cue. Small screens stack the panels and condense the cue. The personalized greeting, direct Scroll action, streak/level/goal strip, quests, exactly three Quick games, Arcade access and secondary practice disclosure remain. All nine palettes, including Jade and Black, retain their saved IDs and preferences. Glass has solid high-contrast/reduced-transparency fallbacks.
+
+The supplied Chineasy screenshots inform a picture → plain form → recall learning pattern. There are 59 original, code-native SVG picture cues, covering all 50 Foundations forms plus nine later characters. They use existing canonical records and render the actual simplified/traditional glyph. The shared Visual library is accessible from Home, Tools, chapter shape practice and Quick Find. Categories expand twelve cues at a time; Back preserves the category, and keyboard focus follows filtering and expansion. Pictures are modern mnemonics, explicitly distinguished from historical origins. No third-party artwork, screenshot text or curriculum is copied.
+
+Picture cues accompany the existing clickable component diagram and personal memory notes in Shape & memory. Introductions and Scroll meet frames offer **Character alone**; unanswered recall, read/find frames and structural puzzles retain their original prompts. The visual-memory setting prevents automatic additions. Explicit picture lookup marks active character, quiz, writing, chapter and Scroll answers as assisted. Browsing, toggling and rendering grant no knowledge or rewards and add no storage keys. The existing single decoration observer is reused; picture insertion is idempotent.
+
+The theme reveal now lasts 640 ms with a gentler low-frequency ink contour and smoother easing. The reveal stays filled until the browser finishes removing the native transition snapshots. Persistent pseudo-element rules suppress a second default cross-fade; rapid clicks, animation failures, reduced motion and later saved preference changes retain their guarded fallbacks. This fixes the lifecycle responsible for the reported end flash; perceptual smoothness still requires device testing.
+
+`tests/visual-memory.cjs` covers glyphs in both scripts, all Foundations coverage, real category/pagination/Back behavior, keyboard focus, stale callbacks, observer idempotence, plain recall, assistance and unchanged browsing credit. The theme tests distinguish the animation's finish from the native transition's finish. The full regression suite and generated-view checks are recorded in `tests/verification-2026-11-10-visual.json`. Eight original SVGs were rasterized and visually inspected; this was illustration review, not browser UI testing. The future Playwright suite was updated and syntax checked but not run: supported browser control is unavailable in this environment.
+
+The deployment now contains 19 ordered JavaScript assets and nine stylesheets. The new picture helper loads immediately before the existing workbook presentation module; the order of all previous scripts is retained. Curriculum, persistence validators, course migration, handwriting checks, review scheduling and reward engines are unchanged. The standalone export reconstructs the referenced assets exactly in deployment order.
 
 ## November 10 alignment, motion, and study flow
 
