@@ -35,12 +35,12 @@ const prepare=[];
 for(const [width,height]of [[390,844],[1280,860]])for(const phase of [.7,2.4]){
  const x=width-28,y=32,radius=Math.hypot(x,height-y)*1.3,start=performance.now(),frames=r(`axInkFrames(${x},${y},${radius},${phase})`);prepare.push(performance.now()-start);
  const code=s=>(s.match(/[MCZ]/g)||[]).join(''),numeric=s=>(s.match(/-?\d+(?:\.\d+)?/g)||[]).map(Number);
- check(width+'/'+phase+' uses 13 continuously interpolable multi-contour frames',()=>{assert.equal(frames.length,13);assert(frames.every(s=>s.startsWith('path("M')&&s.endsWith('")')&&code(s)===code(frames[0])));assert.equal((frames[0].match(/M/g)||[]).length,33);assert.equal((frames[0].match(/C/g)||[]).length,864)});
+ check(width+'/'+phase+' uses 29 continuously interpolable multi-contour frames',()=>{assert.equal(frames.length,29);assert(frames.every(s=>s.startsWith('path("M')&&s.endsWith('")')&&code(s)===code(frames[0])));assert.equal((frames[0].match(/M/g)||[]).length,33);assert.equal((frames[0].match(/C/g)||[]).length,1104)});
  check(width+'/'+phase+' has finite geometry in every frame',()=>assert(frames.every(s=>!/(?:NaN|Infinity|undefined)/.test(s)&&numeric(s).every(Number.isFinite))));
  check(width+'/'+phase+' starts with no exposed picture area',()=>{const n=numeric(frames[0]);assert(n.every((v,i)=>Math.abs(v-(i%2?y:x))<.01))});
  check(width+'/'+phase+' ends with one enclosing contour and collapsed details',()=>{const paths=frames.at(-1).slice(6,-2).match(/M[^M]+/g);assert.equal(paths.length,33);for(const d of paths.slice(1)){const n=numeric(d),cx=n[0],cy=n[1];assert(n.every((v,i)=>Math.abs(v-(i%2?cy:cx))<.01))}const first=numeric(paths[0]);for(let i=0;i<first.length;i+=2)assert(Math.abs(Math.hypot(first[i]-x,first[i+1]-y)-radius)<1)});
- check(width+'/'+phase+' edge includes curves, wisps and veins instead of a circular wipe',()=>{assert(frames[6].length>25000);const parts=frames[6].slice(6,-2).match(/M[^M]+/g);assert(parts.slice(1).every(s=>new Set(numeric(s)).size>5))});
- for(const index of [0,3,6,9,12])masks.push({name:width+'-'+phase+'-'+index,width,height,index,path:frames[index].slice(6,-2)});
+ check(width+'/'+phase+' edge includes curves, wisps and veins instead of a circular wipe',()=>{assert(frames[14].length>25000);const parts=frames[14].slice(6,-2).match(/M[^M]+/g);assert(parts.slice(1).every(s=>new Set(numeric(s)).size>5))});
+ for(const index of [0,7,14,21,28])masks.push({name:width+'-'+phase+'-'+index,width,height,index,last:frames.length-1,path:frames[index].slice(6,-2)});
 }
 // Contrast of declared materials over conservative ambient-color bounds.
 function rgb(h){return [1,3,5].map(i=>parseInt(h.slice(i,i+2),16))}function mix(f,b,t){return f.map((x,i)=>x*t+b[i]*(1-t))}function lum(c){const a=c.map(x=>{x/=255;return x<=.04045?x/12.92:((x+.055)/1.055)**2.4});return .2126*a[0]+.7152*a[1]+.0722*a[2]}function contrast(a,b){const x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}

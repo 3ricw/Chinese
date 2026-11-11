@@ -1,0 +1,214 @@
+{
+  "baseCommit": "5d2304e402117f53f608c5f6437010ab214da598",
+  "release": "2026.11.11-jade-ink-lessons",
+  "automatedChecks": 10076,
+  "failed": 0,
+  "suites": [
+    {
+      "name": "regression",
+      "checks": 112,
+      "failed": 0
+    },
+    {
+      "name": "import-and-pools",
+      "checks": 29,
+      "failed": 0
+    },
+    {
+      "name": "handwriting",
+      "checks": 57,
+      "failed": 0
+    },
+    {
+      "name": "shape-content",
+      "checks": 210,
+      "failed": 0
+    },
+    {
+      "name": "practice",
+      "checks": 7358,
+      "failed": 0
+    },
+    {
+      "name": "practice-feedback",
+      "checks": 1626,
+      "failed": 0
+    },
+    {
+      "name": "ui-practice",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "name": "workbook-design",
+      "checks": 143,
+      "failed": 0
+    },
+    {
+      "name": "study-flow",
+      "checks": 63,
+      "failed": 0
+    },
+    {
+      "name": "visual-memory",
+      "checks": 165,
+      "failed": 0
+    },
+    {
+      "name": "glass-ui",
+      "checks": 86,
+      "failed": 0
+    },
+    {
+      "name": "ink-raster",
+      "checks": 24,
+      "failed": 0
+    },
+    {
+      "name": "word-lessons",
+      "checks": 147,
+      "failed": 0
+    }
+  ],
+  "generatedHTMLViews": 10967,
+  "compiledHandlers": 21313,
+  "scripts": 19,
+  "styles": 9,
+  "standaloneSha256": "c062f2c24b3797bbac989edd83f64460359f7df96b3c54855f8f25e2543b11a0",
+  "standaloneBytes": 2313748,
+  "exactStandaloneReconstruction": true,
+  "guidedLessons": 20,
+  "guidedWords": 100,
+  "originalReadingLines": 74,
+  "retainedWordEntries": 600,
+  "retainedCategories": 20,
+  "inkMaskRasterization": {
+    "checks": 24,
+    "failed": 0,
+    "failures": [],
+    "renderedMasks": 20,
+    "coverage": [
+      {
+        "name": "390-0.7-0",
+        "index": 0,
+        "coverage": 0.0
+      },
+      {
+        "name": "390-0.7-7",
+        "index": 7,
+        "coverage": 0.24605
+      },
+      {
+        "name": "390-0.7-14",
+        "index": 14,
+        "coverage": 0.65902
+      },
+      {
+        "name": "390-0.7-21",
+        "index": 21,
+        "coverage": 1.0
+      },
+      {
+        "name": "390-0.7-28",
+        "index": 28,
+        "coverage": 1.0
+      },
+      {
+        "name": "390-2.4-0",
+        "index": 0,
+        "coverage": 0.0
+      },
+      {
+        "name": "390-2.4-7",
+        "index": 7,
+        "coverage": 0.25796
+      },
+      {
+        "name": "390-2.4-14",
+        "index": 14,
+        "coverage": 0.72972
+      },
+      {
+        "name": "390-2.4-21",
+        "index": 21,
+        "coverage": 0.99909
+      },
+      {
+        "name": "390-2.4-28",
+        "index": 28,
+        "coverage": 1.0
+      },
+      {
+        "name": "1280-0.7-0",
+        "index": 0,
+        "coverage": 0.0
+      },
+      {
+        "name": "1280-0.7-7",
+        "index": 7,
+        "coverage": 0.19335
+      },
+      {
+        "name": "1280-0.7-14",
+        "index": 14,
+        "coverage": 0.69087
+      },
+      {
+        "name": "1280-0.7-21",
+        "index": 21,
+        "coverage": 1.0
+      },
+      {
+        "name": "1280-0.7-28",
+        "index": 28,
+        "coverage": 1.0
+      },
+      {
+        "name": "1280-2.4-0",
+        "index": 0,
+        "coverage": 0.0
+      },
+      {
+        "name": "1280-2.4-7",
+        "index": 7,
+        "coverage": 0.20032
+      },
+      {
+        "name": "1280-2.4-14",
+        "index": 14,
+        "coverage": 0.68528
+      },
+      {
+        "name": "1280-2.4-21",
+        "index": 21,
+        "coverage": 0.99951
+      },
+      {
+        "name": "1280-2.4-28",
+        "index": 28,
+        "coverage": 1.0
+      }
+    ],
+    "method": "librsvg/Cairo rasterization of the actual vector clip paths; no browser rendering",
+    "browserTested": false,
+    "skipped": false
+  },
+  "inkPreparation": {
+    "samples": [
+      80.74,
+      79.87,
+      110.27,
+      38.57
+    ],
+    "method": "Four Node preparations; not browser or device timing"
+  },
+  "additionalStandaloneDesignChecks": 143,
+  "browserTested": false,
+  "deviceTested": false,
+  "limitations": [
+    "DOM/media mocks do not verify browser pixels, mobile overflow or assistive technology.",
+    "librsvg/Cairo checks vector masks, not native browser transition animation.",
+    "No actual iPhone, audio, microphone or stylus testing in this release.",
+    "The guided curriculum covers 100 existing words; all 600 remain available."
+  ]
+}

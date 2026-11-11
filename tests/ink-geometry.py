@@ -34,7 +34,7 @@ for m in json.loads((root/'ink-masks.json').read_text()):
     coverage=sum(v>127 for v in alpha)/len(alpha);rows.append({'name':m['name'],'index':m['index'],'coverage':round(coverage,5)})
     checks+=1
     if m['index']==0 and max(alpha)!=0:failures.append(m['name']+': initial ink is not empty')
-    if m['index']==12 and min(alpha)!=255:failures.append(m['name']+': final ink leaves exposed pixels')
+    if m['index']==m.get('last',12) and min(alpha)!=255:failures.append(m['name']+': final ink leaves exposed pixels')
     assert c.cairo_surface_write_to_png(surface,str(root/('ink-'+m['name']+'.png')).encode())==0
     c.cairo_destroy(ctx);c.cairo_surface_destroy(surface);g.g_object_unref(handle)
 for prefix in sorted({r['name'].rsplit('-',1)[0] for r in rows}):
