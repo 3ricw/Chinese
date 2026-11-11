@@ -94,6 +94,8 @@ SEL=".btn.primary, .btn, .textbtn, .muted, .eyebrow, .badge, .sidebar .nav>butto
 
 async def design(b,path,S):
     ctx,pg,errs=await page(b,path); ev=pg.evaluate
+    # Measure stable geometry separately from the dedicated motion checks.
+    await ev("setSetting('animations',false)")
     S.check('design layer active',await ev("document.documentElement.classList.contains('ax')"))
     S.check('dark is the default appearance',await ev("defaults().settings.theme==='dark'&&document.documentElement.dataset.theme==='dark'"))
     S.check('each theme has tinted dark surfaces that rise in lightness',await ev("Object.values(PALETTES).every(p=>{const L=h=>{const n=parseInt(h.slice(1),16);return ((n>>16)&255)*.2126+((n>>8)&255)*.7152+(n&255)*.0722};return L(p.dark.bg)<L(p.dark.panel)&&L(p.dark.panel)<L(p.dark.elevated)})"))
@@ -176,6 +178,7 @@ async def design(b,path,S):
     await ctx.close()
     # mobile chrome
     ctx,pg,errs=await page(b,path,390,844); ev=pg.evaluate
+    await ev("setSetting('animations',false)")
     S.check('tab bar is a floating capsule inside the screen',await ev("(()=>{const r=document.getElementById('mobile-nav').getBoundingClientRect();return r.left>=4&&r.right<=386&&r.bottom<=844-4&&parseFloat(getComputedStyle(document.getElementById('mobile-nav')).borderTopLeftRadius)>=20})()"))
     S.check('tab bar targets are at least 44pt',await ev("[...document.querySelectorAll('#mobile-nav button')].every(b=>{const r=b.getBoundingClientRect();return r.height>=44&&r.width>=44})"))
     S.check('course control shows on Home on phones',await ev("(()=>{const h=document.getElementById('course-selector');return !h.hidden&&!!h.querySelector('.ax-course-seg')&&h.offsetParent!==null})()"))
@@ -194,6 +197,34 @@ async def design(b,path,S):
         await pg.locator('#flow-lookup-input').fill('school')
         S.check(f'Quick Find fits {width}px with usable filters',await ev(f"document.documentElement.scrollWidth<={width+1}&&[...document.querySelectorAll('.rx-find-filters button')].every(b=>b.getBoundingClientRect().height>=44)"))
         await ev("closeModal()")
+    await ev("starterPreview='dragon';chooseStarter();closeModal()")
+    # Regression from the supplied iPhone screenshots: no flattened intro,
+    # squeezed action column, recentered ring, or hidden bottom controls.
+    for width in [320,390,430,600]:
+        await pg.set_viewport_size({'width':width,'height':844})
+        for scenario in ['fresh','due','resume']:
+            await ev("state.cards={};state.courses.records[selectedCourseId].resume=null")
+            if scenario=='due':
+                await ev("uniqueCards(courseFocusId()).slice(0,8).forEach(c=>state.cards[c.character]={seen:3,due:0,interval:1,streak:1,last:Date.now()-86400000})")
+            if scenario=='resume':
+                await ev("startSession('all',courseFocusId());checkpointCurrent()")
+            await ev("navigate('home')"); await pg.wait_for_timeout(100)
+            S.check(f'Home copy stays grouped at {width}px / {scenario}',await ev("getComputedStyle(document.querySelector('.feed-home-copy')).display==='block'"))
+            S.check(f'Home action spans useful width at {width}px / {scenario}',await ev("(()=>{const h=document.querySelector('.rx-hero').getBoundingClientRect(),a=document.querySelector('.ax-hero-actions').getBoundingClientRect(),b=document.querySelector('.ax-hero-actions>.btn').getBoundingClientRect();return a.width>=h.width-50&&b.width>=140&&b.height>=44&&b.right<=h.right-10})()"))
+            if width==390:
+                S.check(f'Home no longer stretches beyond 420px / {scenario}',await ev("document.querySelector('.rx-hero').getBoundingClientRect().height<=420"))
+            await ev("state.companion.enabled=true;state.settings.companionMessages=true;renderHome()")
+            before=await ev("(()=>{const s=document.querySelector('.rx-buddy-stage').getBoundingClientRect(),n=document.querySelector('.rx-buddy-name').getBoundingClientRect(),h=document.querySelector('.rx-hero').getBoundingClientRect();return [s.top,s.left,s.width,n.top,h.height]})()")
+            await ev("rxPetBuddy()")
+            after=await ev("(()=>{const s=document.querySelector('.rx-buddy-stage').getBoundingClientRect(),n=document.querySelector('.rx-buddy-name').getBoundingClientRect(),h=document.querySelector('.rx-hero').getBoundingClientRect();return [s.top,s.left,s.width,n.top,h.height]})()")
+            S.check(f'Companion greeting leaves stage/name/height stable at {width}px / {scenario}',all(abs(a-b)<1 for a,b in zip(before,after)),[before,after])
+            S.check(f'Progress precedes calendar at {width}px / {scenario}',await ev("document.querySelector('.ax-home-metrics').getBoundingClientRect().top<document.querySelector('.vm-home-side').getBoundingClientRect().top"))
+    await pg.set_viewport_size({'width':390,'height':844})
+    await ev("setSetting('animations',true);navigate('tools')")
+    await ev("new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))")
+    S.check('native entrances start without blocking the controls',await ev("axDisplayAnimations.size>0&&[...document.querySelectorAll('.flow-tool')].every(b=>!b.disabled)"))
+    await ev("setSetting('animations',false)")
+    S.check('disabling app motion cancels active presentation animations',await ev("axDisplayAnimations.size===0"))
     await pg.set_viewport_size({'width':390,'height':844})
     await ev("navigate('home');vmOpenLibrary()"); await pg.wait_for_timeout(150)
     S.check('mobile visual gallery fits with two columns and 44px filters',await ev("document.documentElement.scrollWidth<=391&&getComputedStyle(document.querySelector('.vm-library-grid')).gridTemplateColumns.split(' ').length===2&&[...document.querySelectorAll('.vm-library-filters button')].every(e=>e.getBoundingClientRect().height>=44)"))

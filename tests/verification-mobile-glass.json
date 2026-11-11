@@ -1,0 +1,117 @@
+{
+  "baseCommit": "d342a7c9a2b59cd1ab15f5977eac759093448e17",
+  "release": "2026.11.11-mobile-liquid-glass",
+  "automatedChecks": 10150,
+  "failed": 0,
+  "suites": [
+    {
+      "name": "regression",
+      "checks": 112,
+      "failed": 0
+    },
+    {
+      "name": "import-and-pools",
+      "checks": 29,
+      "failed": 0
+    },
+    {
+      "name": "handwriting",
+      "checks": 57,
+      "failed": 0
+    },
+    {
+      "name": "shape-content",
+      "checks": 210,
+      "failed": 0
+    },
+    {
+      "name": "practice",
+      "checks": 7358,
+      "failed": 0
+    },
+    {
+      "name": "practice-feedback",
+      "checks": 1626,
+      "failed": 0
+    },
+    {
+      "name": "ui-practice",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "name": "workbook-design",
+      "checks": 143,
+      "failed": 0
+    },
+    {
+      "name": "study-flow",
+      "checks": 63,
+      "failed": 0
+    },
+    {
+      "name": "visual-memory",
+      "checks": 165,
+      "failed": 0
+    },
+    {
+      "name": "glass-ui",
+      "checks": 104,
+      "failed": 0
+    },
+    {
+      "name": "ink-raster",
+      "checks": 24,
+      "failed": 0
+    },
+    {
+      "name": "word-lessons",
+      "checks": 147,
+      "failed": 0
+    },
+    {
+      "name": "mobile-motion",
+      "checks": 56,
+      "failed": 0
+    }
+  ],
+  "generatedHTMLViews": 10979,
+  "compiledHandlers": 21315,
+  "scripts": 19,
+  "styles": 9,
+  "standaloneBytes": 2331763,
+  "standaloneSha256": "84d7b212ceac6f8c4fb5362a421362049b4e70192044666e5dbf3d930b65456f",
+  "exactStandaloneReconstruction": true,
+  "additionalStandaloneDesignChecks": 143,
+  "mobileMotion": {
+    "checks": 56,
+    "failed": 0,
+    "failures": [],
+    "method": "Node DOM/media/native-animation mocks, connected-element fixtures, and source-level regressions for photographed mobile layout; no browser/device rendering",
+    "browserTested": false,
+    "deviceTested": false
+  },
+  "inkPreparation": {
+    "samples": [
+      119.37,
+      87.13,
+      110.14,
+      44.56
+    ],
+    "method": "Four Node preparations; not browser or device timing"
+  },
+  "browserTested": false,
+  "deviceTested": false,
+  "methods": [
+    "Node DOM/media/native-animation mocks with connected-element fixtures.",
+    "Source-level regressions for the supplied mobile screenshots; not pixel layout tests.",
+    "Numeric material-token contrast across all nine palettes in Light and Dark.",
+    "librsvg/Cairo rasterization of native ink vector masks.",
+    "JavaScript/handler compilation, Python syntax, CSS lexical balance, and HTML structure."
+  ],
+  "limitations": [
+    "No supported browser-control route was available.",
+    "No actual iPhone layout, glass compositing, animation FPS, audio or microphone testing.",
+    "Expanded future browser checks were syntax checked only."
+  ]
+}

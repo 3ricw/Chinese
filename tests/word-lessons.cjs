@@ -72,13 +72,13 @@ const restored=boot(Object.fromEntries(app.storage));check('reopening still star
 const id=r('cwCurrent().w.id'),credit=r(`cwDesk().records['${id}']?.creditDay||''`),exposure=r(`cwDesk().records['${id}'].exposureDay`);
 r(`cwUnlearn('${id}')`);check('return to New keeps anti-farming and exposure guards',()=>{assert.equal(r(`cwDesk().records['${id}'].creditDay`),credit);assert.equal(r(`cwDesk().records['${id}'].exposureDay`),exposure);assert.equal(r(`cwStatus('${id}')`),'new')});
 r("navigate('home');state.settings.companionMessages=true;renderHome()");const home=app.html();
-check('companion ring is inside a stable art stage and the caption is outside it',()=>{const stage=home.indexOf('class="rx-buddy-stage"'),ring=home.indexOf('class="ax-goal-orbit"'),note=home.indexOf('id="rx-buddy-note"');assert(stage>=0&&ring>stage&&note>ring);assert(home.slice(ring,note).includes('</button></div><p'))});
+check('companion ring is inside a stable art stage and the caption is outside it',()=>{const stage=home.indexOf('class="rx-buddy-stage"'),ring=home.indexOf('class="ax-goal-orbit"'),note=home.indexOf('id="rx-buddy-note"');assert(stage>=0&&ring>stage&&note>ring);assert(home.slice(ring,note).includes('class="textbtn rx-buddy-name"'));assert(note>home.indexOf('class="ax-hero-actions"'))});
 const beforePet=r('JSON.stringify({xp:bx.xp,pet:state.companion.xp,activity:state.activity,cards:state.cards})');
 for(let i=0;i<12;i++)r('rxPetBuddy()');check('companion taps keep varied notes and cannot give rewards',()=>{assert(app.nodes.get('rx-buddy-note').textContent.length>10);assert.equal(r('JSON.stringify({xp:bx.xp,pet:state.companion.xp,activity:state.activity,cards:state.cards})'),beforePet)});
 r('state.settings.companionMessages=false;renderHome()');check('disabled companion messages take no caption space',()=>assert(/id="rx-buddy-note"[^>]*hidden/.test(app.html())));
 const index=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8'),design=fs.readFileSync(path.join(__dirname,'..',index.match(/href="([^"]+)" id="ax-design"/)[1]),'utf8');
 check('sidebar stays inset, fixed to the viewport, with scrollable navigation',()=>{for(const token of ['position:fixed!important;flex-direction:column','height:calc(100dvh - 24px)','width:213px','overflow-y:auto;overscroll-behavior:contain','sidebar-bottom{flex-shrink:0'])assert(design.includes(token),token)});
-check('empty and filled captions use the same reserved height',()=>{assert(design.includes('.rx-home-calm .rx-buddy-note{'));assert(design.includes('min-height:4.5em;height:4.5em'));assert(design.includes('.rx-buddy-note[hidden]{display:none!important}'))});
+check('empty and filled captions use the same reserved height',()=>{assert(design.includes('.rx-home-calm .rx-buddy-note{'));assert(design.includes('min-height:2.8em;height:2.8em'));assert(design.includes('.rx-buddy-note[hidden]{display:none!important}'))});
 check('guided practice and companions log no runtime errors',()=>equal(app.errors,[]));
 // Exercise the actual backup UI handlers, not only their validators.
 r("closeModal();cwStartUnit('cw-lesson-07');save()");

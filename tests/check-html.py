@@ -39,6 +39,8 @@ extra=root/'glass-ui-views.json'
 if extra.exists():views+=json.loads(extra.read_text())
 extra=root/'word-lessons-views.json'
 if extra.exists():views+=json.loads(extra.read_text())
+extra=root/'mobile-motion-views.json'
+if extra.exists():views+=json.loads(extra.read_text())
 for view in views:
  p=Check();p.feed(view['html']);handlers.update(p.handlers)
  if p.stack:p.errors.append('unclosed '+','.join(p.stack))
