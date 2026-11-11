@@ -19,6 +19,6 @@ The behavior suites passed 11,980 checks. The new checks cover all 600 cue mappi
 
 Librsvg/Cairo rendered all 600 word scenes, with 1,200 parse/pixel checks. A representative contact sheet was visually inspected. The existing ink geometry checks also passed. These are vector checks, not browser screenshots.
 
-GitHub's Mac CI passed all 11 Swift shared-model tests, generated the Xcode project, and built the iPhone and Watch simulator targets at commit `4fdb1639c1fde7ebdb5349941c0909971427db1f` (run `43051870970`). The final source has a wording-only correction on the Watch welcome screen, and the same workflow checks it before main is updated. The commit-specific run is available in GitHub Actions.
+GitHub's Mac CI passed all 11 Swift shared-model tests, generated the Xcode project, and built both native simulator targets for the published source at commit `3febe78265a87084b0bcd2432ac3a5f2b1d4dd79` (run `43056995120`). This verifies compilation and model behavior, not signing, installation, or WatchConnectivity delivery on devices.
 
 No real browser, physical iPhone, physical Watch, actual signing/install, WatchConnectivity delivery, Dynamic Type layout, microphone, or audio test was performed here. The native work is a development preview, with no App Store/TestFlight release. App Store packaging is not configured. The website states these limits and provides the source/setup instructions. Cross-device browser progress remains local; no account or cloud sync is implied.
