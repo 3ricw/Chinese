@@ -1,0 +1,105 @@
+{
+  "baseCommit": "76d63276b86bad7923198157bc443a18244e12e2",
+  "release": "2026.11.11-watch-memory-notes",
+  "behaviorChecks": 11978,
+  "behaviorSuites": [
+    {
+      "suite": "regression",
+      "checks": 112,
+      "failed": 0
+    },
+    {
+      "suite": "import-and-pools",
+      "checks": 29,
+      "failed": 0
+    },
+    {
+      "suite": "handwriting",
+      "checks": 57,
+      "failed": 0
+    },
+    {
+      "suite": "shape-content",
+      "checks": 210,
+      "failed": 0
+    },
+    {
+      "suite": "practice",
+      "checks": 7358,
+      "failed": 0
+    },
+    {
+      "suite": "practice-feedback",
+      "checks": 1626,
+      "failed": 0
+    },
+    {
+      "suite": "ui-practice",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "suite": "workbook-design",
+      "checks": 143,
+      "failed": 0
+    },
+    {
+      "suite": "study-flow",
+      "checks": 63,
+      "failed": 0
+    },
+    {
+      "suite": "visual-memory",
+      "checks": 165,
+      "failed": 0
+    },
+    {
+      "suite": "glass-ui",
+      "checks": 104,
+      "failed": 0
+    },
+    {
+      "suite": "word-lessons",
+      "checks": 147,
+      "failed": 0
+    },
+    {
+      "suite": "mobile-motion",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "suite": "notes-watch-visuals",
+      "checks": 1841,
+      "failed": 0
+    },
+    {
+      "suite": "notes-backup",
+      "checks": 11,
+      "failed": 0
+    }
+  ],
+  "vectorChecks": 1224,
+  "wordScenes": 600,
+  "generatedViews": 12186,
+  "compiledHandlers": 21839,
+  "package": {
+    "scripts": 21,
+    "styles": 9,
+    "compiledHandlers": 21839,
+    "standaloneExact": true,
+    "standaloneBoot": true
+  },
+  "standaloneBytes": 2441556,
+  "standaloneSha256": "d38c16ef6602100be18b467a7f179d52be85d9b6205ade5cd63a693654b550d5",
+  "native": {
+    "sharedModelTests": 11,
+    "iphoneSimulatorBuild": "passed",
+    "watchSimulatorBuild": "passed",
+    "verifiedCommit": "4fdb1639c1fde7ebdb5349941c0909971427db1f",
+    "workflowRun": 43051870970
+  },
+  "browserTested": false,
+  "physicalAppleWatchTested": false,
+  "physicalIPhoneTested": false
+}

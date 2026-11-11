@@ -1,6 +1,16 @@
-# Eric's Chinese — workbook design and chapter practice
+# Eric’s Chinese — courses, memory aids, and Watch preview
 
-This update builds on upstream `main` commit `10a062693fcb27640812cab67051f9c0c10a2bb9` and retains the existing GitHub Pages origin. Publishing is explicitly authorized for this update; use an expected-head check.
+The existing Chinese learning app at https://3ricw.github.io/Chinese/. This update builds on `main` commit `76d63276b86bad7923198157bc443a18244e12e2` and preserves the GitHub Pages origin and browser-local progress.
+
+## Memory notes, word visuals, and Apple Watch (2026-11-11)
+
+Character notes are visible in Usage and Shape & memory. Common words have their own personal notes, and Tools includes a searchable shared notebook. Existing `state.memoryNotes` keys are retained; optional `state.commonWords.notes` records use the unchanged word IDs. Both note types round-trip through backups and follow the existing reset confirmation. Looking at notes or picture hints before answering records help, including paused practice.
+
+All 600 common-word entries now have individually assigned original SVG memory cues: pictures for concrete concepts and diagrams for grammatical or abstract meanings. They appear during teaching and after reveal; cold recall stays plain unless the learner deliberately requests a picture hint (`V`). These are memory aids, not etymologies or 600 unique paintings. Course word details also offer matching cues or clickable character-shape compositions. The visual-memory preference is respected.
+
+Tools → Apple Watch exports a five-card practice copy from the selected course’s studied characters, studied common words, or saved words. See [the native development preview](apple-watch/README.md) for iPhone/Watch source, build instructions, install limitations, and the explicit file-transfer workflow. Native Watch results stay separate from website mastery, XP, streaks, and companion rewards. No accounts or cloud synchronization have been added.
+
+New checks: `node tests/notes-watch-visuals.cjs`, `node tests/notes-backup.cjs`, then `python3 tests/word-visual-raster.py`. The [Mac build workflow](.github/workflows/watch-checks.yml) tests the Swift model and compiles both native simulator targets. Browser mock tests, vector rasterization, simulator compilation, and physical-device testing are distinct.
 
 ## November 10 glass study desk and liquid ink
 

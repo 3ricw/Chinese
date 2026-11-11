@@ -44,7 +44,7 @@ struct WristHome: View {
                     } else if let pack = store.pack {
                         Image(systemName: "character.book.closed.fill").font(.title).foregroundStyle(.mint)
                         Text(pack.title).font(.headline)
-                        Text("\(pack.cards.count) familiar forms\nAvailable offline").font(.caption).foregroundStyle(.secondary)
+                        Text("\(pack.cards.count) reading cards\nAvailable offline").font(.caption).foregroundStyle(.secondary)
                         Button("Start short review") { store.start() }.tint(.mint)
                     } else {
                         Image(systemName: "iphone.and.arrow.forward").font(.largeTitle).foregroundStyle(.mint)
