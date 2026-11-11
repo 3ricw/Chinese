@@ -15,7 +15,7 @@ Character notes retain `state.memoryNotes` without key renames. Whole-word notes
 
 ## Verification and limits
 
-The behavior suites passed 11,978 checks. The new checks cover all 600 cue mappings and both scripts, hidden cold-recall pictures, assistance, stale/duplicate callbacks, note editing, quota failures, actual export Blob contents and import callbacks, reset, startup, paused-session help, Watch-set selection and unchanged reward/knowledge state. Structural validation covered 12,186 generated views and 21,839 compiled handlers. All 21 ordered scripts compile; the standalone HTML reconstructs the deployed scripts and nine styles exactly.
+The behavior suites passed 11,980 checks. The new checks cover all 600 cue mappings and both scripts, hidden cold-recall pictures, assistance, stale/duplicate callbacks, note editing, quota failures, actual export Blob contents and import callbacks, reset, startup, paused-session help, Watch-set selection and unchanged reward/knowledge state. Structural validation covered 12,186 generated views and 21,839 compiled handlers. All 21 ordered scripts compile; the standalone HTML reconstructs the deployed scripts and nine styles exactly.
 
 Librsvg/Cairo rendered all 600 word scenes, with 1,200 parse/pixel checks. A representative contact sheet was visually inspected. The existing ink geometry checks also passed. These are vector checks, not browser screenshots.
 

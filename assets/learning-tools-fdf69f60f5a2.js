@@ -86,4 +86,4 @@ function wristDownloadPack(){
  const blob=new Blob([JSON.stringify(wristPack,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Erics_Chinese_Watch_Set.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Watch practice set exported');
 }
 
-function personalFocusNote(){const editor=document.querySelector('.personal-note textarea');if(!editor?.isConnected)return;editor.scrollIntoView({block:'center',behavior:state.settings.animations===false?'instant':'smooth'});editor.focus({preventScroll:true})}
+function personalFocusNote(){const editor=document.querySelector('.personal-note textarea');if(!editor?.isConnected)return;editor.scrollIntoView({block:'center',behavior:state.settings.animations===false||matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});editor.focus({preventScroll:true})}

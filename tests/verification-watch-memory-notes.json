@@ -1,7 +1,7 @@
 {
   "baseCommit": "76d63276b86bad7923198157bc443a18244e12e2",
   "release": "2026.11.11-watch-memory-notes",
-  "behaviorChecks": 11978,
+  "behaviorChecks": 11980,
   "behaviorSuites": [
     {
       "suite": "regression",
@@ -75,7 +75,7 @@
     },
     {
       "suite": "notes-backup",
-      "checks": 11,
+      "checks": 13,
       "failed": 0
     }
   ],
@@ -90,8 +90,8 @@
     "standaloneExact": true,
     "standaloneBoot": true
   },
-  "standaloneBytes": 2441556,
-  "standaloneSha256": "d38c16ef6602100be18b467a7f179d52be85d9b6205ade5cd63a693654b550d5",
+  "standaloneBytes": 2441612,
+  "standaloneSha256": "f9613538423d6678208ea9adb7a6c9cbec91aa17c3d8c348aac8a5dfe6784337",
   "native": {
     "sharedModelTests": 11,
     "iphoneSimulatorBuild": "passed",
