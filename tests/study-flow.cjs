@@ -87,8 +87,8 @@ r('skipCompanionSetup()');check('companion setup can still be skipped',()=>asser
 let m=motionApp();m.r('axToggleTheme()');check('native snapshot captures the old appearance first',()=>assert.equal(m.r('state.settings.theme'),'dark'));m.transitions[0].apply();await flush();
 check('theme callback saves the requested appearance',()=>assert.equal(m.r('state.settings.theme'),'light'));
 check('the wipe targets the new snapshot',()=>assert.equal(m.animations[0].options.pseudoElement,'::view-transition-new(root)'));
-check('theme reveal uses the slower 640ms timing',()=>assert.equal(m.animations[0].options.duration,640));
-check('ink polygons have compatible point counts',()=>assert(m.animations[0].frames.clipPath.every(s=>s.split(',').length===96)));
+check('liquid ink reveal uses a 1000ms timing',()=>assert.equal(m.animations[0].options.duration,1000));
+check('ink paths have matching commands for continuous interpolation',()=>{const frames=m.animations[0].frames.clipPath;assert.equal(frames.length,13);const signature=s=>(s.match(/[MCZ]/g)||[]).join('');assert(frames.every(s=>signature(s)===signature(frames[0])));assert.equal((frames[0].match(/M/g)||[]).length,33);assert.equal((frames[0].match(/C/g)||[]).length,864)});
 m.animations[0].finish();await flush();check('completed reveal stays filled until native snapshots are removed',()=>assert(m.app.ctx.document.documentElement.dataset.axInkTransition==='active'&&m.animations[0].canceled===0));m.transitions[0].finish();await flush();check('finished effects remove their animation and transient flag',()=>assert(m.animations[0].canceled>0&&!m.app.ctx.document.documentElement.dataset.axInkTransition));
 m=motionApp();m.r('axToggleTheme();axToggleTheme()');m.transitions[1].apply();await flush();m.transitions[0].apply();m.transitions[0].finish();await flush();
 check('rapid clicks preserve the latest requested appearance',()=>assert.equal(m.r('state.settings.theme'),'dark'));
@@ -103,6 +103,7 @@ m=motionApp();m.r('axToggleTheme()');m.transitions[0].apply();await flush();m.r(
 check('turning off motion during a reveal cancels the effect and keeps the preference',()=>assert(m.animations[0].canceled>0&&m.transitions[0].skipped>0&&m.r("state.settings.theme==='light'")));m.transitions[0].finish();await flush();
 m=motionApp();m.app.ctx.document.documentElement.animate=()=>{throw Error('animation unsupported')};m.r('axToggleTheme()');m.transitions[0].apply();await flush();
 check('native animation failure leaves the applied theme usable',()=>assert(m.r("state.settings.theme==='light'")&&m.transitions[0].skipped>0));m.transitions[0].finish();await flush();check('failed animation cleans up only after the native transition finishes',()=>assert(!m.app.ctx.document.documentElement.dataset.axInkTransition));
+m=motionApp();m.app.ctx.CSS={supports:()=>false};m.r('axToggleTheme()');check('unsupported path clipping falls back without a broken theme',()=>assert(m.r("state.settings.theme==='light'")&&m.transitions.length===0));
 check('new interactions have no logged runtime errors',()=>equal(app.errors,[]));
 const result={checks,failed:failures.length,failures,searchTiming:timing,method:'Node DOM/media mocks and deferred native-animation mocks',browserTested:false};
 fs.mkdirSync(path.join(__dirname,'results'),{recursive:true});fs.writeFileSync(path.join(__dirname,'results/study-flow.json'),JSON.stringify(result,null,2));fs.writeFileSync(path.join(__dirname,'results/study-flow-views.json'),JSON.stringify(views));

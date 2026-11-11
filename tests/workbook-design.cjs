@@ -20,7 +20,7 @@ for(const course of ['chinese-1','chinese-2']){
  check(course+' Home has one primary next step',()=>assert.equal((home.match(/class="btn primary"/g)||[]).length,1));
  check(course+' primary action matches its current course',()=>assert(home.includes('onclick="'+r('rxNextAction().action')+'"')));
  check(course+' greeting, companion and Scroll remain visible',()=>{for(const token of ['rx-greeting','rx-companion-scene','openScrollQuickAccess()'])assert(home.includes(token));assert(home.indexOf('rx-companion-scene')<home.indexOf('<details class="rx-home-more"'))});
- check(course+' daily status stays with the next action',()=>assert(/<div class="rx-home-start">[\s\S]*?<section[^>]*rx-hero[\s\S]*?<button class="bx-status-row"[\s\S]*?<\/button><\/div><aside class="vm-home-side">/.test(home)));
+ check(course+' daily status stays with the next action',()=>assert(home.indexOf('class="bx-status-row ax-home-metrics"')>home.indexOf('class="vm-home-dashboard"')&&home.indexOf('class="bx-status-row ax-home-metrics"')<home.indexOf('class="rx-home-extras"')));
  check(course+' three quests and three quick games stay outside disclosure',()=>{const first=home.slice(0,home.indexOf('<details class="rx-home-more"'));assert.equal((first.match(/data-game=/g)||[]).length,3);assert(first.includes('id="bx-quests"'));assert(first.includes('All games'))});
  check(course+' more practice uses closed native details',()=>{assert(more.startsWith('<details class="rx-home-more"><summary>'));assert(!/<details[^>]*\bopen\b/.test(more));assert(!/<summary[^>]*onclick/.test(more))});
  check(course+' secondary learning paths remain available',()=>{for(const action of ["navigate('lab')","navigate('review')","labOpenWeekly()","navigate('labskills')"])assert(more.includes('onclick="'+action+'"'))});
@@ -60,7 +60,7 @@ const key='hanzi-reading-room-v2',saved=Object.fromEntries(app.storage),before=r
 for(const field of ['cards','bookmarks','memoryNotes','writing','companion','courses','learningLab','readingDesk','commonWords'])check('design startup preserves '+field,()=>equal(restored.run('state['+JSON.stringify(field)+']'),before[field]));
 check('saved Black and Light preferences survive startup',()=>assert(restored.run("state.settings.palette==='black'&&state.settings.theme==='light'")));
 check('UI initializes without new learning credit',()=>assert.equal(restored.run('bx.xp'),r('bx.xp')));
-// Contrast checks below cover token colors and sampled hero mesh, not rendered pixels.
+// Contrast checks below cover palette tokens, not rendered pixels.
 function rgb(h){return [1,3,5].map(i=>parseInt(h.slice(i,i+2),16))}function luminance(c){const v=c.map(x=>{x/=255;return x<=.04045?x/12.92:((x+.055)/1.055)**2.4});return .2126*v[0]+.7152*v[1]+.0722*v[2]}function contrast(a,b){const x=luminance(a),y=luminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}function over(f,b,alpha){return f.map((x,i)=>x*alpha+b[i]*(1-alpha))}
 for(const [id,p]of Object.entries(r('PALETTES')))for(const mode of ['light','dark']){
  const c=p[mode];check(id+'/'+mode+' text and primary-button tokens have AA contrast',()=>{assert(contrast(rgb(c.ink),rgb(c.panel))>=4.5);assert(contrast(rgb(c.muted),rgb(c.bg))>=4.5);assert(contrast(rgb(c.muted),rgb(c.panel))>=4.5);assert(contrast(rgb(c.green),mode==='light'?[255,255,255]:rgb(c.panel))>=4.5)});

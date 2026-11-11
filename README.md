@@ -1,6 +1,14 @@
 # Eric's Chinese — workbook design and chapter practice
 
-This update builds on upstream `main` commit `92dbe09a016bc6ce4dcc26ce8639b9be83226bad` and retains the existing GitHub Pages origin. Publishing is explicitly authorized for this update; use an expected-head check.
+This update builds on upstream `main` commit `10a062693fcb27640812cab67051f9c0c10a2bb9` and retains the existing GitHub Pages origin. Publishing is explicitly authorized for this update; use an expected-head check.
+
+## November 10 glass study desk and liquid ink
+
+The attached dashboard video's composition now applies to the app's shared presentation: frosted sidebar and Quick Find, a feature/companion card beside a compact practice calendar, four actual progress cards, soft theme-colored atmosphere, illuminated edges and consistent rounded surfaces. Course, Review, Tools, Arcade, settings, reading, practice and study sheets share the same material. Streak, learner level, daily checks and due reviews use existing data. The companion's ring shows daily checks. Home keeps its primary next action, Scroll, quests, three Quick games and all existing paths. On phones, progress cards use two columns. Jade and all saved palettes, including Ink, remain compatible; solid surfaces and reduced motion remain available through the existing preferences and system fallbacks.
+
+The ink transition restores a detailed folded boundary with wisps and veins. Thirteen compatible compound-path keyframes run for 1,000ms using the existing native snapshot lifecycle. The browser interpolates the geometry; JavaScript does not repaint it each frame. Empty/full mask endpoints, rapid toggles, failed/unsupported animation and saved settings are checked. Cleanup still waits for the native transition to finish, preserving the previous end-flash fix.
+
+[The review](docs/glass-ink-review-2026-11-10.md) records the reference adaptation, implementation and verification limits. `tests/glass-ui.cjs` and optional `tests/ink-geometry.py` add material/data, vector-topology and actual raster-mask regressions. `tests/verification-2026-11-10-glass.json` records the release checks. The supported browser route remains unavailable; no actual browser or iPhone visual/audio/stylus testing is claimed. The 19-script / nine-stylesheet order and exact standalone reconstruction are retained. Learning engines, storage, course IDs, schedules and rewards are unchanged.
 
 ## November 10 visual studio
 
