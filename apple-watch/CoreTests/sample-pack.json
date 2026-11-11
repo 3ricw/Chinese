@@ -1,0 +1,28 @@
+{
+  "format": "erics-chinese-wrist",
+  "version": 1,
+  "id": "wrist-mwcai5s5-1",
+  "createdAt": 1794411882437,
+  "course": "chinese-1",
+  "courseName": "Chinese 1",
+  "script": "traditional",
+  "title": "Chinese 1 · familiar characters",
+  "cards": [
+    {
+      "id": "character:你",
+      "s": "你",
+      "t": "你",
+      "pinyin": "nǐ",
+      "meaning": "you",
+      "note": "Person on the left; familiar face"
+    },
+    {
+      "id": "character:好",
+      "s": "好",
+      "t": "好",
+      "pinyin": "hǎo",
+      "meaning": "good",
+      "note": ""
+    }
+  ]
+}

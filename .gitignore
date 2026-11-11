@@ -1,1 +1,6 @@
 tests/results/
+# Native local build products and signing state.
+apple-watch/.build/
+apple-watch/.swiftpm/
+apple-watch/*.xcodeproj/
+**/xcuserdata/

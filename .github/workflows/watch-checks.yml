@@ -1,0 +1,26 @@
+name: Apple Watch source checks
+on:
+  push:
+    paths:
+      - 'apple-watch/**'
+      - '.github/workflows/watch-checks.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test the shared practice and validation model
+        run: swift test --package-path apple-watch
+      - name: Generate the local-development Xcode project
+        run: |
+          if ! command -v xcodegen >/dev/null; then brew install xcodegen; fi
+          cd apple-watch
+          xcodegen generate
+      - name: Build the iPhone companion for Simulator
+        run: xcodebuild -project apple-watch/EricsChineseWrist.xcodeproj -scheme EricsChinesePhone -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/erics-chinese-ios CODE_SIGNING_ALLOWED=NO build
+      - name: Build the Watch app for Simulator
+        run: xcodebuild -project apple-watch/EricsChineseWrist.xcodeproj -scheme EricsChineseWatch -sdk watchsimulator -destination 'generic/platform=watchOS Simulator' -derivedDataPath /tmp/erics-chinese-watch CODE_SIGNING_ALLOWED=NO build
