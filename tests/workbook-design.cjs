@@ -24,7 +24,7 @@ for(const course of ['chinese-1','chinese-2']){
  check(course+' three quests and three quick games stay outside disclosure',()=>{const first=home.slice(0,home.indexOf('<details class="rx-home-more"'));assert.equal((first.match(/data-game=/g)||[]).length,3);assert(first.includes('id="bx-quests"'));assert(first.includes('All games'))});
  check(course+' more practice uses closed native details',()=>{assert(more.startsWith('<details class="rx-home-more"><summary>'));assert(!/<details[^>]*\bopen\b/.test(more));assert(!/<summary[^>]*onclick/.test(more))});
  check(course+' secondary learning paths remain available',()=>{for(const action of ["navigate('lab')","navigate('review')","labOpenWeekly()","navigate('labskills')"])assert(more.includes('onclick="'+action+'"'))});
- r('renderHome();renderHome()');check(course+' repeated Home renders do not duplicate links',()=>{assert.equal((app.html().match(/class="rx-home-more"/g)||[]).length,1);assert.equal((app.html().match(/class="ax-row"/g)||[]).length,2)});
+ r('renderHome();renderHome()');check(course+' repeated Home renders do not duplicate links',()=>{assert.equal((app.html().match(/class="rx-home-more"/g)||[]).length,1);assert.equal((app.html().match(/class="ax-row"/g)||[]).length,3)});
 }
 // Related component forms use one color without changing labels, actions, or knowledge.
 const familyNodes=[];function component(glyph,klass='memory-piece'){

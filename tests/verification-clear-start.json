@@ -1,0 +1,105 @@
+{
+  "baseCommit": "7342d27ac690544c7bb9370c5d5eb45e4c237637",
+  "release": "2026.11.11-clear-start",
+  "behaviorChecks": 12074,
+  "behaviorSuites": [
+    {
+      "suite": "regression",
+      "checks": 112,
+      "failed": 0
+    },
+    {
+      "suite": "import-and-pools",
+      "checks": 29,
+      "failed": 0
+    },
+    {
+      "suite": "handwriting",
+      "checks": 57,
+      "failed": 0
+    },
+    {
+      "suite": "shape-content",
+      "checks": 210,
+      "failed": 0
+    },
+    {
+      "suite": "practice",
+      "checks": 7358,
+      "failed": 0
+    },
+    {
+      "suite": "practice-feedback",
+      "checks": 1626,
+      "failed": 0
+    },
+    {
+      "suite": "ui-practice",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "suite": "workbook-design",
+      "checks": 143,
+      "failed": 0
+    },
+    {
+      "suite": "study-flow",
+      "checks": 63,
+      "failed": 0
+    },
+    {
+      "suite": "visual-memory",
+      "checks": 165,
+      "failed": 0
+    },
+    {
+      "suite": "glass-ui",
+      "checks": 104,
+      "failed": 0
+    },
+    {
+      "suite": "word-lessons",
+      "checks": 147,
+      "failed": 0
+    },
+    {
+      "suite": "mobile-motion",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "suite": "notes-watch-visuals",
+      "checks": 1841,
+      "failed": 0
+    },
+    {
+      "suite": "notes-backup",
+      "checks": 13,
+      "failed": 0
+    },
+    {
+      "suite": "home-start",
+      "checks": 94,
+      "failed": 0
+    }
+  ],
+  "generatedViews": 12210,
+  "compiledHandlers": 21851,
+  "package": {
+    "scripts": 21,
+    "styles": 9,
+    "standaloneExact": true,
+    "standaloneBoot": true
+  },
+  "standaloneBytes": 2453718,
+  "standaloneSha256": "13ddf7ff9d84f3928da82f2d6616b8127b699a2f56269278fdbab31d88987e3b",
+  "declaredColorChecks": {
+    "paletteAppearancePairs": 18,
+    "minimumTextContrast": 5.13,
+    "renderedPixels": false
+  },
+  "browserTested": false,
+  "deviceTested": false,
+  "nativeSourceChanged": false
+}

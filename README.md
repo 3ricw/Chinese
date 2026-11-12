@@ -1,6 +1,14 @@
 # Eric’s Chinese — courses, memory aids, and Watch preview
 
-The existing Chinese learning app at https://3ricw.github.io/Chinese/. This update builds on `main` commit `76d63276b86bad7923198157bc443a18244e12e2` and preserves the GitHub Pages origin and browser-local progress.
+The existing Chinese learning app at https://3ricw.github.io/Chinese/. The latest update builds on `main` commit `7342d27ac690544c7bb9370c5d5eb45e4c237637` and preserves the GitHub Pages origin and browser-local progress.
+
+## Clear starting steps and responsive feedback (2026-11-11)
+
+Home now starts new learners with the existing small guided introduction, explains the learning loop, and clearly separates optional quests/games. Established learners keep full-chapter priority; saved practice and due review still come first. The calendar and picture cue are expandable, and full chapter remains available from Home’s additional practice options. The compact glass hero, progress strip, companion, and five mobile destinations remain.
+
+Desktop navigation has one cancelable traveling glass highlight. Original quiet UI ticks respect mute, spoken Chinese, and completion sounds; pending audio cannot play after cancellation or profile replacement. Motion uses the existing lifecycle and respects accessibility settings. No storage keys or learning/reward rules change.
+
+[Design/research review](docs/clear-start-review.md) · [Continue development here](docs/CONTINUE-HERE.md) · [Verification record](tests/verification-clear-start.json). The update passed 12,074 behavior checks and structural checks across 12,210 generated views. These are automated mocks and source checks; actual browser/iPhone visual and audio testing remains outstanding.
 
 ## Memory notes, word visuals, and Apple Watch (2026-11-11)
 
