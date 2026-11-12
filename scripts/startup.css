@@ -1,0 +1,16 @@
+:root{--boot-bg:#070E0A;--boot-ink:#F0F5F2;--boot-muted:#ADBBB2}
+html[data-app-boot],html[data-app-boot] body{background:var(--boot-bg)!important;color:var(--boot-ink)!important}
+html[data-app-boot] :is(.shell,.mobile-nav,#overlay,#toast,#ax-atmosphere){visibility:hidden!important;pointer-events:none!important}
+#app-startup[hidden]{display:none}
+html[data-app-boot] #app-startup{display:grid!important;position:fixed;inset:0;z-index:2147483640;place-content:center;justify-items:center;gap:16px;padding:24px;text-align:center;background:var(--boot-bg);color:var(--boot-ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+#app-startup strong{font-size:20px;letter-spacing:-.03em}
+#app-startup p{max-width:28ch;margin:0;color:var(--boot-muted)}
+#app-startup .boot-mark{display:grid;place-items:center;width:54px;height:54px;border:1px solid currentColor;border-radius:18px;font-size:32px}
+#app-startup .boot-progress{width:24px;height:24px;border:2px solid var(--boot-muted);border-top-color:transparent;border-radius:50%;animation:boot-turn 1s linear infinite}
+html[data-app-boot=failed] .boot-progress{display:none}
+#app-startup button,#app-startup a{font:inherit;color:inherit;min-height:44px;box-sizing:border-box;padding:10px 16px;border:1px solid var(--boot-muted);border-radius:14px;background:transparent;text-decoration:none}
+#app-startup button[hidden]{display:none}
+#app-startup a{font-size:13px}
+@keyframes boot-turn{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){#app-startup .boot-progress{animation:none}}
+html[data-boot-motion=off] #app-startup .boot-progress{animation:none}

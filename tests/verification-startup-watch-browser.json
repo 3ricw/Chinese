@@ -1,0 +1,117 @@
+{
+  "baseCommit": "10f94c0ab51452ab2fa9a3cf483cfb868f2f4e38",
+  "release": "2026.11.11-startup-watch-browser",
+  "behaviorChecks": 12744,
+  "behaviorSuites": [
+    {
+      "suite": "regression",
+      "checks": 112,
+      "failed": 0
+    },
+    {
+      "suite": "import-and-pools",
+      "checks": 29,
+      "failed": 0
+    },
+    {
+      "suite": "handwriting",
+      "checks": 57,
+      "failed": 0
+    },
+    {
+      "suite": "shape-content",
+      "checks": 210,
+      "failed": 0
+    },
+    {
+      "suite": "practice",
+      "checks": 7358,
+      "failed": 0
+    },
+    {
+      "suite": "practice-feedback",
+      "checks": 1626,
+      "failed": 0
+    },
+    {
+      "suite": "ui-practice",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "suite": "workbook-design",
+      "checks": 143,
+      "failed": 0
+    },
+    {
+      "suite": "study-flow",
+      "checks": 63,
+      "failed": 0
+    },
+    {
+      "suite": "visual-memory",
+      "checks": 165,
+      "failed": 0
+    },
+    {
+      "suite": "glass-ui",
+      "checks": 104,
+      "failed": 0
+    },
+    {
+      "suite": "word-lessons",
+      "checks": 147,
+      "failed": 0
+    },
+    {
+      "suite": "mobile-motion",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "suite": "notes-watch-visuals",
+      "checks": 1841,
+      "failed": 0
+    },
+    {
+      "suite": "notes-backup",
+      "checks": 13,
+      "failed": 0
+    },
+    {
+      "suite": "home-start",
+      "checks": 94,
+      "failed": 0
+    },
+    {
+      "suite": "startup-watch-browser",
+      "checks": 670,
+      "failed": 0
+    }
+  ],
+  "generatedViews": 12217,
+  "compiledHandlers": 21849,
+  "package": {
+    "scripts": 22,
+    "externalScripts": 21,
+    "externalStyles": 9,
+    "inlineStyles": 1,
+    "standaloneExact": true,
+    "standaloneBoot": true
+  },
+  "standaloneBytes": 2460934,
+  "standaloneSha256": "334a2954b34752f513272e91d5ae5330305ee42383894f28abba352f8834cb0e",
+  "watch": {
+    "entries": 1127,
+    "commonWords": 600,
+    "topics": 36,
+    "requestedBytes": 315056,
+    "staticBrowsingWithoutJavaScript": true,
+    "noMasteryOrXP": true
+  },
+  "interruptedStartupPreservesRawProgress": true,
+  "browserTested": false,
+  "physicalWatchTested": false,
+  "physicalPhoneTested": false,
+  "nativeSourceChanged": false
+}

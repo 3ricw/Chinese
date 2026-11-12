@@ -8,6 +8,10 @@ Make learning Chinese easy, especially recognizing written forms when the sound 
 
 The November 11 clear-start update gives novices a small guided introduction, experienced learners full-chapter practice, and saved sessions/reviews priority. Home keeps its greeting, primary action, companion, Scroll, four real progress metrics, quests, and exactly three Quick games. Secondary practice and the calendar/picture cue are expandable. See `docs/clear-start-review.md` for research, rationale, and verification limits.
 
+The next November 11 update fixes startup flashes and adds `/watch/`, a compact browser dictionary with search, saved words, topics, both scripts, and a no-JavaScript fallback. `scripts/startup.js`/`.css` are embedded before external resources; the final design module releases the guard only after a complete-state save. The existing `save()` respects pending/failed startup so missing extension modules cannot overwrite stored progress. Keep that protection.
+
+Watch browser content is generated with `node scripts/build-watch.cjs` from existing course/common-word data. Its own local favorites use `erics-chinese-watch-browser-v1`; bounded lookup exposure uses `erics-chinese-watch-lookups-v1`. The page never rewrites main progress. `wristApplyBrowserLookups()` marks paused answers as assisted in the full app when browser storage is shared. No device/account cloud sync exists. `?watch=1` selects the compact surface and `?full=1` bypasses routing. See `docs/startup-watch-browser-review.md` and `tests/verification-startup-watch-browser.json`.
+
 ## Architecture and compatibility
 
 - The app is deployed as `index.html`, `.nojekyll`, and ordered versioned assets. Read every active reference. Several older function definitions exist; edit the effective definition instead of appending another override.
@@ -25,7 +29,7 @@ The November 11 clear-start update gives novices a small guided introduction, ex
 
 ## Verification and packaging
 
-Run relevant suites in `tests/` using `tests/runtime.cjs`; these are DOM/media mocks, not real browser tests. `tests/home-start.cjs` covers the latest Home and feedback changes. `tests/check-html.py` inspects generated views. Full latest results: `tests/verification-clear-start.json`.
+Run relevant suites in `tests/` using `tests/runtime.cjs`; these are DOM/media mocks, not real browser tests. `tests/home-start.cjs` covers the latest Home and feedback changes. `tests/check-html.py` inspects generated views. Full latest results: `tests/verification-startup-watch-browser.json`. `tests/startup-watch-browser.cjs` also simulates missing modules and interrupted startup.
 
 `python3 scripts/build-preview.py /absolute/output/Erics_Chinese_1_and_2_Preview.html` content-addresses active assets and embeds them in the same order. Retain previously published assets. Verify the standalone matches referenced scripts/styles exactly. A downloaded preview has separate browser storage; use backup export/import for a progress copy.
 

@@ -1,6 +1,14 @@
 # Eric’s Chinese — courses, memory aids, and Watch preview
 
-The existing Chinese learning app at https://3ricw.github.io/Chinese/. The latest update builds on `main` commit `7342d27ac690544c7bb9370c5d5eb45e4c237637` and preserves the GitHub Pages origin and browser-local progress.
+The existing Chinese learning app at https://3ricw.github.io/Chinese/. The latest update builds on `main` commit `10f94c0ab51452ab2fa9a3cf483cfb868f2f4e38` and preserves the GitHub Pages origin and browser-local progress.
+
+## Stable startup and Watch browser word search (2026-11-11)
+
+The full app stays covered until every required module has finished. The old file-preview reference appears only without JavaScript; an early inline guard provides saved-theme loading and recovery for slow or failed requests. Main progress is written only after extensions have restored, so an interrupted startup cannot overwrite common-word records or notes. The existing module order, Pages origin, and saved progress keys remain.
+
+[Watch word lookup](https://3ricw.github.io/Chinese/watch/) puts search first across 1,127 word/character entries. Search Chinese, English, or pinyin; filter courses/topics; save words; and return to the previous list. A static topic dictionary supports viewers without JavaScript. This browser view is available alongside the existing native Watch development preview. Dictionary browsing grants no mastery or XP; same-browser lookup assistance carries into paused full-app practice.
+
+[Review and limits](docs/startup-watch-browser-review.md) · [Verification](tests/verification-startup-watch-browser.json). The release passed 12,744 behavior checks and structure checks across 12,217 views. Updated browser/device appearance, text entry, and audio remain untested on actual devices.
 
 ## Clear starting steps and responsive feedback (2026-11-11)
 
