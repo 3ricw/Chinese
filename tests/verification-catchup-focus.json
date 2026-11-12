@@ -1,0 +1,132 @@
+{
+  "baseCommit": "d2a91381337c7e0c53c7df565dd1c31ab4833097",
+  "release": "2026.11.12-catchup-focus",
+  "behaviorChecks": 13040,
+  "suites": [
+    {
+      "suite": "catchup-learning",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "suite": "glass-ui",
+      "checks": 104,
+      "failed": 0
+    },
+    {
+      "suite": "handwriting",
+      "checks": 57,
+      "failed": 0
+    },
+    {
+      "suite": "home-polish",
+      "checks": 68,
+      "failed": 0
+    },
+    {
+      "suite": "home-start",
+      "checks": 94,
+      "failed": 0
+    },
+    {
+      "suite": "import-and-pools",
+      "checks": 29,
+      "failed": 0
+    },
+    {
+      "suite": "mobile-motion",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "suite": "notes-backup",
+      "checks": 13,
+      "failed": 0
+    },
+    {
+      "suite": "notes-watch-visuals",
+      "checks": 1841,
+      "failed": 0
+    },
+    {
+      "suite": "practice",
+      "checks": 7358,
+      "failed": 0
+    },
+    {
+      "suite": "practice-feedback",
+      "checks": 1626,
+      "failed": 0
+    },
+    {
+      "suite": "regression",
+      "checks": 112,
+      "failed": 0
+    },
+    {
+      "suite": "shape-content",
+      "checks": 210,
+      "failed": 0
+    },
+    {
+      "suite": "sound-consistency",
+      "checks": 99,
+      "failed": 0
+    },
+    {
+      "suite": "startup-watch-browser",
+      "checks": 670,
+      "failed": 0
+    },
+    {
+      "suite": "study-flow",
+      "checks": 63,
+      "failed": 0
+    },
+    {
+      "suite": "ui-practice",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "suite": "visual-memory",
+      "checks": 165,
+      "failed": 0
+    },
+    {
+      "suite": "watch-auto-route",
+      "checks": 34,
+      "failed": 0
+    },
+    {
+      "suite": "watch-followup",
+      "checks": 39,
+      "failed": 0
+    },
+    {
+      "suite": "word-lessons",
+      "checks": 147,
+      "failed": 0
+    },
+    {
+      "suite": "workbook-design",
+      "checks": 143,
+      "failed": 0
+    }
+  ],
+  "generatedViews": 12237,
+  "compiledHandlers": 21851,
+  "package": {
+    "scripts": 23,
+    "externalScripts": 22,
+    "externalStyles": 10,
+    "standaloneExact": true,
+    "standaloneCatchup": true,
+    "bytes": 2482046,
+    "sha256": "05c9d253c98ac39212ff63757bb60fae12b9d1fd5f84e7f7b2b55e464f66ad70"
+  },
+  "oldAssetsRetainedUnchanged": true,
+  "browserTested": false,
+  "deviceTested": false,
+  "nativeWatchChanged": false
+}

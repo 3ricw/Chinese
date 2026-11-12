@@ -1,5 +1,7 @@
 # Continuing Eric’s Chinese
 
+Latest November 12 update: `2026.11.12-catchup-focus`. See `docs/catchup-focus-2026-11-12.md` and `tests/verification-catchup-focus.json`. Cross-course recognition catch-up is stored inside the existing validated `learningLab` extension; its module must load before legacy initialization. Home's guide is closed by default; metrics share a strip, fuller content stays, and a chosen catch-up plan has priority after saved sessions. Generic control sounds share one listener; common-word and guided-shape outcomes have their own guarded feedback. All 13,040 automated checks passed; real browser/device verification is still outstanding.
+
 Fetch `3ricw/Chinese`, branch `main`, before changing anything. Live origin: https://3ricw.github.io/Chinese/. Keep that origin so browser-local progress stays accessible. Use a current-head check when publishing; do not force-push. Remote main is the source of truth, not old temporary files or local commit ancestry.
 
 ## Current direction

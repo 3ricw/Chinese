@@ -1,6 +1,14 @@
 # Eric’s Chinese — courses, memory aids, and Watch preview
 
-The existing Chinese learning app at https://3ricw.github.io/Chinese/. The latest update builds on `main` commit `df25591f3026d2946f8b7bc19bcbd6794caa889a` and preserves the GitHub Pages origin and browser-local progress.
+The existing Chinese learning app at https://3ricw.github.io/Chinese/. The latest update builds on `main` commit `d2a91381337c7e0c53c7df565dd1c31ab4833097` and preserves the GitHub Pages origin and browser-local progress.
+
+## Catch-up learning and clearer Home (2026-11-12)
+
+Home → **Catch up on chapters** builds a recognition plan across Chinese 1 and 2, including missed Lessons 2–12 while class is on Lesson 13. Short sets mix due reviews with at most five new shapes using established guided learning and recall. Coverage and recall on later days are shown separately. Quizzes, words, readings, writing, and badges stay with their courses; shared character knowledge carries forward.
+
+Home puts one task first, joins metrics, and collapses the guide while retaining companion, Scroll, quests, and three Quick games. Theme-aware glass styling and spacing clarify the hierarchy. Everyday controls share quiet sounds; grading, speech, mute, and milestones retain guarded feedback.
+
+[Review and limitations](docs/catchup-focus-2026-11-12.md) · [Verification](tests/verification-catchup-focus.json). **13,040 automated checks passed**. Actual browser/device appearance and audio testing remain outstanding.
 
 ## Automatic Watch browser entry (2026-11-12)
 
