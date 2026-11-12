@@ -37,6 +37,10 @@
   window.appBoot = {
     ready: function () {
       if (phase !== 'pending') return false;
+      var styles = document.querySelectorAll('link[rel="stylesheet"][href^="assets/"]');
+      for (var i = 0; i < styles.length; i++) {
+        if (!styles[i].disabled && !styles[i].sheet) { fail(); return false; }
+      }
       phase = 'committing';
       try { if (typeof window.save === 'function') window.save(); }
       catch (_) { phase = 'failed'; root.setAttribute('data-app-boot', 'failed'); update(); return false; }

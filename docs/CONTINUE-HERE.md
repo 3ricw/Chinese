@@ -12,6 +12,8 @@ The next November 11 update fixes startup flashes and adds `/watch/`, a compact 
 
 Watch browser content is generated with `node scripts/build-watch.cjs` from existing course/common-word data. Its own local favorites use `erics-chinese-watch-browser-v1`; bounded lookup exposure uses `erics-chinese-watch-lookups-v1`. The page never rewrites main progress. `wristApplyBrowserLookups()` marks paused answers as assisted in the full app when browser storage is shared. No device/account cloud sync exists. `?watch=1` selects the compact surface and `?full=1` bypasses routing. See `docs/startup-watch-browser-review.md` and `tests/verification-startup-watch-browser.json`.
 
+The November 12 follow-up makes Watch favorites transactional, resumes pending searches on return, provides a dedicated Saved search, and restores the correct query/list during history navigation. A healthy Watch record loads even if the main record is unreadable. Final startup also verifies required stylesheet objects before committing. Review: `docs/watch-followup-2026-11-12.md`; current verification: `tests/verification-watch-followup.json`. The additional 39 checks are in `tests/watch-followup.cjs`.
+
 ## Architecture and compatibility
 
 - The app is deployed as `index.html`, `.nojekyll`, and ordered versioned assets. Read every active reference. Several older function definitions exist; edit the effective definition instead of appending another override.
@@ -29,7 +31,7 @@ Watch browser content is generated with `node scripts/build-watch.cjs` from exis
 
 ## Verification and packaging
 
-Run relevant suites in `tests/` using `tests/runtime.cjs`; these are DOM/media mocks, not real browser tests. `tests/home-start.cjs` covers the latest Home and feedback changes. `tests/check-html.py` inspects generated views. Full latest results: `tests/verification-startup-watch-browser.json`. `tests/startup-watch-browser.cjs` also simulates missing modules and interrupted startup.
+Run relevant suites in `tests/` using `tests/runtime.cjs`; these are DOM/media mocks, not real browser tests. `tests/home-start.cjs` covers the latest Home and feedback changes. `tests/check-html.py` inspects generated views. Full latest results: `tests/verification-watch-followup.json`. `tests/startup-watch-browser.cjs` also simulates missing modules and interrupted startup.
 
 `python3 scripts/build-preview.py /absolute/output/Erics_Chinese_1_and_2_Preview.html` content-addresses active assets and embeds them in the same order. Retain previously published assets. Verify the standalone matches referenced scripts/styles exactly. A downloaded preview has separate browser storage; use backup export/import for a progress copy.
 

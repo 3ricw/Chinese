@@ -49,6 +49,8 @@ extra=root/'startup-watch-browser-views.json'
 if extra.exists():views+=json.loads(extra.read_text())
 for name in ['index.html','browse.html']:
  views.append({'name':'watch/full/'+name,'html':(Path(__file__).parent.parent/'watch'/name).read_text()})
+extra=root/'watch-followup-views.json'
+if extra.exists():views+=json.loads(extra.read_text())
 for view in views:
  p=Check();p.feed(view['html']);handlers.update(p.handlers)
  if p.stack:p.errors.append('unclosed '+','.join(p.stack))

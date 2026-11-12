@@ -1,6 +1,14 @@
 # Eric’s Chinese — courses, memory aids, and Watch preview
 
-The existing Chinese learning app at https://3ricw.github.io/Chinese/. The latest update builds on `main` commit `10f94c0ab51452ab2fa9a3cf483cfb868f2f4e38` and preserves the GitHub Pages origin and browser-local progress.
+The existing Chinese learning app at https://3ricw.github.io/Chinese/. The latest update builds on `main` commit `99eb883a363a595180411d1e9cef3f707d47b150` and preserves the GitHub Pages origin and browser-local progress.
+
+## Watch search and save reliability (2026-11-12)
+
+Saved words now have their own search field. Searches resume correctly when the page returns from the background, and word links/Back restore the correct query and list. Favorites change only after a successful browser write, so a failed save or removal cannot display a false Saved state. A healthy Watch saved list also loads independently of an unreadable main-app record.
+
+Final startup additionally verifies that required stylesheets are available before saving state and revealing the interface. The existing recovery screen handles failure. The dictionary, course IDs, learning rules, theme effects, and reward safeguards are unchanged.
+
+[Review](docs/watch-followup-2026-11-12.md) · [Verification](tests/verification-watch-followup.json). The release passed 12,783 automated behavior checks. Real browser and physical-device verification remains outstanding.
 
 ## Stable startup and Watch browser word search (2026-11-11)
 

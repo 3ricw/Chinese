@@ -1,0 +1,123 @@
+{
+  "baseCommit": "99eb883a363a595180411d1e9cef3f707d47b150",
+  "release": "2026.11.12-watch-followup",
+  "behaviorChecks": 12783,
+  "behaviorSuites": [
+    {
+      "suite": "regression",
+      "checks": 112,
+      "failed": 0
+    },
+    {
+      "suite": "import-and-pools",
+      "checks": 29,
+      "failed": 0
+    },
+    {
+      "suite": "handwriting",
+      "checks": 57,
+      "failed": 0
+    },
+    {
+      "suite": "shape-content",
+      "checks": 210,
+      "failed": 0
+    },
+    {
+      "suite": "practice",
+      "checks": 7358,
+      "failed": 0
+    },
+    {
+      "suite": "practice-feedback",
+      "checks": 1626,
+      "failed": 0
+    },
+    {
+      "suite": "ui-practice",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "suite": "workbook-design",
+      "checks": 143,
+      "failed": 0
+    },
+    {
+      "suite": "study-flow",
+      "checks": 63,
+      "failed": 0
+    },
+    {
+      "suite": "visual-memory",
+      "checks": 165,
+      "failed": 0
+    },
+    {
+      "suite": "glass-ui",
+      "checks": 104,
+      "failed": 0
+    },
+    {
+      "suite": "word-lessons",
+      "checks": 147,
+      "failed": 0
+    },
+    {
+      "suite": "mobile-motion",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "suite": "notes-watch-visuals",
+      "checks": 1841,
+      "failed": 0
+    },
+    {
+      "suite": "notes-backup",
+      "checks": 13,
+      "failed": 0
+    },
+    {
+      "suite": "home-start",
+      "checks": 94,
+      "failed": 0
+    },
+    {
+      "suite": "startup-watch-browser",
+      "checks": 670,
+      "failed": 0
+    },
+    {
+      "suite": "watch-followup",
+      "checks": 39,
+      "failed": 0
+    }
+  ],
+  "generatedViews": 12219,
+  "compiledHandlers": 21855,
+  "package": {
+    "scripts": 22,
+    "externalScripts": 21,
+    "externalStyles": 9,
+    "inlineStyles": 1,
+    "standaloneExact": true,
+    "standaloneBoot": true
+  },
+  "standaloneBytes": 2461151,
+  "standaloneSha256": "c14460a06db44badbe80332f691ff77980872c4a6da97a600f518f61d19fa788",
+  "watch": {
+    "entries": 1127,
+    "commonWords": 600,
+    "topics": 36,
+    "catalogChanged": false,
+    "favoritesCommitAfterStorage": true,
+    "searchSaved": true,
+    "queryResumesAfterVisibilityChange": true,
+    "historyRestoresQuery": true
+  },
+  "browserTested": false,
+  "physicalWatchTested": false,
+  "physicalPhoneTested": false,
+  "nativeSourceChanged": false
+}
