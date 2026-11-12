@@ -4,10 +4,15 @@
   'use strict';
   var root = document.documentElement, phase = 'pending', slow = false;
   var params = new URLSearchParams(location.search || '');
-  var small = window.innerWidth <= 260 && window.innerHeight <= 520;
-  var coarse = window.matchMedia && matchMedia('(pointer: coarse)').matches;
+  // Read CSS pixels, not Retina hardware pixels. The disabled-adaptations
+  // meta tag lets watchOS expose its real viewport instead of a 320px layout.
+  function watchSize(width, height) {
+    return width > 0 && height > 0 && width <= 260 && height <= 520;
+  }
+  var small = watchSize(window.innerWidth, window.innerHeight) ||
+    (window.screen && watchSize(window.screen.width, window.screen.height));
   if (/^https?:$/.test(location.protocol) && params.get('full') !== '1' &&
-      (params.get('watch') === '1' || /watch/i.test(navigator.userAgent || '') || (small && coarse))) {
+      (params.get('watch') === '1' || /watch/i.test(navigator.userAgent || '') || small)) {
     var watchURL = new URL('watch/', location.href);
     if (params.get('q')) watchURL.searchParams.set('q', params.get('q').slice(0,80));
     location.replace(watchURL.href);

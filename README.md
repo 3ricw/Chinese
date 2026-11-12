@@ -1,6 +1,12 @@
 # Eric’s Chinese — courses, memory aids, and Watch preview
 
-The existing Chinese learning app at https://3ricw.github.io/Chinese/. The latest update builds on `main` commit `99eb883a363a595180411d1e9cef3f707d47b150` and preserves the GitHub Pages origin and browser-local progress.
+The existing Chinese learning app at https://3ricw.github.io/Chinese/. The latest update builds on `main` commit `df25591f3026d2946f8b7bc19bcbd6794caa889a` and preserves the GitHub Pages origin and browser-local progress.
+
+## Automatic Watch browser entry (2026-11-12)
+
+Opening the normal app URL at Watch-sized dimensions now routes directly to word Search without requiring a touch-pointer signal or Watch-specific user agent. Native Watch viewport metadata avoids watchOS's wider shrink-to-fit layout; the same metadata is present on Search and the static topic dictionary. A small screen can also be detected when its browser reports a wider layout viewport. Phone/desktop entry, the explicit `?watch=1` link, and the `?full=1` bypass remain available.
+
+[Review](docs/watch-auto-route-2026-11-12.md) · [Focused verification](tests/verification-watch-auto-route.json). All 991 checks rerun for this update passed, including 34 new routing checks. Real Watch browser verification remains outstanding.
 
 ## Watch search and save reliability (2026-11-12)
 

@@ -36,7 +36,7 @@ for(const suffix of ['js','css']){
 }
 fs.writeFileSync(path.join(dir,'index.html'),index);
 const style=index.match(/href="(watch-ui[^\"]+\.css)"/)[1];
-const head='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#070E0A"><title>Browse words · Eric’s Chinese</title><link rel="stylesheet" href="'+style+'"></head><body><main class="watch-page"><header><a href="./">← Word search</a><h1>Browse words</h1><p>Open a topic, then tap a word.</p></header>';
+const head='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="disabled-adaptations" content="watch"><meta name="theme-color" content="#070E0A"><title>Browse words · Eric’s Chinese</title><link rel="stylesheet" href="'+style+'"></head><body><main class="watch-page"><header><a href="./">← Word search</a><h1>Browse words</h1><p>Open a topic, then tap a word.</p></header>';
 const fallbackSeen=new Set();
 const body=groups.map(g=>'<details class="topic" id="'+esc(g.id)+'"><summary>'+esc(g.name)+'</summary>'+entries.filter(e=>e.groups.includes(g.id)).map(e=>{const id=fallbackSeen.has(e.id)?'':' id="'+esc(e.id)+'"';fallbackSeen.add(e.id);return '<details class="word-static"'+id+'><summary><span lang="zh">'+esc(e.s)+(e.s!==e.t?' / '+esc(e.t):'')+'</span><span>'+esc(e.p)+'</span></summary><p>'+esc(e.en)+'</p>'+(e.x?'<p lang="zh">'+esc(e.x)+'</p><p>'+esc(e.xe)+'</p>':'')+'</details>'}).join('')+'</details>').join('');
 fs.writeFileSync(path.join(dir,'browse.html'),head+body+'<p><a href="./">Back to word search</a></p></main></body></html>');

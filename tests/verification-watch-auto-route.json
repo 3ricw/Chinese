@@ -1,0 +1,70 @@
+{
+  "baseCommit": "df25591f3026d2946f8b7bc19bcbd6794caa889a",
+  "release": "2026.11.12-watch-auto-route",
+  "behaviorChecks": 991,
+  "behaviorSuites": [
+    {
+      "suite": "watch-auto-route",
+      "checks": 34,
+      "failed": 0
+    },
+    {
+      "suite": "startup-watch-browser",
+      "checks": 670,
+      "failed": 0
+    },
+    {
+      "suite": "watch-followup",
+      "checks": 39,
+      "failed": 0
+    },
+    {
+      "suite": "regression",
+      "checks": 112,
+      "failed": 0
+    },
+    {
+      "suite": "import-and-pools",
+      "checks": 29,
+      "failed": 0
+    },
+    {
+      "suite": "notes-backup",
+      "checks": 13,
+      "failed": 0
+    },
+    {
+      "suite": "home-start",
+      "checks": 94,
+      "failed": 0
+    }
+  ],
+  "structure": {
+    "views": 12219,
+    "compiledHandlers": 21855,
+    "failed": 0,
+    "method": "Rechecked existing generated-view fixtures and current Watch HTML documents; no new full UI rendering claimed"
+  },
+  "package": {
+    "scripts": 22,
+    "externalScripts": 21,
+    "externalStyles": 9,
+    "standaloneExact": true,
+    "standaloneBoot": true,
+    "standaloneBytes": 2461453,
+    "standaloneSha256": "8a7139056f54840fedf5c0a00e2d11bba4b64f8deb573504598df80615c6845c"
+  },
+  "watch": {
+    "nativeViewportMetadata": true,
+    "pointerDetectionRequired": false,
+    "viewportOrScreenDimensions": true,
+    "maxWidthCSSPixels": 260,
+    "maxHeightCSSPixels": 520,
+    "searchFirst": true,
+    "fullAppOverride": true,
+    "catalogChanged": false
+  },
+  "browserTested": false,
+  "physicalWatchTested": false,
+  "nativeSourceChanged": false
+}
