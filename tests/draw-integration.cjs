@@ -1,0 +1,36 @@
+/* Real app/Watch callbacks under DOM/storage mocks, not browser/device QA. */
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{boot}=require('./runtime.cjs');
+const root=path.resolve(__dirname,'..'),checks=[],failures=[],views=[];function check(name,fn){checks.push(name);try{fn()}catch(e){failures.push({name,error:e.message})}}
+const main=boot(),r=main.run;r("onboardingStep=null;state.profile.setupDone=true;closeModal();navigate('tools')");
+views.push({name:'draw/tools',html:main.html()});
+check('Dictionary is the first base Tools entry',()=>{const html=main.html();assert(html.indexOf('<strong>Dictionary</strong>')<html.indexOf('<strong>Draw to find a word</strong>'));assert(html.indexOf('<strong>Dictionary</strong>')<html.indexOf('<strong>Memory notes</strong>'))});
+check('Tools retains catch-up after Home is simplified',()=>assert(main.html().includes('catchupOpen()')));
+const index=fs.readFileSync(path.join(root,'index.html'),'utf8'),refs=[...index.matchAll(/src="(assets\/[^"]+)"/g)].map(x=>x[1]),combined=refs.map(x=>fs.readFileSync(path.join(root,x),'utf8')).join('\n');
+check('Review and common-word extensions do not prepend over Dictionary',()=>{assert(!combined.includes("insertAdjacentHTML('afterbegin',cwEntryMarkup(true))"));assert(!combined.includes("grid.insertAdjacentHTML('afterbegin',`<button class=\"flow-tool bx-tool-review\""))});
+r("navigate('search')");check('the normal Dictionary has direct handwriting access',()=>assert(main.html().includes('DrawLookup.openMain()')));
+const xp=r('bx.xp'),knowledge=r('JSON.stringify(state.cards)');r('DrawLookup.openMain()');
+check('desktop drawing opens in the existing modal',()=>assert(main.nodes.get('overlay').innerHTML.includes('draw-main-host')));
+check('opening the pad never grants knowledge or XP',()=>{assert.equal(r('bx.xp'),xp);assert.equal(r('JSON.stringify(state.cards)'),knowledge)});
+r("DrawLookup.state().search('你好')");
+check('selected drawing text reaches word-aware Quick Find',()=>{assert.equal(main.nodes.get('flow-lookup-input').value,'你好');assert(r("rxFindRows.some(row=>row.kind==='words')"));assert(main.nodes.get('flow-lookup-results').innerHTML.includes('你好'))});
+check('returning from drawing never starts spoken audio',()=>{let sounds=0;main.ctx.speechSynthesis.speak=()=>sounds++;r("DrawLookup.openMain();DrawLookup.state().search('你好')");assert.equal(sounds,0)});
+r("closeModal();startSession('all','1',['你']);checkpointCurrent();navigate('tools');DrawLookup.openMain();DrawLookup.state().expose('你好')");
+check('drawing suggestions preserve assistance in paused recall',()=>assert(r('savedResume.data.usedHint')));
+const key='hanzi-reading-room-v2',seed=main.storage.get(key),watch=boot({[key]:seed},root,'watch/index.html'),w=watch.run;
+const host=watch.ctx.document.getElementById('watch-draw-host');w('WatchWords.draw()');
+check('the Watch Search page opens its own small pad',()=>{assert(!host.hidden);assert(w('!!DrawLookup.state()'))});
+const watchBefore=watch.storage.get(key);w("DrawLookup.state().expose('你好')");
+check('Watch drawing exposure uses the bounded lookup ledger',()=>{const ledger=JSON.parse(watch.storage.get('erics-chinese-watch-lookups-v1'));assert(ledger.texts.includes('你好'));assert(ledger.texts.length<=120)});
+w("DrawLookup.state().search('你好')");
+check('Watch candidate search opens Search with the selected word',()=>{assert.equal(w('WatchWords.state.view'),'search');assert.equal(w('WatchWords.state.q'),'你好');assert.equal(w('WatchWords.state.scope'),'all');assert(host.hidden);assert(watch.nodes.get('watch-results').innerHTML.includes('你好'))});
+check('Watch drawing lookup never rewrites main progress',()=>assert.equal(watch.storage.get(key),watchBefore));
+w("WatchWords.go('saved');WatchWords.draw();DrawLookup.state().search('关系')");
+check('drawing from Saved can find a word outside favorites',()=>{assert.equal(w('WatchWords.state.view'),'search');assert.equal(w('WatchWords.state.q'),'关系');assert(watch.nodes.get('watch-results').innerHTML.includes('关系'))});
+w("WatchWords.draw();WatchWords.open('cw-01-01')");
+check('opening a word closes and invalidates the Watch pad',()=>{assert(host.hidden);assert.equal(w('DrawLookup.state()'),null)});
+const html=fs.readFileSync(path.join(root,'watch/index.html'),'utf8');
+check('Watch drawing is directly below text search and uses shared versioned assets',()=>{assert(html.indexOf('id="watch-draw-button"')<html.indexOf('id="watch-scope-controls"'));assert(html.includes('../assets/draw-lookup-'));assert(html.includes('type="button" id="watch-draw-button"'))});
+check('model and recognizer are absent from initial hosted script requests',()=>{assert(!/src="[^"]*draw-(?:model|recognizer)/.test(index));assert(!/src="[^"]*draw-(?:model|recognizer)/.test(html))});
+for(const a of [main,watch])check('integrated lookup paths have no runtime errors '+checks.length,()=>assert.deepEqual(a.errors,[]));
+const result={checks:checks.length,failed:failures.length,failures,method:'DOM/storage mocks with actual desktop/Watch drawing adapters, query routing, assistance, and Tools order',browserTested:false,watchDeviceTested:false};
+fs.writeFileSync(path.join(__dirname,'results/draw-integration.json'),JSON.stringify(result,null,2));fs.writeFileSync(path.join(__dirname,'results/draw-integration-views.json'),JSON.stringify(views));console.log(JSON.stringify(result));if(failures.length)process.exitCode=1;

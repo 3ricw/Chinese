@@ -29,6 +29,13 @@ const hash=crypto.createHash('sha256').update(code).digest('hex').slice(0,12),fi
 const dir=path.join(root,'watch');fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(path.join(dir,file),code);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let index=fs.readFileSync(path.join(dir,'index.html'),'utf8');
+// Reuse the same handwriting interface and versioned model URLs as the app.
+const appHTML=fs.readFileSync(path.join(root,'index.html'),'utf8');
+for(const suffix of ['js','css']){
+ const shared=appHTML.match(new RegExp('(?:src|href)="(assets/draw-lookup-[a-f0-9]{12}\\.'+suffix+')"'));
+ if(!shared)throw Error('Build the main preview before the Watch page');
+ index=index.replace(new RegExp('(?:src|href)="\\.\\./assets/draw-lookup(?:-[a-f0-9]{12})?\\.'+suffix+'"'),(suffix==='js'?'src':'href')+'="../'+shared[1]+'"');
+}
 index=index.replace(/src="word-data[^\"]*\.js"/,'src="'+file+'"');
 for(const suffix of ['js','css']){
  const name='watch-ui.'+suffix,bytes=fs.readFileSync(path.join(dir,name)),digest=crypto.createHash('sha256').update(bytes).digest('hex').slice(0,12),dest='watch-ui-'+digest+'.'+suffix;

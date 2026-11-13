@@ -51,7 +51,7 @@ for name in ['index.html','browse.html']:
  views.append({'name':'watch/full/'+name,'html':(Path(__file__).parent.parent/'watch'/name).read_text()})
 extra=root/'watch-followup-views.json'
 if extra.exists():views+=json.loads(extra.read_text())
-for name in ['home-polish','catchup-learning']:
+for name in ['home-polish','catchup-learning','minimal-home','draw-lookup-ui','draw-integration']:
  extra=root/(name+'-views.json')
  if extra.exists():views+=json.loads(extra.read_text())
 for view in views:

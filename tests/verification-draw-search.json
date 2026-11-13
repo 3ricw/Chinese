@@ -1,0 +1,172 @@
+{
+  "baseCommit": "1de0f74ae878fb29c35ed07e7c6300ddf8a637a0",
+  "release": "2026.11.12-draw-search",
+  "checks": 13223,
+  "suites": [
+    {
+      "suite": "startup-watch-browser",
+      "checks": 670,
+      "failed": 0
+    },
+    {
+      "suite": "workbook-design",
+      "checks": 143,
+      "failed": 0
+    },
+    {
+      "suite": "mobile-motion",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "suite": "word-lessons",
+      "checks": 147,
+      "failed": 0
+    },
+    {
+      "suite": "watch-auto-route",
+      "checks": 34,
+      "failed": 0
+    },
+    {
+      "suite": "notes-watch-visuals",
+      "checks": 1841,
+      "failed": 0
+    },
+    {
+      "suite": "notes-backup",
+      "checks": 13,
+      "failed": 0
+    },
+    {
+      "suite": "shape-content",
+      "checks": 210,
+      "failed": 0
+    },
+    {
+      "suite": "draw-integration",
+      "checks": 19,
+      "failed": 0
+    },
+    {
+      "suite": "draw-lookup-ui",
+      "checks": 77,
+      "failed": 0
+    },
+    {
+      "suite": "draw-recognizer",
+      "checks": 71,
+      "failed": 0
+    },
+    {
+      "suite": "handwriting",
+      "checks": 57,
+      "failed": 0
+    },
+    {
+      "suite": "watch-followup",
+      "checks": 39,
+      "failed": 0
+    },
+    {
+      "suite": "catchup-learning",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "suite": "practice-feedback",
+      "checks": 1626,
+      "failed": 0
+    },
+    {
+      "suite": "study-flow",
+      "checks": 63,
+      "failed": 0
+    },
+    {
+      "suite": "home-start",
+      "checks": 94,
+      "failed": 0
+    },
+    {
+      "suite": "sound-consistency",
+      "checks": 99,
+      "failed": 0
+    },
+    {
+      "suite": "ui-practice",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "suite": "regression",
+      "checks": 112,
+      "failed": 0
+    },
+    {
+      "suite": "minimal-home",
+      "checks": 76,
+      "failed": 0
+    },
+    {
+      "suite": "import-and-pools",
+      "checks": 29,
+      "failed": 0
+    },
+    {
+      "suite": "practice",
+      "checks": 7358,
+      "failed": 0
+    },
+    {
+      "suite": "glass-ui",
+      "checks": 104,
+      "failed": 0
+    },
+    {
+      "suite": "visual-memory",
+      "checks": 165,
+      "failed": 0
+    },
+    {
+      "suite": "home-polish",
+      "checks": 8,
+      "failed": 0
+    }
+  ],
+  "generatedViews": 12238,
+  "compiledHandlers": 21858,
+  "package": {
+    "hostedScripts": 24,
+    "externalScripts": 23,
+    "externalStyles": 11,
+    "lazyAssets": [
+      {
+        "path": "assets/draw-recognizer-39f183702cbc.js",
+        "sha256": "39f183702cbcf1cca2a53ca3d85a5a026d08d7a41eb7e9ef3ce2d52ed4406c11",
+        "bytes": 7667
+      },
+      {
+        "path": "assets/draw-model-905440fdb00b.js",
+        "sha256": "905440fdb00b67c93f695340d7b23aac9b3b8e27df7aa63a8199857bf9ccfb5e",
+        "bytes": 818012
+      }
+    ],
+    "standaloneScripts": 26,
+    "standaloneExact": true,
+    "standaloneDraw": true,
+    "bytes": 3319682,
+    "sha256": "0d77bdbbe04813a4391e8da3011db789b1ca0ac461ab89fdf852460f19bafc2c"
+  },
+  "recognition": {
+    "descriptorForms": 9507,
+    "manuallyDrawnFixtures": 9,
+    "fixtureIntendedCharacterWithinTop": 3,
+    "grade": false,
+    "localOnly": true
+  },
+  "oldAssetsRetainedUnchanged": true,
+  "browserTested": false,
+  "physicalWatchTested": false,
+  "nativeWatchChanged": false
+}

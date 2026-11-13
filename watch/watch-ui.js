@@ -24,9 +24,10 @@ var WatchWords=(function(){
  function link(w){return '<a class="word-result" href="browse.html#'+encodeURIComponent(w.id)+'" data-word="'+esc(w.id)+'"><span><strong lang="zh">'+esc(form(w))+'</strong><small>'+esc(w.p)+'</small><span class="result-meaning">'+esc(w.en)+'</span></span><span class="result-arrow" aria-hidden="true">›</span></a>'}
  function isList(){return s.view==='search'||s.view==='saved'}
  function rememberQuery(){if(isList())queries[s.view]=s.q}
+ function draw(){if(!isList()||!window.DrawLookup)return;var host=el('watch-draw-host');DrawLookup.attach(host,{base:'../assets/',close:function(){host.hidden=true;el('watch-draw-button').focus()},expose:function(chars){help([{s:chars,t:chars}])},search:function(term){DrawLookup.close();s.view='search';s.scope='all';s.group='';query(term,true);el('watch-query').focus()}});host.hidden=false;try{host.scrollIntoView({block:'start'})}catch(_){}}
  function syncControls(){
   var view=s.view==='detail'&&returnTo?returnTo.view:s.view,saved=view==='saved';
-  el('watch-search').hidden=!isList();el('watch-query').value=s.q;el('watch-query').placeholder=saved?'Find a saved word':'你好 · ni3 hao3 · hello';
+  el('watch-search').hidden=!isList();el('watch-draw-button').hidden=!isList();if(!isList()){el('watch-draw-host').hidden=true;if(window.DrawLookup)DrawLookup.close();}el('watch-query').value=s.q;el('watch-query').placeholder=saved?'Find a saved word':'你好 · ni3 hao3 · hello';
   el('watch-query-label').textContent=saved?'Search your saved words':'Chinese, pinyin, or English';
   el('watch-scope-controls').hidden=saved;el('watch-scope').value=s.scope;el('watch-script').value=s.script;
   document.querySelectorAll('[data-view]').forEach(function(a){if(a.dataset.view===view)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
@@ -83,5 +84,5 @@ var WatchWords=(function(){
   document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')stop();else if(isList())query(el('watch-query').value,true)});
   routeFromURL();
  }
- boot();return {search:search,normalize:norm,open:detail,back:back,query:query,go:go,state:s,save:saveWord};
+ boot();return {search:search,normalize:norm,open:detail,back:back,query:query,go:go,state:s,save:saveWord,draw:draw};
 })();

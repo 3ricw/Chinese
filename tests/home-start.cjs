@@ -12,8 +12,8 @@ function snapshot(){return r('JSON.stringify({cards:state.cards,words:state.comm
  for(const course of ['chinese-1','chinese-2'])for(const script of ['simplified','traditional'])for(const size of [1,3,5]){
   fresh(course);r(`state.settings.script='${script}';state.settings.newCharacters=${size};renderHome()`);
   const plan=r('rxNextAction()'),before=snapshot(),h=a.html();views.push({name:`home-start/${course}/${script}/${size}`,html:h});
-  check(`${course}/${script}/${size}: one clear small-set action`,()=>{assert.equal(plan.button,`Learn ${size} characters`);assert(plan.action.includes("startSession('learn'"));assert.equal((h.match(/class="btn primary"/g)||[]).length,1);assert(h.includes('Start here'));assert(h.includes('Full chapter practice'))});
-  check(`${course}/${script}/${size}: explanation, optional games and deferred calendar`,()=>{assert(h.indexOf('rx-home-guide')<h.indexOf('ax-home-metrics'));assert(h.includes('When you want a change'));assert.equal((h.match(/data-game=/g)||[]).length,3);assert(h.includes('id="bx-quests"'));assert(/<details class="rx-home-week"><summary>/.test(h));assert(!/<details class="rx-home-week"[^>]*\bopen\b/.test(h))});
+  check(`${course}/${script}/${size}: one clear small-set action`,()=>{assert.equal(plan.button,`Learn ${size} characters`);assert(plan.action.includes("startSession('learn'"));assert.equal((h.match(/class="btn primary"/g)||[]).length,1);assert(h.includes('Start here'));assert(h.includes('class="rx-home-more"'))});
+  check(`${course}/${script}/${size}: only the chapter and Scroll lead Home`,()=>{assert(h.includes('rx-home-minimal'));assert(h.includes('Open Scroll'));assert(!h.includes('rx-home-guide'));assert(!h.includes('id="bx-quests"'));assert.equal((h.match(/data-game=/g)||[]).length,0);assert(/<details class="rx-home-more"><summary>/.test(h));assert(!/<details[^>]*\bopen\b/.test(h))});
   r('rxOpenHomeHelp()');views.push({name:`home-help/${course}/${script}/${size}`,html:a.nodes.get('overlay').innerHTML});r('closeModal();renderHome()');
   check(`${course}/${script}/${size}: explanatory UI adds no learning or rewards`,()=>assert.equal(snapshot(),before));
   r(plan.action);
@@ -29,12 +29,12 @@ function snapshot(){return r('JSON.stringify({cards:state.cards,words:state.comm
  }
  check('a full first guided set finishes without manufacturing spaced familiarity',()=>{assert(r('session.done'));assert.equal(r('uniqueCards().filter(familiar).length'),0);assert(r('Object.keys(state.cards).length>0'))});
  r("clearSavedSession();navigate('home')");
- check('the next small set never jumps from three introduced shapes to fifty cold prompts',()=>assert(r("rxNextAction().action.startsWith(\"startSession('learn'\")||rxNextAction().action==='rxStartRecovery()'")));
+ check('the next small set never jumps from three introduced shapes to fifty cold prompts',()=>assert(r("rxNextAction().action.startsWith(\"startSession('learn'\")||rxNextAction().action.startsWith(\"startSession('all'\")")));
  for(const course of ['chinese-1','chinese-2']){
   fresh(course);r("var focus=courseFocusId();uniqueCards(focus).slice(0,8).forEach(c=>state.cards[c.character]={seen:3,streak:2,interval:3,memoryStage:2,last:Date.now(),due:Date.now()+86400000});state.activity[dayKey()]={cards:8,readings:0};renderHome()");
   check(course+': established learners retain full-chapter priority',()=>assert(r("rxNextAction().action.startsWith(\"startSession('all'\")")));
   r("Object.values(state.cards).forEach(v=>v.due=0);renderHome()");
-  check(course+': due reviews have a bounded next action',()=>assert.equal(r('rxNextAction().action'),'rxStartRecovery()'));
+  check(course+': due reviews remain optional without replacing the chapter',()=>assert(r("rxNextAction().action.startsWith(\"startSession('all'\")")));
   r("startSession('all',focus);reveal();checkpointCurrent();navigate('home')");
   check(course+': saved practice wins over reviews',()=>assert.equal(r('rxNextAction().action'),'resumeSession()'));
   r('rxOpenHomeHelp();closeModal();resumeSession()');

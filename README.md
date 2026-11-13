@@ -1,6 +1,14 @@
 # Eric’s Chinese — courses, memory aids, and Watch preview
 
-The existing Chinese learning app at https://3ricw.github.io/Chinese/. The latest update builds on `main` commit `d2a91381337c7e0c53c7df565dd1c31ab4833097` and preserves the GitHub Pages origin and browser-local progress.
+The existing Chinese learning app at https://3ricw.github.io/Chinese/. The latest update builds on `main` commit `1de0f74ae878fb29c35ed07e7c6300ddf8a637a0` and preserves the GitHub Pages origin and browser-local progress.
+
+## Draw to search and simpler Home (2026-11-12)
+
+Draw a character in Watch Search or the app Dictionary/Tools, choose a suggestion, and search its words. Choose additional characters to assemble a compound. Recognition runs locally with 9,507 licensed character descriptors; it offers approximate suggestions and no writing grade or learning credit. The model loads only when requested; text search remains available.
+
+Home now centers on resume/start chapter and Scroll, with a small companion, actual streak, and one closed More section. Quests/games stay in Arcade. Dictionary is first in Tools; Review, common words, notes, catch-up, and other activities remain accessible.
+
+[Review and limits](docs/draw-search-2026-11-12.md) · [Verification](tests/verification-draw-search.json) · [Data license](vendor/handwriting/README.md). **13,223 automated checks passed**; real-browser and physical Watch input/accuracy remain untested.
 
 ## Catch-up learning and clearer Home (2026-11-12)
 

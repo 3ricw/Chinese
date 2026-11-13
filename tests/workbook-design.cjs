@@ -20,10 +20,10 @@ for(const course of ['chinese-1','chinese-2']){
  check(course+' Home has one primary next step',()=>assert.equal((home.match(/class="btn primary"/g)||[]).length,1));
  check(course+' primary action matches its current course',()=>assert(home.includes('onclick="'+r('rxNextAction().action')+'"')));
  check(course+' greeting, companion and Scroll remain visible',()=>{for(const token of ['rx-greeting','rx-companion-scene','openScrollQuickAccess()'])assert(home.includes(token));assert(home.indexOf('rx-companion-scene')<home.indexOf('<details class="rx-home-more"'))});
- check(course+' daily status stays with the next action',()=>assert(home.indexOf('class="bx-status-row ax-home-metrics"')>home.indexOf('class="vm-home-dashboard"')&&home.indexOf('class="bx-status-row ax-home-metrics"')<home.indexOf('class="rx-home-extras"')));
- check(course+' three quests and three quick games stay outside disclosure',()=>{const first=home.slice(0,home.indexOf('<details class="rx-home-more"'));assert.equal((first.match(/data-game=/g)||[]).length,3);assert(first.includes('id="bx-quests"'));assert(first.includes('All games'))});
+ check(course+' a compact actual streak replaces the dashboard metrics',()=>{assert(home.includes('class="rx-home-streak"'));assert(!home.includes('ax-home-metrics'));assert(home.includes(r('streak()')+' day streak. Open progress'))});
+ check(course+' optional games and quests no longer compete on Home',()=>{assert.equal((home.match(/data-game=/g)||[]).length,0);assert(!home.includes('id="bx-quests"'));assert(!home.includes('Quick games'))});
  check(course+' more practice uses closed native details',()=>{assert(more.startsWith('<details class="rx-home-more"><summary>'));assert(!/<details[^>]*\bopen\b/.test(more));assert(!/<summary[^>]*onclick/.test(more))});
- check(course+' secondary learning paths remain available',()=>{for(const action of ["navigate('lab')","navigate('review')","labOpenWeekly()","navigate('labskills')"])assert(more.includes('onclick="'+action+'"'))});
+ check(course+' secondary learning paths remain available',()=>{for(const action of ["navigate('review')","catchupOpen()","rxOpenHomeHelp()"])assert(more.includes('onclick="'+action+'"'))});
  r('renderHome();renderHome()');check(course+' repeated Home renders do not duplicate links',()=>{assert.equal((app.html().match(/class="rx-home-more"/g)||[]).length,1);assert.equal((app.html().match(/class="ax-row"/g)||[]).length,3)});
 }
 // Related component forms use one color without changing labels, actions, or knowledge.
@@ -54,8 +54,9 @@ const currentObserver=observers.at(-1);currentObserver.cb([{target:currentTitle,
 // Single forms receive the workbook guide; multi-character words and existing artwork keep their structure.
 const han=new app.ctx.Element(),word=new app.ctx.Element(),art=new app.ctx.Element();han.textContent='好';word.textContent='你好';art.textContent='好';art.children.push({});app.ctx.workbookFixture={querySelectorAll:s=>s===r('AX_HERO')?[han,word,art]:[]};
 r('axDecorate(workbookFixture);axDecorate(workbookFixture)');check('one Chinese form receives the square',()=>assert(han.classList.contains('ax-tzg')));check('words are not squeezed into a single square',()=>assert(!word.classList.contains('ax-tzg')));check('existing companion/character artwork is preserved',()=>assert(!art.classList.contains('ax-tzg')));
-// Compare fresh and rich restored profiles; UI initialization cannot migrate away their records.
-r("state.cards['你']={seen:9,streak:4,interval:7,due:Date.now()+86400000,last:Date.now(),memoryStage:2};state.bookmarks=['你'];state.memoryNotes['你']='My saved visual cue';state.settings.palette='black';state.settings.theme='light';labImportDeck('Chinese,pinyin,English\\n朋友,péngyou,friend\\n学校,xuéxiào,school','Saved class');labData().stamps=11;save()");
+// Compare rich restored profiles, including real Scroll progression. Empty/null
+// Scroll state is lazily initialized by the legacy startup; saved sets must persist.
+r("state.cards['你']={seen:9,streak:4,interval:7,due:Date.now()+86400000,last:Date.now(),memoryStage:2};state.bookmarks=['你'];state.memoryNotes['你']='My saved visual cue';state.settings.palette='black';state.settings.theme='light';labImportDeck('Chinese,pinyin,English\\n朋友,péngyou,friend\\n学校,xuéxiào,school','Saved class');labData().stamps=11;feedEnsureState().sets=7;save()");
 const key='hanzi-reading-room-v2',saved=Object.fromEntries(app.storage),before=r('validateState(state)'),restored=boot(saved,path.dirname(target),path.basename(target));
 for(const field of ['cards','bookmarks','memoryNotes','writing','companion','courses','learningLab','readingDesk','commonWords'])check('design startup preserves '+field,()=>equal(restored.run('state['+JSON.stringify(field)+']'),before[field]));
 check('saved Black and Light preferences survive startup',()=>assert(restored.run("state.settings.palette==='black'&&state.settings.theme==='light'")));
