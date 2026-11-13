@@ -1,16 +1,22 @@
-:root{--boot-bg:#070E0A;--boot-ink:#F0F5F2;--boot-muted:#ADBBB2}
+:root{--boot-bg:#070E0A;--boot-ink:#F0F5F2;--boot-muted:#ADBBB2;--boot-accent:#73D6A3}
 html[data-app-boot],html[data-app-boot] body{background:var(--boot-bg)!important;color:var(--boot-ink)!important}
 html[data-app-boot] :is(.shell,.mobile-nav,#overlay,#toast,#ax-atmosphere){visibility:hidden!important;pointer-events:none!important}
 #app-startup[hidden]{display:none}
-html[data-app-boot] #app-startup{display:grid!important;position:fixed;inset:0;z-index:2147483640;place-content:center;justify-items:center;gap:16px;padding:24px;text-align:center;background:var(--boot-bg);color:var(--boot-ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-#app-startup strong{font-size:20px;letter-spacing:-.03em}
+html[data-app-boot] #app-startup{display:grid!important;position:fixed;inset:0;z-index:2147483640;place-content:center;justify-items:center;gap:18px;padding:24px;text-align:center;background:var(--boot-bg);color:var(--boot-ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;isolation:isolate}
+#app-startup::before{content:'';position:absolute;z-index:-1;width:min(78vw,420px);height:min(78vw,420px);border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--boot-accent) 10%,transparent),transparent 68%);pointer-events:none}
+#app-startup strong{font-size:23px;letter-spacing:-.035em}
 #app-startup p{max-width:28ch;margin:0;color:var(--boot-muted)}
-#app-startup .boot-mark{display:grid;place-items:center;width:54px;height:54px;border:1px solid currentColor;border-radius:18px;font-size:32px}
-#app-startup .boot-progress{width:24px;height:24px;border:2px solid var(--boot-muted);border-top-color:transparent;border-radius:50%;animation:boot-turn 1s linear infinite}
+#app-startup .boot-mark{display:grid;place-items:center;position:relative;width:88px;height:88px;margin-bottom:6px;border:1px solid var(--boot-muted);border-color:color-mix(in srgb,var(--boot-accent) 35%,transparent);border-radius:29px;background:color-mix(in srgb,var(--boot-accent) 9%,var(--boot-bg));color:var(--boot-accent);font-size:49px;box-shadow:inset 0 1px 0 color-mix(in srgb,var(--boot-ink) 18%,transparent),0 12px 40px color-mix(in srgb,var(--boot-accent) 8%,transparent)}
+#app-startup .boot-mark::after{content:'';position:absolute;inset:-8px;border:1px solid var(--boot-accent);border-radius:36px;opacity:.16;animation:boot-breathe 2.4s ease-in-out infinite}
+#app-startup .boot-progress{width:132px;height:3px;margin-top:2px;overflow:hidden;border-radius:8px;background:color-mix(in srgb,var(--boot-muted) 18%,transparent)}
+#app-startup .boot-progress::after{content:'';display:block;width:42%;height:100%;border-radius:inherit;background:var(--boot-accent);animation:boot-travel 1.8s ease-in-out infinite}
 html[data-app-boot=failed] .boot-progress{display:none}
 #app-startup button,#app-startup a{font:inherit;color:inherit;min-height:44px;box-sizing:border-box;padding:10px 16px;border:1px solid var(--boot-muted);border-radius:14px;background:transparent;text-decoration:none}
-#app-startup button[hidden]{display:none}
-#app-startup a{font-size:13px}
-@keyframes boot-turn{to{transform:rotate(360deg)}}
-@media(prefers-reduced-motion:reduce){#app-startup .boot-progress{animation:none}}
-html[data-boot-motion=off] #app-startup .boot-progress{animation:none}
+#app-startup button[hidden],#app-startup a[hidden]{display:none}
+#app-startup a{font-size:13px;border-color:transparent;text-decoration:underline;text-underline-offset:4px}
+html[data-app-boot=failed] .boot-mark::after{animation:none}
+@keyframes boot-breathe{50%{transform:scale(1.055);opacity:.3}}
+@keyframes boot-travel{0%{transform:translateX(-110%)}100%{transform:translateX(350%)}}
+@media(prefers-reduced-motion:reduce){#app-startup .boot-progress::after,#app-startup .boot-mark::after{animation:none}}
+html[data-boot-motion=off] #app-startup .boot-progress::after,html[data-boot-motion=off] #app-startup .boot-mark::after{animation:none}
+@supports not (background:color-mix(in srgb,black,white)){#app-startup .boot-progress{background:var(--boot-muted)}#app-startup .boot-mark{background:var(--boot-bg)}}

@@ -22,18 +22,23 @@
     var settings = JSON.parse(localStorage.getItem('hanzi-reading-room-v2') || '{}').settings || {};
     var dark = settings.theme === 'dark' || (settings.theme === 'system' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) || !settings.theme;
     var colors = {jade:['#F0F6F2','#070E0A'],sky:['#EFF6F7','#050E10'],blue:['#F1F5FB','#080C13'],lavender:['#F5F3FA','#0D0B12'],rose:['#F9F2F4','#110A0C'],imperial:['#FAF3F1','#120A09'],amber:['#F7F4EF','#100B07'],sage:['#F3F5F0','#0B0D08'],black:['#F4F4F4','#0C0C0C']};
-    var pair = colors[settings.palette] || colors.jade;
+    var palette = Object.prototype.hasOwnProperty.call(colors, settings.palette) ? settings.palette : 'jade';
+    var pair = colors[palette];
+    var accents = {jade:['#19714B','#73D6A3'],sky:['#176B79','#72D4E5'],blue:['#285AAB','#88B4FF'],lavender:['#7151A2','#C1A1F4'],rose:['#A03F68','#EE9CB9'],imperial:['#9C4331','#EF9B83'],amber:['#885C18','#E9BD72'],sage:['#596D38','#B9D18F'],black:['#333333','#D4D4D4']};
     root.style.setProperty('--boot-bg', pair[dark ? 1 : 0]);
     root.style.setProperty('--boot-ink', dark ? '#F0F5F2' : '#161E19');
     root.style.setProperty('--boot-muted', dark ? '#ADBBB2' : '#58625C');
+    root.style.setProperty('--boot-accent', accents[palette][dark ? 1 : 0]);
     root.style.colorScheme = dark ? 'dark' : 'light';
     if (settings.animations === false) root.setAttribute('data-boot-motion', 'off');
   } catch (_) {}
   function update() {
     var message = document.getElementById('app-startup-message');
     var retry = document.getElementById('app-startup-retry');
+    var lookup = document.getElementById('app-startup-lookup');
     if (message) message.textContent = phase === 'failed' ? 'The app couldn’t finish loading. Please try again.' : slow ? 'Still loading. Check your connection, or try again.' : 'Opening your study desk…';
     if (retry) retry.hidden = phase !== 'failed' && !slow;
+    if (lookup) lookup.hidden = phase !== 'failed' && !slow;
   }
   function fail() {
     if (phase === 'ready') return;

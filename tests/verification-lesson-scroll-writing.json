@@ -1,0 +1,361 @@
+{
+  "release": "2026.11.12-lesson-scroll-writing",
+  "baseCommit": "59c889ced8725c61cbd74af3e73e190d9372a43e",
+  "automatedChecks": 13434,
+  "suiteCount": 28,
+  "failed": 0,
+  "suites": [
+    {
+      "suite": "tests/catchup-learning.cjs",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "suite": "tests/draw-integration.cjs",
+      "checks": 19,
+      "failed": 0
+    },
+    {
+      "suite": "tests/draw-lookup-ui.cjs",
+      "checks": 77,
+      "failed": 0
+    },
+    {
+      "suite": "tests/draw-recognizer.cjs",
+      "checks": 71,
+      "failed": 0
+    },
+    {
+      "suite": "tests/glass-ui.cjs",
+      "checks": 104,
+      "failed": 0
+    },
+    {
+      "suite": "tests/handwriting.cjs",
+      "checks": 77,
+      "failed": 0
+    },
+    {
+      "suite": "tests/home-chapter.cjs",
+      "checks": 23,
+      "failed": 0
+    },
+    {
+      "suite": "tests/home-polish.cjs",
+      "checks": 8,
+      "failed": 0
+    },
+    {
+      "suite": "tests/home-start.cjs",
+      "checks": 94,
+      "failed": 0
+    },
+    {
+      "suite": "tests/import-and-pools.cjs",
+      "checks": 29,
+      "failed": 0
+    },
+    {
+      "suite": "tests/lesson-scroll.cjs",
+      "checks": 142,
+      "failed": 0
+    },
+    {
+      "suite": "tests/minimal-home.cjs",
+      "checks": 79,
+      "failed": 0
+    },
+    {
+      "suite": "tests/mobile-motion.cjs",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "suite": "tests/notes-backup.cjs",
+      "checks": 13,
+      "failed": 0
+    },
+    {
+      "suite": "tests/notes-watch-visuals.cjs",
+      "checks": 1841,
+      "failed": 0
+    },
+    {
+      "suite": "tests/practice-feedback.cjs",
+      "checks": 1626,
+      "failed": 0
+    },
+    {
+      "suite": "tests/practice.cjs",
+      "checks": 7358,
+      "failed": 0
+    },
+    {
+      "suite": "tests/regression.cjs",
+      "checks": 112,
+      "failed": 0
+    },
+    {
+      "suite": "tests/shape-content.cjs",
+      "checks": 210,
+      "failed": 0
+    },
+    {
+      "suite": "tests/sound-consistency.cjs",
+      "checks": 99,
+      "failed": 0
+    },
+    {
+      "suite": "tests/startup-watch-browser.cjs",
+      "checks": 693,
+      "failed": 0
+    },
+    {
+      "suite": "tests/study-flow.cjs",
+      "checks": 63,
+      "failed": 0
+    },
+    {
+      "suite": "tests/ui-practice.cjs",
+      "checks": 56,
+      "failed": 0
+    },
+    {
+      "suite": "tests/visual-memory.cjs",
+      "checks": 165,
+      "failed": 0
+    },
+    {
+      "suite": "tests/watch-auto-route.cjs",
+      "checks": 34,
+      "failed": 0
+    },
+    {
+      "suite": "tests/watch-followup.cjs",
+      "checks": 39,
+      "failed": 0
+    },
+    {
+      "suite": "tests/word-lessons.cjs",
+      "checks": 147,
+      "failed": 0
+    },
+    {
+      "suite": "tests/workbook-design.cjs",
+      "checks": 143,
+      "failed": 0
+    }
+  ],
+  "structure": {
+    "views": 12280,
+    "handlers": 21884,
+    "failed": 0,
+    "failures": []
+  },
+  "syntax": {
+    "activeJavaScript": true,
+    "standaloneScripts": 26,
+    "generatedHandlers": true
+  },
+  "inkGeometry": {
+    "checks": 24,
+    "failed": 0,
+    "method": "Cairo/librsvg rasterization of actual vector masks, separate from behavior checks"
+  },
+  "package": {
+    "baseCommit": "59c889ced8725c61cbd74af3e73e190d9372a43e",
+    "assets": [
+      {
+        "path": "assets/chinese-css-00-d39bf4262294.css",
+        "sha256": "d39bf4262294e6870e708ef9c57f2fb06b81feaad87f4e0aefdd8b222c2d13b0",
+        "bytes": 192169
+      },
+      {
+        "path": "assets/chinese-css-01-ae4d56909f60.css",
+        "sha256": "ae4d56909f6034760cea8ab37e72e465e2645eda32586cdad7653e4a840c6cff",
+        "bytes": 37540
+      },
+      {
+        "path": "assets/chinese-css-02-2b3a2d33dec1.css",
+        "sha256": "2b3a2d33dec1e64c8ab478f790ca56946e022ab0fa69241bdede9bb405bf6b0b",
+        "bytes": 9012
+      },
+      {
+        "path": "assets/chinese-css-03-7faeeaa1fa60.css",
+        "sha256": "7faeeaa1fa60a426e68aab454202d61dbc2ae92307ee427592f4cc01f187d493",
+        "bytes": 21331
+      },
+      {
+        "path": "assets/chinese-css-04-acacaf340a3c.css",
+        "sha256": "acacaf340a3ce50cfebe87de1ee2c1662e5974f88ccffabb0c08737fef6ff5a9",
+        "bytes": 17755
+      },
+      {
+        "path": "assets/course-consistency-0b38d3a5fa67.css",
+        "sha256": "0b38d3a5fa676f94d77c2b89719e530d1ec9a5826509432f7095a2bd1164bf63",
+        "bytes": 12369
+      },
+      {
+        "path": "assets/handwriting-practice-67e827a3f788.css",
+        "sha256": "67e827a3f788e2a14b14fe521d177563eb1168c1d0c211868820d766ab953b37",
+        "bytes": 5391
+      },
+      {
+        "path": "assets/chapter-adventures-7f4891626e81.css",
+        "sha256": "7f4891626e81c13c8560ccefc90e451e9ddac6e3f9f44048114016631d62721e",
+        "bytes": 37861
+      },
+      {
+        "path": "assets/catchup-style-053be8eaf456.css",
+        "sha256": "053be8eaf4569d302e379ae8cfd59914fc49da237fd7abfabf0b9023b6f9d6f1",
+        "bytes": 3367
+      },
+      {
+        "path": "assets/draw-lookup-6412ecdff541.css",
+        "sha256": "6412ecdff54122fa20b31a25597b037fe818001bccad1bf9b93b0d1863209aa6",
+        "bytes": 2826
+      },
+      {
+        "path": "assets/workbook-design-9fff375401f6.css",
+        "sha256": "9fff375401f6577c16a485ed3b28ea4d6fb45e1c29016927f6778d96704a9917",
+        "bytes": 94897
+      },
+      {
+        "path": "assets/chinese-js-00-6b396a1e9ae7.js",
+        "sha256": "6b396a1e9ae78005f496166b5b810ac5155e1f589349535e7709e9fdfcbfedbf",
+        "bytes": 129
+      },
+      {
+        "path": "assets/chinese-js-01-c25081aa2b4e.js",
+        "sha256": "c25081aa2b4e95c980252e89172ad150c611dbf55638cdc46ca34103ac787e5f",
+        "bytes": 143
+      },
+      {
+        "path": "assets/chinese2-content-c468fe6bfabc.js",
+        "sha256": "c468fe6bfabc07aeb2ba32478cadfed5d509a8e8686731896143d6128e5ab180",
+        "bytes": 111174
+      },
+      {
+        "path": "assets/course-core-cf0f73a37787.js",
+        "sha256": "cf0f73a377876d4222d6f541c1fe2f0f66b1e68e20228a7f8df7221e9953e411",
+        "bytes": 9284
+      },
+      {
+        "path": "assets/handwriting-practice-ddf2a0c49b1c.js",
+        "sha256": "ddf2a0c49b1c8365ec5051c9dbfcee6a3d3edb7a144a49c853c30d7387d15c9d",
+        "bytes": 17341
+      },
+      {
+        "path": "assets/adventure-content-d65dd3f47733.js",
+        "sha256": "d65dd3f477331bb189e1d2b241acd9a78f96ffe2694cc514d0cfe38acde77327",
+        "bytes": 68290
+      },
+      {
+        "path": "assets/shape-challenges-9181317a1cc9.js",
+        "sha256": "9181317a1cc93f0349d1e571d727f195d90d22b447628fc677b9db5115731565",
+        "bytes": 26810
+      },
+      {
+        "path": "assets/adventure-feedback-72cf29b4bed2.js",
+        "sha256": "72cf29b4bed20b01e632b9a1e2c054e42278d34d98e61db9ad70c41b51ee26c0",
+        "bytes": 13283
+      },
+      {
+        "path": "assets/practice-store-2c46f4801bdf.js",
+        "sha256": "2c46f4801bdf7ff263fb7d655b1d9851b6afb9666f8cc0686ebf0491c1a4e115",
+        "bytes": 16445
+      },
+      {
+        "path": "assets/practice-engine-d51cf2ef07f2.js",
+        "sha256": "d51cf2ef07f2f7a0e8b8679bae7c6fdcb57d57d629b2c7220719c479fbb4c8be",
+        "bytes": 20601
+      },
+      {
+        "path": "assets/practice-pages-dfa91fb28972.js",
+        "sha256": "dfa91fb28972618faff3aecf9a0dd1e19e3f99d25065c96ea56db90bfa3477fe",
+        "bytes": 27703
+      },
+      {
+        "path": "assets/practice-personal-67b5a5125e7f.js",
+        "sha256": "67b5a5125e7fa5003bc6151297179fe0c0bf87a9ccb454a64cea06b9abb6152c",
+        "bytes": 30713
+      },
+      {
+        "path": "assets/catchup-learning-d798c1992055.js",
+        "sha256": "d798c19920553c90609b49bc566ae2615678c47da8aa0724ee1038c01b251d47",
+        "bytes": 11978
+      },
+      {
+        "path": "assets/chinese-js-02-3165b9844d16.js",
+        "sha256": "3165b9844d16740c0edf865b5a230d3b0c52f492597398c0abdb37ab9a484aa4",
+        "bytes": 924095
+      },
+      {
+        "path": "assets/chinese-js-03-aa0c343f1f7f.js",
+        "sha256": "aa0c343f1f7f505bcefdb81f65bce7986084c5252cd4b9e1585f84b74a9166eb",
+        "bytes": 88650
+      },
+      {
+        "path": "assets/chinese-js-04-ad6a96c7c777.js",
+        "sha256": "ad6a96c7c777323d26a1b053a0dd217892b7544ca8f35caed10d65580115dd10",
+        "bytes": 29517
+      },
+      {
+        "path": "assets/chinese-js-05-9ac30620ceae.js",
+        "sha256": "9ac30620ceaed3a0a2a4f8aeb06a5b3f55dc8755222f74b2f6f03b60a0c5abff",
+        "bytes": 34585
+      },
+      {
+        "path": "assets/chinese-js-06-65141f6d4b4c.js",
+        "sha256": "65141f6d4b4c3c3a9cd76a1b2db6457df63128d330de29cc46a8f69ee51e0359",
+        "bytes": 169728
+      },
+      {
+        "path": "assets/word-visuals-36094f6082f0.js",
+        "sha256": "36094f6082f0a146df0ac1f5fdba01557dacc4f64568e12f62692e252ce2ed38",
+        "bytes": 92168
+      },
+      {
+        "path": "assets/learning-tools-eb791d3ca887.js",
+        "sha256": "eb791d3ca887aa7df8a9726a97decbed3586510ab3431eca784763b6a0ff3fc5",
+        "bytes": 13361
+      },
+      {
+        "path": "assets/visual-memory-fb3c091ab97b.js",
+        "sha256": "fb3c091ab97b345179d7d6a0a9a64e5ed95c787410b27cb474c98720f8661a2e",
+        "bytes": 23661
+      },
+      {
+        "path": "assets/draw-lookup-debd675e8196.js",
+        "sha256": "debd675e819645b01f21fb85c0f65b764583f0e989fee7ff7cf70f19bf549774",
+        "bytes": 10475
+      },
+      {
+        "path": "assets/workbook-design-6ed45bfd463a.js",
+        "sha256": "6ed45bfd463af5852968d74242c625cc0dc29c2d5a073299f5ce28058a788fb5",
+        "bytes": 204018
+      }
+    ],
+    "lazyAssets": [
+      {
+        "path": "assets/draw-recognizer-39f183702cbc.js",
+        "sha256": "39f183702cbcf1cca2a53ca3d85a5a026d08d7a41eb7e9ef3ce2d52ed4406c11",
+        "bytes": 7667
+      },
+      {
+        "path": "assets/draw-model-905440fdb00b.js",
+        "sha256": "905440fdb00b67c93f695340d7b23aac9b3b8e27df7aa63a8199857bf9ccfb5e",
+        "bytes": 818012
+      }
+    ],
+    "standaloneSha256": "bbf08caf1848be1e1225cacc8815592d5ae03d5ea970a4557778694d22716328",
+    "standaloneBytes": 3331234
+  },
+  "browserTested": false,
+  "deviceTested": false,
+  "limits": [
+    "No actual browser/iPhone/Watch layout, pointer, audio, stylus or rotation test.",
+    "Hanzi Writer geometry is provided by pinned external library; automation exercises callbacks and dimensions rather than real handwritten samples.",
+    "Home design is an application of UX guidance, not a measured learning or usability study."
+  ]
+}
