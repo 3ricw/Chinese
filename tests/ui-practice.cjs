@@ -8,7 +8,7 @@ function field(id,value){const node=app.nodes.get(id)||app.ctx.document.getEleme
 function editWord(deck='',word='',changes={}){r(`labEditWord(${JSON.stringify(deck)},${JSON.stringify(word)})`);for(const [key,value]of Object.entries(changes))field('lab-edit-'+key,value);return r(`labSaveWord(${JSON.stringify(deck)},${JSON.stringify(word)})`)}
 (async()=>{
 r("onboardingStep=null;state.profile.setupDone=true;closeModal();state.settings.soundEffects=false;var utterances=[];speechSynthesis.speak=u=>utterances.push(u.text);navigate('home')");
-check('Home retains focused chapter, companion, Scroll and compact streak',()=>{const h=app.html();for(const token of ['rx-greeting','feed-home-copy','rx-companion-scene','Open Scroll','rx-home-streak','rx-home-more'])assert(h.includes(token),token);assert.equal((h.match(/data-game=/g)||[]).length,0);assert(!h.includes('rx-quest-area'))});
+check('Home retains focused chapter, companion, Scroll and supporting stats',()=>{const h=app.html();for(const token of ['rx-greeting','feed-home-copy','rx-companion-scene','Open Scroll','rx-home-progress','ax-home-metrics','rx-home-more'])assert(h.includes(token),token);assert.equal((h.match(/data-game=/g)||[]).length,0);assert(!h.includes('rx-quest-area'))});
 check('Home starts the current chapter or its initial introduction without new preferences',()=>assert(["startSession('all'","startSession('learn'"].some(prefix=>r('rxNextAction().action').startsWith(prefix))));
 check('Course directs new material to full chapter',()=>assert(r("courseNext('1').action===\"startSession('all','1')\"")));
 r("navigate('lab')");capture('practice/new-hierarchy');

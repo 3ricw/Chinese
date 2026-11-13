@@ -1,6 +1,12 @@
 # Eric’s Chinese — courses, memory aids, and Watch preview
 
-The existing Chinese learning app at https://3ricw.github.io/Chinese/. The latest update builds on `main` commit `1de0f74ae878fb29c35ed07e7c6300ddf8a637a0` and preserves the GitHub Pages origin and browser-local progress.
+The existing Chinese learning app at https://3ricw.github.io/Chinese/. The latest update builds on `main` commit `da966573855f915da8927e60ce8fddcbdd0f93f3` and preserves the GitHub Pages origin and browser-local progress.
+
+## Home balance (2026-11-12)
+
+Chapter/resume and Scroll remain first. A shared strip restores streak, learner level, daily goal, and due reviews below the task. The companion is substantially larger across desktop/tablet/phone layouts; the duplicate greeting streak is removed. Optional activities stay in More, Tools, and Arcade.
+
+[Review](docs/home-balance-2026-11-12.md) · [Focused verification](tests/verification-home-balance.json). **1,647 relevant automated checks passed**. Actual device appearance remains unverified.
 
 ## Draw to search and simpler Home (2026-11-12)
 
