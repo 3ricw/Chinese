@@ -15,14 +15,21 @@ function finishPrep(run) {
   }`);
   assert.equal(run('lanePrepLive(laneToken)'),null);
 }
-test('fresh learners see the character, reading, meaning and speaker before any quiz',()=>{
+test('both individual characters appear with readings, meanings and separate audio before the greeting',()=>{
   assert.equal(run('onboardingStep'),'lane-welcome');
-  assert(overlay().includes('Meet your first character.')&&overlay().includes('nǐ')&&overlay().includes('Hear 你')&&overlay().includes('Explore the app'));
+  assert(overlay().includes('Meet two characters.')&&overlay().includes('Explore the app'));
+  for(const value of ['nǐ','hǎo','>you<','>good<','Hear 你"','Hear 好"'])assert(overlay().includes(value),value);
+  assert(!overlay().includes('Hear 你好"'));
+  run("var greetSpoken=[];var originalSpeaker=speak;speak=word=>greetSpoken.push(word);laneWelcomeSound(0,laneToken);laneWelcomeSound(1,laneToken)");
+  assert.equal(run("greetSpoken.join('/')"),'你/好');
   assert(!overlay().includes('Check my reply'));
 });
 run("var initialXP=bx.xp;var firstToken=laneToken;laneWelcomeNext(laneToken);laneWelcomeNext(firstToken)");
 test('the second screen models the combined word without crediting mastery',()=>{
-  assert(overlay().includes('Put them together.')&&overlay().includes('nǐ hǎo'));
+  assert(overlay().includes('Put them together.')&&overlay().includes('nǐ hǎo')&&overlay().includes('>hello<'));
+  assert.equal((overlay().match(/class="ln-word-card"/g)||[]).length,1);
+  run("laneWelcomeSound(1,firstToken);laneWelcomeSound(0,laneToken);speak=originalSpeaker");
+  assert.equal(run("greetSpoken.join('/')"),'你/好/你好');
   assert.equal(run('bx.xp'),run('initialXP'));assert.equal(run('Object.keys(state.cards).length'),0);
 });
 run("laneWelcomeNext(laneToken);trailSetupNext(trailViewToken)");
