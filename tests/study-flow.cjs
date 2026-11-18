@@ -73,10 +73,10 @@ check('missed run prioritizes the existing retry',()=>assert(app.html().includes
 views.push({name:'study-flow/complete-missed-run',html:app.html()});r('labRetryMisses();labAnswer(labCurrent().correct)');
 check('direct retry retains helped status and zero new XP',()=>assert(r('labRun.feedback.helped&&labRun.feedback.xp===0')));
 check('new flows never start speech automatically',()=>assert.equal(r('spoken.length'),0));
-// Personalization follows the first playable greeting. Names and partners are optional.
+// Personalization follows the first guided greeting. Names and partners are optional.
 r("navigate('home');laneWelcome()");
-check('the first screen teaches a usable greeting',()=>assert(app.nodes.get('overlay').innerHTML.includes('Say hello to Lin.')));
-r('laneWelcomePick(0,laneToken);laneWelcomeCheck(laneToken);laneWelcomeNext(laneToken)');
+check('the first screen teaches a usable greeting',()=>assert(app.nodes.get('overlay').innerHTML.includes('Meet your first character.')));
+r('laneWelcomeNext(laneToken);laneWelcomeNext(laneToken)');
 check('setup offers the learning purpose and a skip action',()=>assert(app.nodes.get('overlay').innerHTML.includes('What brings you here?')&&app.nodes.get('overlay').innerHTML.includes('Explore the app first')));
 r('trailSetupNext(trailViewToken);trailSetupNext(trailViewToken);trailSetupName("<invalid>",trailViewToken);trailSetupNext(trailViewToken)');
 check('invalid names stay editable on the same step',()=>assert(r("onboardingStep==='trail'&&trailDraft.step===2&&!!$('jy-setup-error').textContent")));

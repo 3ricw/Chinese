@@ -4,7 +4,9 @@
 
 ## Lantern Lane
 
-New learners meet Lin and reply to a Mandarin greeting before choosing a course, a learning goal, or a companion. On a returning profile, open **Home → Lantern Lane → Play scene**. **Your route → Replay welcome** reopens the introduction on the same profile.
+New learners meet 你, hear its sound, and combine it with 好 to make 你好. Choosing **I’m starting fresh** starts Chinese 1 at the market gate. Open **Home → Lantern Lane** to start or resume a stop. Each stop teaches a few characters at a time, checks the meanings of the written forms, and rehearses the exchange before the independent conversation. The lesson remembers your exact step, including a pending answer. **Review the character lessons** reopens the preparation during a conversation or from its results.
+
+Choose **No pinyin**, **New words**, or **All words** in any scene. New words starts on by default and fades readings for words recognized on a first try and individual characters already familiar from spaced recall. The preference carries across scenes and both writing systems.
 
 Chinese 1 has four conversations about greetings, drinks, directions, and prices. Chinese 2 adds making plans, borrowing a book, ordering dinner, and inviting a friend out. Each scene mixes dialogue, movable word tiles, and bilingual matching. Missed turns return at the end of the scene. Passport stamps survive reloads and backups. Revisit dates advance after practice on different days. The app’s existing XP limits apply, and the character scheduler still uses separate recall checks.
 

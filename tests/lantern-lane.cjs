@@ -7,13 +7,44 @@ const checks = [], views = [];
 function test(label, run) { run(); checks.push(label); }
 function shot(a, name) { views.push({name:'lantern/'+name,html:a.html()}); }
 const app=boot(), run=app.run, overlay=()=>app.nodes.get('overlay').innerHTML;
-test('fresh start is a playable greeting with a skip action',()=>{assert.equal(run('onboardingStep'),'lane-welcome');assert(overlay().includes('Say hello to Lin.'));assert(overlay().includes('Explore the app'));});
-run("var initialXP=bx.xp;var firstToken=laneToken;laneWelcomePick(1,laneToken);laneWelcomePick(0,firstToken);laneWelcomeCheck(laneToken)");
-test('wrong opening reply shows a specific correction',()=>{assert.equal(run('laneWelcomeDraft.feedback'),false);assert(overlay().includes('thank you'));assert.equal(run('bx.xp'),run('initialXP'));});
-run('laneWelcomeRetry(laneToken);laneWelcomePick(0,laneToken);laneWelcomeCheck(laneToken);laneWelcomeNext(laneToken)');
-test('the first win leads to route choice without writing a mastery record',()=>{assert.equal(run('onboardingStep'),'trail');assert.equal(run('Object.keys(state.cards).length'),0);});
-run("trailSetupNext(trailViewToken);trailSetupPick('course','chinese-2',trailViewToken);trailSetupNext(trailViewToken);trailSetupName('Eric',trailViewToken);trailSetupPick('starter','turtle',trailViewToken);trailSetupNext(trailViewToken)");
-test('course, name and companion choices reach the matching route',()=>assert(run("selectedCourseId==='chinese-2'&&laneSceneId==='meeting'&&currentView==='lane'&&state.profile.name==='Eric'&&state.companion.starter==='turtle'")));
+function finishPrep(run) {
+  run(`for(let n=0; n<50 && lanePrepLive(laneToken); n++){
+    const {step,lesson}=lanePrepLive(laneToken);
+    if(step.kind==='check' && !lesson.choice) laneLessonChoose(step.words.indexOf(step.word),laneToken);
+    laneLessonNext(laneToken);
+  }`);
+  assert.equal(run('lanePrepLive(laneToken)'),null);
+}
+test('fresh learners see the character, reading, meaning and speaker before any quiz',()=>{
+  assert.equal(run('onboardingStep'),'lane-welcome');
+  assert(overlay().includes('Meet your first character.')&&overlay().includes('nǐ')&&overlay().includes('Hear 你')&&overlay().includes('Explore the app'));
+  assert(!overlay().includes('Check my reply'));
+});
+run("var initialXP=bx.xp;var firstToken=laneToken;laneWelcomeNext(laneToken);laneWelcomeNext(firstToken)");
+test('the second screen models the combined word without crediting mastery',()=>{
+  assert(overlay().includes('Put them together.')&&overlay().includes('nǐ hǎo'));
+  assert.equal(run('bx.xp'),run('initialXP'));assert.equal(run('Object.keys(state.cards).length'),0);
+});
+run("laneWelcomeNext(laneToken);trailSetupNext(trailViewToken)");
+test('starting fresh shows only the Chinese 1 route',()=>{
+  assert(overlay().includes('Your first stop is Chinese 1.')&&!overlay().includes('Chinese 2'));
+  assert.equal(run("trailSetupPick('course','chinese-2',trailViewToken)"),false);
+  assert.equal(run("trailSetupPick('lesson','c2-13',trailViewToken)"),false);
+});
+run("trailSetupNext(trailViewToken);trailSetupName('Eric',trailViewToken);trailSetupPick('starter','turtle',trailViewToken);trailSetupNext(trailViewToken)");
+test('fresh learner opens the first character lesson and keeps their profile choices',()=>assert(run("selectedCourseId==='chinese-1'&&laneSceneId==='gate'&&lanePrepLive(laneToken).step.kind==='learn'&&state.profile.name==='Eric'&&state.companion.starter==='turtle'")));
+run("lanePick('choice',0,laneToken);laneCheck(laneToken);laneLessonNext(laneToken);laneLessonNext(laneToken);laneLessonChoose(1,laneToken);laneSetPinyin('none',laneToken)");
+test('a first incorrect meaning gets feedback and switching pinyin preserves it',()=>{
+  assert(run("laneData().lessons.gate.at===1&&laneData().lessons.gate.choice==='好'&&laneData().runs.gate.choice===null"));
+  assert(app.html().includes('Try again')&&!app.html().includes('<rt'));
+});
+const paused=boot(Object.fromEntries(app.storage));paused.run("laneStart('gate')");
+test('saved reading feedback resumes with pinyin preference, a retry cannot credit first-try recognition',()=>{
+  assert(paused.html().includes('Try again')&&!paused.html().includes('<rt'));
+  paused.run("laneLessonNext(laneToken);laneLessonChoose(0,laneToken);laneLessonNext(laneToken);laneLessonChoose(1,laneToken);laneSetPinyin('new',laneToken)");
+  assert(paused.run("!laneData().recognized.includes('你')&&laneData().recognized.includes('好')&&lanePinyin('好').indexOf('<rt')===-1&&lanePinyin('你').includes('nǐ')"));
+});
+run("switchCourse('chinese-2','home');laneStart('meeting')");finishPrep(run);
 run("laneHelp(laneToken);var m=laneScene('meeting');lanePick('choice',m.greet.answer,laneToken);var duplicate=laneToken;laneCheck(duplicate);laneCheck(duplicate);");
 test('helped answer is saved once and earns no XP',()=>assert(run("laneData().runs.meeting.first[0]==='help'&&laneData().runs.meeting.xp===0&&state.activity[dayKey()].cards===1")));
 const saved=Object.fromEntries(app.storage);
@@ -22,7 +53,7 @@ test('a saved learner reaches Home and can resume feedback',()=>{assert.equal(rr
 rr("laneNext(laneToken);lanePick('add',0,laneToken);lanePick('add',1,laneToken);lanePick('remove',0,laneToken);navigate('home')");
 test('tile reordering and pause survive a reload',()=>{const resumed=boot(Object.fromEntries(reload.storage));resumed.run("laneStart('meeting')");assert.equal(resumed.run("laneData().runs.meeting.tiles.join(',')"),'1');});
 rr("switchCourse('chinese-1','home');laneStart('gate')");
-test('a coached greeting continues at the next actual exercise',()=>assert(rr("laneData().runs.gate.pos===1&&laneData().runs.gate.first[0]==='help'")));
+test('returning to the beginner route resumes the reading checkpoint',()=>assert(rr("laneData().lessons.gate.at===1&&laneData().runs.gate.pos===0&&laneData().runs.gate.first[0]===null")));
 rr("navigate('home');laneWelcome(true);laneWelcomeSkip(laneToken)");
 test('replaying or skipping welcome preserves the profile and active runs',()=>assert(rr("state.profile.name==='Eric'&&state.companion.starter==='turtle'&&laneData().runs.meeting.pos===1")));
 for (const script of ['simplified','traditional']) {
@@ -32,7 +63,7 @@ for (const script of ['simplified','traditional']) {
     r("switchCourse('"+course+"','home')");
     const ids=Array.from(r('laneStops().map(s=>s.id)'));
     for(const id of ids){
-      r("laneStart('"+id+"')");shot(a,script+'/'+id+'/start');
+      r("laneStart('"+id+"')");shot(a,script+'/'+id+'/characters');finishPrep(r);shot(a,script+'/'+id+'/start');
       test(script+'/'+id+' starts with four different tasks',()=>assert.equal(r('laneData().runs[laneSceneId].queue.join()'),'0,1,2,3'));
       r("var scene=laneScene(laneSceneId),current=laneData().runs[laneSceneId];lanePick('choice',(scene.greet.answer+1)%3,laneToken);laneCheck(laneToken)");
       test(id+' mistake is queued for a later revisit',()=>assert.equal(r('current.queue.join()'),'0,1,2,3,0'));
@@ -59,20 +90,38 @@ for (const script of ['simplified','traditional']) {
   test(script+' browser runtime mock logged no errors',()=>assert.deepEqual(a.errors,[]));
 }
 const classApp=boot(), c=classApp.run;
-c("laneWelcomePick(0,laneToken);laneWelcomeCheck(laneToken);laneWelcomeNext(laneToken);trailSetupPick('intent','class',trailViewToken);trailSetupNext(trailViewToken);trailSetupPick('course','chinese-2',trailViewToken);trailSetupPick('lesson','c2-13',trailViewToken);trailSetupNext(trailViewToken);trailSetupNext(trailViewToken)");
+c("laneWelcomeNext(laneToken);laneWelcomeNext(laneToken);trailSetupPick('intent','class',trailViewToken);trailSetupNext(trailViewToken);trailSetupPick('course','chinese-2',trailViewToken);trailSetupPick('lesson','c2-13',trailViewToken);trailSetupNext(trailViewToken);trailSetupNext(trailViewToken)");
 test('class learners start their actual chapter and can pause a character trail',()=>assert(c("currentView==='trail'&&trailRun().lesson==='c2-13'&&selectedCourseId==='chinese-2'")));
 c("while(!trailRun().done){const r=trailRun(),s=trailStep(),args=[r.id,r.pos,trailViewToken];if(s.kind==='choose'&&!r.feedback)trailChoose(s.ch,...args);else if(s.kind==='recall'&&!r.revealed)trailReveal(...args);else if(s.kind==='recall'&&!r.feedback)trailRate('good',...args);else trailNext(...args)}");
 test('a full character trail finishes with scheduled character reviews',()=>assert(c('trailRun().done&&Object.values(state.cards).some(s=>s.due>Date.now())')));
 const cross=boot(), cx=cross.run;
 cx("laneWelcomeSkip(laneToken);startSession('all','1',['你']);checkpointCurrent();navigate('home')");
 test('a paused chapter precedes the conversation in reading and tab order',()=>assert(cross.html().indexOf('class="rx-home-start"')<cross.html().indexOf('class="ln-home"')));
-cx("laneStart('gate');laneHelp(laneToken)");
+cx("laneStart('gate')");finishPrep(cx);cx("laneHelp(laneToken)");
 test('revealing an overlapping translation marks the paused chapter as assisted',()=>assert(cx("savedResume.data.usedHint===true")));
-cx("navigate('home');laneStart('tea');navigate('tools');personalMarkAssistance('茶 · tea');laneStart('tea')");
+cx("navigate('home');laneStart('tea')");finishPrep(cx);cx("navigate('tools');personalMarkAssistance('茶 · tea');laneStart('tea')");
 test('using a matching lookup during a paused conversation is recorded as help',()=>assert(cx("laneData().runs.tea.helped")));
 const corrupt=boot().run;
 test('malformed queues and foreign scene keys are discarded on import',()=>assert.equal(corrupt("Object.keys(laneValidate({runs:{fake:laneNewRun(1),gate:{...laneNewRun(1),queue:['0',1,2,3]}}}).runs).length"),0));
 test('traditional food and meeting characters have independent spellings',()=>{corrupt("state.settings.script='traditional'");assert.equal(corrupt("laneZh('一碗面，见面，面条')"),'一碗麵，見面，麵條');});
+test('pre-update in-flight conversations and completed stamps migrate independently',()=>{
+  const legacy={runs:{gate:{...JSON.parse(corrupt('JSON.stringify(laneNewRun(17))')),pos:1,tiles:[1]}},stamps:{tea:{last:'2026-11-12',next:'2026-11-13',days:1}}};
+  assert(corrupt(`(()=>{const d=laneValidate(${JSON.stringify(legacy)});return d.runs.gate.pos===1&&d.runs.gate.tiles[0]===1&&d.lessons.gate.at===laneLessonSteps('gate').length&&d.lessons.tea.at===laneLessonSteps('tea').length&&d.pinyin==='new'})()`));
+});
+test('all prompts, options, feedback and rehearsal have readings for every Chinese token',()=>{
+  assert(corrupt(`LANE_SCENES.every(s=>[s.greet.line,s.end.line,...s.greet.choices,...s.end.choices,s.greet.why,s.end.why,s.build.why,...s.build.words,...s.build.extras,...s.pairs.map(p=>p[0]),...LANE_CHAPTERS[s.id].flat()].every(line=>laneTokens(line).every(w=>!/[一-鿿]/.test(w)||LANE_WORDS.has(w))))`));
+});
+test('pinyin modes use lexical boundaries, familiar cards and traditional script',()=>{
+  corrupt("laneData().recognized=['苹果'];state.cards['我']={memoryStage:2};laneData().pinyin='new'");
+  assert(corrupt("lanePinyin('我买苹果').includes('mǎi')&&!lanePinyin('我买苹果').includes('píngguǒ')&&!lanePinyin('我买苹果').includes('wǒ')&&lanePinyin('我买苹果').includes('蘋果')"));
+  corrupt("laneData().pinyin='all'");assert(corrupt("lanePinyin('我买苹果').includes('píngguǒ')&&lanePinyin('我买苹果').includes('wǒ')"));
+  corrupt("laneData().pinyin='none'");assert.equal(corrupt("lanePinyin('我买苹果。')"),'我買蘋果。');
+});
+test('an existing learner can review prerequisites and return to the same conversation turn',()=>{
+  rr("switchCourse('chinese-2','home');laneStart('meeting');laneReviewLesson(laneToken);laneLessonNext(laneToken);navigate('home');laneStart('meeting')");
+  assert(rr("laneData().lessons.meeting.at===1&&laneData().runs.meeting.tiles[0]===1"));finishPrep(rr);
+  assert(rr("laneLive(laneToken).q===1&&laneLive(laneToken).r.tiles[0]===1"));
+});
 const folder=path.join(__dirname,'results');fs.mkdirSync(folder,{recursive:true});
 fs.writeFileSync(path.join(folder,'lantern-lane-views.json'),JSON.stringify(views));
 fs.writeFileSync(path.join(folder,'lantern-lane.json'),JSON.stringify({checks:checks.length,failed:0}));

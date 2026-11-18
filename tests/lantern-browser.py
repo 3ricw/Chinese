@@ -15,11 +15,22 @@ class QuietFiles(SimpleHTTPRequestHandler):
         pass
 
 
+def finish_prep(page):
+    for _ in range(40):
+        if not page.locator('.ln-lesson').count():
+            return
+        if page.get_by_role('group', name='Choose the meaning').count() and not page.locator('.ln-feedback').count():
+            meaning = page.evaluate("LANE_WORDS.get(lanePrepLive(laneToken).step.word).meaning")
+            page.get_by_role('button', name=meaning, exact=True).click()
+        page.locator('.ln-dock .ln-button').click()
+    raise AssertionError('Preparation did not reach the conversation')
+
+
 def run(engine, url, artifacts):
     artifacts.mkdir(parents=True, exist_ok=True)
     browser = engine.launch()
     try:
-        for width, height in [(320, 568), (390, 844), (1280, 860)]:
+        for width, height in [(320, 568), (390, 844), (883, 735), (1280, 860)]:
             label = f'{engine.name}-{width}'
             mobile = width < 600
             ctx = browser.new_context(viewport={'width': width, 'height': height}, is_mobile=mobile,
@@ -34,23 +45,44 @@ def run(engine, url, artifacts):
             try:
                 page.wait_for_function("window.appBoot && appBoot.status()==='ready'")
                 expect(page.get_by_role('dialog')).to_be_visible()
-                expect(page.get_by_role('heading', name='Say hello to Lin.')).to_be_visible()
-                check = page.get_by_role('button', name='Check my reply')
-                expect(check).to_be_disabled()
+                expect(page.get_by_role('heading', name='Meet your first character.')).to_be_visible()
+                expect(page.locator('.ln-word-card rt')).to_have_text('nǐ')
+                expect(page.get_by_role('button',name='Hear 你')).to_be_visible()
                 page.screenshot(path=artifacts/f'{label}-welcome.png')
-                page.locator('.ln-welcome .ln-option').filter(has_text='谢谢').click()
-                check.click()
-                expect(page.locator('.ln-feedback')).to_contain_text('thank you')
-                page.get_by_role('button', name='Try again').click()
-                page.locator('.ln-welcome .ln-option').filter(has_text='你好').click()
-                check.click()
+                page.get_by_role('button',name='Build a greeting').click()
+                expect(page.locator('.ln-intro')).to_contain_text('nǐ hǎo')
                 page.get_by_role('button', name='Choose my learning route').click()
                 page.get_by_role('button', name='I’m starting fresh', exact=False).click()
                 page.locator('.jy-setup-actions .primary').click()
-                page.get_by_role('button', name='Chinese 1', exact=False).last.click()
+                expect(page.get_by_role('heading',name='Your first stop is Chinese 1.')).to_be_visible()
+                expect(page.get_by_role('dialog')).not_to_contain_text('Chinese 2')
                 page.locator('.jy-setup-actions .primary').click()
                 page.locator('#jy-name').fill('Eric')
                 page.locator('.jy-setup-actions .primary').click()
+                expect(page.locator('.ln-exercise h1')).to_have_text('Meet three characters.')
+                page.screenshot(path=artifacts/f'{label}-characters.png')
+                page.get_by_role('button',name='Try reading them').click()
+                page.get_by_role('button',name='good',exact=True).click()
+                expect(page.locator('.ln-feedback')).to_contain_text('Look at the shape again')
+                page.get_by_role('combobox',name='Pinyin').select_option('none')
+                expect(page.locator('.ln-round rt')).to_have_count(0)
+                page.get_by_role('button',name='Pause lesson and go Home').click()
+                page.reload()
+                page.locator('.ln-home-next .ln-button').click()
+                expect(page.get_by_role('combobox',name='Pinyin')).to_have_value('none')
+                expect(page.get_by_role('button',name='Try again')).to_be_visible()
+                page.get_by_role('button',name='Try again').click()
+                page.get_by_role('combobox',name='Pinyin').select_option('new')
+                finish_prep(page)
+                expect(page.locator('.ln-exercise h1')).to_have_text('Greet Lin back.')
+                page.get_by_role('combobox',name='Pinyin').select_option('all')
+                expect(page.locator('.ln-bubble rt')).to_have_text('nǐ hǎo')
+                page.locator('.ln-option').filter(has_text='你好').click()
+                page.get_by_role('combobox',name='Pinyin').select_option('none')
+                expect(page.locator('.ln-round rt')).to_have_count(0)
+                expect(page.locator('.ln-option.is-selected')).to_contain_text('你好')
+                page.get_by_role('button',name='Check answer').click()
+                page.locator('.ln-dock .ln-button').click()
                 expect(page.locator('.ln-exercise h1')).to_have_text('Introduce yourself as Xiao An.')
                 expect(page.locator('.ln-dock .ln-button')).to_be_disabled()
                 page.get_by_role('button',name='Add 叫',exact=True).click()
@@ -93,6 +125,8 @@ def run(engine, url, artifacts):
                 page.get_by_role('button',name='Explore the app').click()
                 assert page.evaluate("state.profile.name==='Eric' && Object.keys(laneData().stamps).length===1")
                 page.evaluate("switchCourse('chinese-2','home');setSetting('script','traditional');navigate('home');laneStart('books')")
+                expect(page.locator('.ln-word-card').first).to_contain_text('書')
+                finish_prep(page)
                 expect(page.locator('.ln-bubble')).to_contain_text('書')
                 page.get_by_role('button',name='Show translation').click()
                 expect(page.locator('.ln-bubble')).to_contain_text('Which book')
@@ -104,10 +138,25 @@ def run(engine, url, artifacts):
                 if width==320:
                     duration=page.locator('.ln-lights i').first.evaluate("el=>getComputedStyle(el).animationDuration")
                     assert duration=='0s', duration
+                page.evaluate("""switchCourse('chinese-1','home');trailBegin('I');
+                    for(let n=0;n<20 && trailStep().kind!=='recall';n++){
+                      const r=trailRun(),s=trailStep(),args=[r.id,r.pos,trailViewToken];
+                      if(s.kind==='choose'&&!r.feedback)trailChoose(s.ch,...args);else trailNext(...args);
+                    }""")
+                expect(page.locator('.jy-character')).to_have_text('人')
+                font_size=page.locator('.jy-character').evaluate("el=>parseFloat(getComputedStyle(el).fontSize)")
+                assert font_size>=110,font_size
+                if width>=800:
+                    gap=page.evaluate("document.querySelector('.jy-dock').getBoundingClientRect().top-document.querySelector('.jy-study-tools').getBoundingClientRect().bottom")
+                    assert gap<=40,gap
+                page.screenshot(path=artifacts/f'{label}-recall.png')
                 assert not errors, errors
                 assert not missing, missing
                 print(f'PASS {label}: onboarding, answer correction, tiles, pairs, resume, stamp, route, both courses and legacy destinations',flush=True)
-            except Exception:
+            except Exception as error:
+                state=page.evaluate("({view:currentView,scene:laneSceneId,heading:document.querySelector('#view h1')?.textContent,body:document.body.innerText.slice(-400)})")
+                detail=(str(error)+' '+str(state)+' '+str(errors))[:2200].replace('%','%25').replace('\r','%0D').replace('\n','%0A')
+                print(f'::error::{label} {detail}',flush=True)
                 page.screenshot(path=artifacts/f'{label}-failure.png')
                 print('Page state',page.evaluate("({view:typeof currentView==='string'?currentView:null,step:typeof onboardingStep==='string'?onboardingStep:null, visible:document.body.innerText.slice(-800)})"),errors,missing,flush=True)
                 raise

@@ -37,7 +37,7 @@ for(const [label,opts,redirect]of [['desktop',{},false],['phone',{width:390,heig
 }
 check('the explicit Watch link keeps a supplied word query',()=>assert.equal(new URL(startup({url:'https://3ricw.github.io/Chinese/?watch=1&q=你好'}).redirects[0]).searchParams.get('q'),'你好'));
 const app=boot(),ar=app.run;check('the complete app cold-boots with its final UI and released gate',()=>{assert.equal(ar('appBoot.status()'),'ready');assert.equal(ar('currentView'),'home');assert(app.html().includes('rx-home-minimal'));assert.deepEqual(app.errors,[])});
-ar("onboardingStep=null;state.profile.setupDone=false;laneWelcome();laneWelcomePick(0,laneToken);laneWelcomeCheck(laneToken);laneWelcomeNext(laneToken);trailSetupNext(trailViewToken);trailSetupNext(trailViewToken);trailSetupName('New learner',trailViewToken);trailSetupPick('starter','dragon',trailViewToken);trailSetupNext(trailViewToken);navigate('home')");
+ar("onboardingStep=null;state.profile.setupDone=false;laneWelcome();laneWelcomeNext(laneToken);laneWelcomeNext(laneToken);trailSetupNext(trailViewToken);trailSetupNext(trailViewToken);trailSetupName('New learner',trailViewToken);trailSetupPick('starter','dragon',trailViewToken);trailSetupNext(trailViewToken);navigate('home')");
 check('the fresh-name and companion flow reaches usable Home',()=>{assert.equal(ar('onboardingStep'),null);assert.equal(ar('state.profile.name'),'New learner');assert.equal(ar('state.companion.starter'),'dragon');assert(!app.nodes.get('overlay').innerHTML.includes('companion-modal'))});
 ar('eval(rxNextAction().action)');check('the fresh learner can start real guided practice',()=>assert(ar('currentView==="session"&&memoryIsStudy()')));
 
