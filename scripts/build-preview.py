@@ -4,7 +4,7 @@ Run from any directory: python3 scripts/build-preview.py /absolute/output.html
 The deployment consists of index.html, .nojekyll, and referenced assets/ files.
 No network requests or publishing are performed.
 """
-import hashlib,re,sys,json
+import base64,hashlib,re,sys,json
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 index=(ROOT/'index.html').read_text()
@@ -50,11 +50,18 @@ def inline_style(m):
  match=re.search(r'href="(assets/[^"]+)"',attrs)
  if not match:return m.group()
  ident=re.search(r'\bid="([^"]+)"',attrs)
- return '<style'+(' id="'+ident.group(1)+'"' if ident else '')+'>'+(ROOT/match.group(1)).read_text()+'</style>'
+ css_path=ROOT/match.group(1)
+ css=css_path.read_text()
+ def embed_illustration(image):
+  data=(css_path.parent/image.group(1)).read_bytes()
+  return 'url("data:image/webp;base64,'+base64.b64encode(data).decode('ascii')+'")'
+ css=re.sub(r'url\("(lantern-[a-z-]+-[a-f0-9]{12}\.webp)"\)',embed_illustration,css)
+ return '<style'+(' id="'+ident.group(1)+'"' if ident else '')+'>'+css+'</style>'
 standalone=re.sub(r'<script\b([^>]*)></script>',inline_script,index)
 standalone=re.sub(r'<link\b([^>]*)>',inline_style,standalone)
 assert not re.search(r'(?:src|href)="assets/',standalone)
 out=Path(sys.argv[1]).resolve();out.parent.mkdir(parents=True,exist_ok=True);out.write_text(standalone)
-result=dict(baseCommit='59c889ced8725c61cbd74af3e73e190d9372a43e',assets=manifest,lazyAssets=lazy_assets,standaloneSha256=hashlib.sha256(out.read_bytes()).hexdigest(),standaloneBytes=out.stat().st_size)
+result=dict(baseCommit='400a4f1c927783c8b3143552ed966563ef389292',assets=manifest,lazyAssets=lazy_assets,standaloneSha256=hashlib.sha256(out.read_bytes()).hexdigest(),standaloneBytes=out.stat().st_size)
+(ROOT/'tests/results').mkdir(exist_ok=True)
 (ROOT/'tests/results/package.json').write_text(json.dumps(result,indent=2))
 print(json.dumps(dict(output=str(out),assets=len(manifest),bytes=out.stat().st_size,sha256=result['standaloneSha256'])))

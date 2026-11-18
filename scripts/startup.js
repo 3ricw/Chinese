@@ -57,7 +57,7 @@
       phase = 'ready'; clearTimeout(timer);
       root.removeAttribute('data-app-boot'); root.removeAttribute('data-boot-motion');
       root.style.removeProperty('color-scheme');
-      var modal = document.querySelector('.companion-modal input,.companion-modal button');
+      var modal = document.querySelector('.ln-welcome h1,.jy-onboarding h1') || document.querySelector('.companion-modal input:not([disabled]),.companion-modal button:not([disabled])');
       if (modal) modal.focus();
       return true;
     },

@@ -1,0 +1,39 @@
+name: Chinese learning app browser checks
+on:
+  push:
+    branches: [main, 'qa/lantern-*']
+    paths:
+      - index.html
+      - 'assets/**'
+      - 'tests/lantern-*'
+      - '.github/workflows/lantern-browser.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  practice:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check lesson state and progress
+        run: node tests/lantern-lane.cjs
+      - name: Install browser for interaction tests
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps ${{ matrix.browser }}
+      - name: Test phone and desktop layouts
+        run: python tests/lantern-browser.py --browser ${{ matrix.browser }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lantern-${{ matrix.browser }}
+          path: tests/results/browser
+          retention-days: 7

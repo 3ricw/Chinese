@@ -73,16 +73,17 @@ check('missed run prioritizes the existing retry',()=>assert(app.html().includes
 views.push({name:'study-flow/complete-missed-run',html:app.html()});r('labRetryMisses();labAnswer(labCurrent().correct)');
 check('direct retry retains helped status and zero new XP',()=>assert(r('labRun.feedback.helped&&labRun.feedback.xp===0')));
 check('new flows never start speech automatically',()=>assert.equal(r('spoken.length'),0));
-// Optional setup progress is a decoration; original validation remains effective.
-r("navigate('home');showNameSetup()");const label=new app.ctx.Element(),skip=new app.ctx.Element();let progress='',present=false;
-const modal={querySelector:s=>s==='.ax-setup-progress'?(present?{}:null):s==='.eyebrow'?label:s.startsWith('button[onclick')?skip:null,insertAdjacentHTML(where,html){assert.equal(where,'afterbegin');progress+=html;present=true}};
-app.ctx.setupFixture={querySelector:()=>modal};r('axOnboarding(setupFixture);axOnboarding(setupFixture)');
-check('setup progress is inserted once and reports the first step',()=>{assert.equal((progress.match(/class="ax-setup-progress"/g)||[]).length,1);assert(progress.includes('1 of 2'))});
-check('setup uses the established app name and clear skip label',()=>{assert.equal(label.textContent,'Welcome to Eric’s Chinese');assert.equal(skip.textContent,'Skip name')});
-app.ctx.document.getElementById('profile-name').value='<invalid>';r('saveProfileName(true)');check('invalid names stay editable on the same step',()=>assert.equal(r('onboardingStep'),'name'));
-app.ctx.document.getElementById('profile-name').value='Eric';r('saveProfileName(true)');check('valid name moves to the optional companion step',()=>assert.equal(r('onboardingStep'),'starter'));
-progress='';present=false;r('axOnboarding(setupFixture)');check('second setup step shows completed first step',()=>assert(progress.includes('2 of 2')&&progress.includes('class="is-complete"')));
-r('skipCompanionSetup()');check('companion setup can still be skipped',()=>assert(r("onboardingStep===null&&currentView==='home'&&!state.companion.enabled")));
+// Personalization follows the first playable greeting. Names and partners are optional.
+r("navigate('home');laneWelcome()");
+check('the first screen teaches a usable greeting',()=>assert(app.nodes.get('overlay').innerHTML.includes('Say hello to Lin.')));
+r('laneWelcomePick(0,laneToken);laneWelcomeCheck(laneToken);laneWelcomeNext(laneToken)');
+check('setup offers the learning purpose and a skip action',()=>assert(app.nodes.get('overlay').innerHTML.includes('What brings you here?')&&app.nodes.get('overlay').innerHTML.includes('Explore the app first')));
+r('trailSetupNext(trailViewToken);trailSetupNext(trailViewToken);trailSetupName("<invalid>",trailViewToken);trailSetupNext(trailViewToken)');
+check('invalid names stay editable on the same step',()=>assert(r("onboardingStep==='trail'&&trailDraft.step===2&&!!$('jy-setup-error').textContent")));
+r('trailSetupName("Eric",trailViewToken);trailSetupPick("companion",false,trailViewToken);trailSetupNext(trailViewToken)');
+check('valid name is saved when the learner starts the conversation',()=>assert(r("state.profile.name==='Eric'&&state.profile.setupDone&&currentView==='lane'")));
+check('companion setup can still be skipped',()=>assert(r("onboardingStep===null&&!state.companion.enabled")));
+r("navigate('home')");
 // Animation success, failures, unsupported APIs, preferences, and races.
 let m=motionApp();m.r('axToggleTheme()');check('native snapshot captures the old appearance first',()=>assert.equal(m.r('state.settings.theme'),'dark'));m.transitions[0].apply();await flush();
 check('theme callback saves the requested appearance',()=>assert.equal(m.r('state.settings.theme'),'light'));

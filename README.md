@@ -1,6 +1,16 @@
 # Eric’s Chinese — courses, memory aids, and Watch preview
 
-The existing Chinese learning app at https://3ricw.github.io/Chinese/. The latest update builds on `main` commit `da966573855f915da8927e60ce8fddcbdd0f93f3` and preserves the GitHub Pages origin and browser-local progress.
+[Open Eric’s Chinese](https://3ricw.github.io/Chinese/).
+
+## Lantern Lane
+
+New learners meet Lin and reply to a Mandarin greeting before choosing a course, a learning goal, or a companion. On a returning profile, open **Home → Lantern Lane → Play scene**. **Your route → Replay welcome** reopens the introduction on the same profile.
+
+Chinese 1 has four conversations about greetings, drinks, directions, and prices. Chinese 2 adds making plans, borrowing a book, ordering dinner, and inviting a friend out. Each scene mixes dialogue, movable word tiles, and bilingual matching. Missed turns return at the end of the scene. Passport stamps survive reloads and backups. Revisit dates advance after practice on different days. The app’s existing XP limits apply, and the character scheduler still uses separate recall checks.
+
+Learners who know spoken Chinese or want to start at a particular class chapter can choose a short character lesson during setup. Home continues to prioritize unfinished chapter practice. Sound and reduced-motion preferences apply to the new interactions.
+
+Run `node tests/lantern-lane.cjs` for the state and reward regressions. The browser suite supports `python tests/lantern-browser.py --browser chromium` and `--browser webkit` with the corresponding Playwright browsers installed.
 
 ## Home balance (2026-11-12)
 
