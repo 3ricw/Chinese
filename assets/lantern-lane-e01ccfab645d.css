@@ -55,9 +55,6 @@
 .ln-character-route {min-width:0;border:1px solid var(--line);border-radius:17px;padding:0 17px;color:var(--ink)}
 .ln-character-route>summary {color:var(--ink)}
 .ln-character-route .jy-home {margin:0 0 14px}
-html.ax .rx-home.ln-feature-first {display:flex;flex-direction:column}
-html.ax .rx-home.ln-feature-first>.rx-greeting {order:-3}
-html.ax .rx-home.ln-feature-first>.ln-home {order:-2}
 .ln-welcome {overflow:hidden;background:var(--ln-paper);text-align:left}
 html.ax .modal.companion-modal:has(.ln-welcome) {position:relative;padding:0!important;width:min(100%,560px)!important;max-width:560px!important;max-height:calc(100dvh - 32px)!important;overflow-y:auto!important;border-radius:24px;overscroll-behavior:contain;scrollbar-width:thin}
 .ln-welcome-top {display:flex;align-items:center;justify-content:space-between;gap:10px;padding:3px 22px;border-bottom:1px solid var(--ln-line)}

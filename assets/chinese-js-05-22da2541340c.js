@@ -128,8 +128,10 @@ function rxOpenHomeHelp(){
 renderHome=function(){
  document.body.classList.remove('feed-focus');
  const action=rxNextAction(),intro=typeof axHomeIntro==='function'?axHomeIntro(action):action,hour=new Date().getHours(),greeting=hour<12?'Good morning':hour<18?'Good afternoon':'Good evening',buddy=cleanBuddyEnabled();
- $('view').innerHTML=`<div class="flow-home feed-home rx-home rx-home-calm rx-home-minimal ${(!savedResume&&!trailHomeAction()&&action.action!=='labResume()')?'ln-feature-first':''}">
+ const featureConversation=!savedResume&&!trailHomeAction()&&action.action!=='labResume()';
+ $('view').innerHTML=`<div class="flow-home feed-home rx-home rx-home-calm rx-home-minimal">
   <div class="rx-greeting"><div><h1>${greeting}${state.profile.name?', '+esc(state.profile.name):''}.</h1><p class="ax-home-subtitle">${esc(currentCourse().name)} · ${esc(lessonLabel(courseFocusId()))}</p></div><button type="button" class="textbtn rx-home-progress" onclick="navigate('stats')">Your progress ${icon('arrow')}</button></div>
+  ${featureConversation?laneHomeMarkup():''}
   <div class="vm-home-dashboard"><div class="rx-home-start"><section class="feed-home-hero rx-hero" aria-label="Your next step">
     <div class="feed-home-copy"><span class="eyebrow">${esc(intro.eyebrow)}</span><h2>${esc(action.title)}</h2></div>
     <p class="rx-hero-description">${esc(intro.copy)}</p>
@@ -137,7 +139,7 @@ renderHome=function(){
     <div class="ax-hero-actions"><button class="btn primary" onclick="${action.action}" data-ui-sound="open"><span>${esc(action.button)}</span>${icon('arrow')}</button><button class="textbtn rx-scroll-link" onclick="openScrollQuickAccess()" data-ui-sound="open">${scrollNavIcon()} Open Scroll</button></div>
    </section></div></div>
   ${typeof axHomeMetrics==='function'?axHomeMetrics():''}
-  ${laneHomeMarkup()}
+  ${featureConversation?'':laneHomeMarkup()}
   <details class="ln-character-route"><summary>Character practice ${icon('chevron')}</summary>${trailHomeMarkup()}</details>
   ${rxHomeChapterMarkup()}
   ${rxHomeMoreMarkup()}

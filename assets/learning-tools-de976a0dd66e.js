@@ -24,6 +24,7 @@ function personalNoteInput(token,editor){
  if(status)status.textContent=ok?'Saved on this device · included in progress backups.':'Not saved to this browser. Export a backup before leaving.';
 }
 function personalMarkAssistance(visible){
+ laneMarkLookup(visible);
  trailMarkAssistance(visible);
  // Notes can be opened while a card is paused in Tools. Preserve that help in
  // both runtime and persisted sessions, including the other course's resume.

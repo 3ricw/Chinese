@@ -120,6 +120,7 @@ function laneCheck(token) {
     activity('cards');
   }
   save();
+  laneExposeAnswer(scene,q);
   playStudySound(correct ? (r.combo === 3 ? 'milestone' : 'correct') : 'retry');
   laneRender('feedback');
 }
@@ -162,10 +163,29 @@ function lanePick(kind, n, token) {
     }
   }
 }
+// A translation revealed in one activity also counts as help for a matching paused answer.
+function laneExposeAnswer(scene, q) {
+  if (typeof personalMarkAssistance!=='function') return;
+  const turn=q===0?scene.greet:scene.end;
+  const shown=q===1?scene.build.words.join(''):q===2?scene.pairs.map(pair=>pair[0]).join(' '):turn.line+' '+turn.choices[turn.answer];
+  personalMarkAssistance(shown+' '+laneZh(shown));
+}
+function laneMarkLookup(visible) {
+  const value=String(visible||'');
+  if(!value)return;
+  for(const [id,r] of Object.entries(state.learningLab?.trail?.lane?.runs||{})) {
+    if(r.feedback!==null||r.helped||r.pos>=r.queue.length||(currentView==='lane'&&laneSceneId===id))continue;
+    const scene=laneScene(id);if(!scene)continue;
+    const q=r.queue[r.pos], turn=q===0?scene.greet:scene.end;
+    const words=q===1?scene.build.words:q===2?scene.pairs.map(pair=>pair[0]):
+      [turn.line,turn.choices[turn.answer],...scene.pairs.map(pair=>pair[0]).filter(word=>(turn.line+turn.choices[turn.answer]).includes(word))];
+    if(words.some(word=>{const hanzi=word.replace(/[^\u3400-\u9fff]/g,'');return hanzi&&(value.includes(hanzi)||value.includes(laneZh(hanzi)))}))r.helped=true;
+  }
+}
 function laneHelp(token) {
   const live = laneLive(token);
   if (!live || live.r.feedback !== null || live.r.helped) return;
-  live.r.helped = true; save(); laneRender('hint');
+  live.r.helped = true; save(); laneExposeAnswer(live.scene,live.q); laneRender('hint');
 }
 function laneReplay(i,token) {
   const live=laneLive(token);
@@ -315,7 +335,7 @@ function laneWelcomePick(n,token) {
 function laneWelcomeCheck(token) {
   if(!laneWelcomeLive(token)||laneWelcomeDraft.feedback!==null||laneWelcomeDraft.chosen===null)return;
   const correct=laneWelcomeDraft.chosen===laneScene('gate').greet.answer;
-  laneWelcomeDraft.feedback=correct; playStudySound(correct?'correct':'retry'); laneWelcomeRender('.ln-feedback');
+  laneWelcomeDraft.feedback=correct; laneExposeAnswer(laneScene('gate'),0); playStudySound(correct?'correct':'retry'); laneWelcomeRender('.ln-feedback');
 }
 function laneWelcomeRetry(token) {
   if(!laneWelcomeLive(token)||laneWelcomeDraft.feedback!==false)return;

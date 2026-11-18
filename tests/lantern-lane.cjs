@@ -63,6 +63,13 @@ c("laneWelcomePick(0,laneToken);laneWelcomeCheck(laneToken);laneWelcomeNext(lane
 test('class learners start their actual chapter and can pause a character trail',()=>assert(c("currentView==='trail'&&trailRun().lesson==='c2-13'&&selectedCourseId==='chinese-2'")));
 c("while(!trailRun().done){const r=trailRun(),s=trailStep(),args=[r.id,r.pos,trailViewToken];if(s.kind==='choose'&&!r.feedback)trailChoose(s.ch,...args);else if(s.kind==='recall'&&!r.revealed)trailReveal(...args);else if(s.kind==='recall'&&!r.feedback)trailRate('good',...args);else trailNext(...args)}");
 test('a full character trail finishes with scheduled character reviews',()=>assert(c('trailRun().done&&Object.values(state.cards).some(s=>s.due>Date.now())')));
+const cross=boot(), cx=cross.run;
+cx("laneWelcomeSkip(laneToken);startSession('all','1',['你']);checkpointCurrent();navigate('home')");
+test('a paused chapter precedes the conversation in reading and tab order',()=>assert(cross.html().indexOf('class="rx-home-start"')<cross.html().indexOf('class="ln-home"')));
+cx("laneStart('gate');laneHelp(laneToken)");
+test('revealing an overlapping translation marks the paused chapter as assisted',()=>assert(cx("savedResume.data.usedHint===true")));
+cx("navigate('home');laneStart('tea');navigate('tools');personalMarkAssistance('茶 · tea');laneStart('tea')");
+test('using a matching lookup during a paused conversation is recorded as help',()=>assert(cx("laneData().runs.tea.helped")));
 const corrupt=boot().run;
 test('malformed queues and foreign scene keys are discarded on import',()=>assert.equal(corrupt("Object.keys(laneValidate({runs:{fake:laneNewRun(1),gate:{...laneNewRun(1),queue:['0',1,2,3]}}}).runs).length"),0));
 test('traditional food and meeting characters have independent spellings',()=>{corrupt("state.settings.script='traditional'");assert.equal(corrupt("laneZh('一碗面，见面，面条')"),'一碗麵，見面，麵條');});
