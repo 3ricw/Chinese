@@ -4,7 +4,7 @@
 
 ## Lantern Lane
 
-New learners meet 你, hear its sound, and combine it with 好 to make 你好. Choosing **I’m starting fresh** starts Chinese 1 at the market gate. Open **Home → Lantern Lane** to start or resume a stop. Each stop teaches a few characters at a time, checks the meanings of the written forms, and rehearses the exchange before the independent conversation. The lesson remembers your exact step, including a pending answer. **Review the character lessons** reopens the preparation during a conversation or from its results.
+New learners meet 你, hear its sound, and combine it with 好 to make 你好. Choosing **I’m starting fresh** starts Chinese 1 at the market gate. Home leads with the current chapter and direct Scroll access. Open **Home → Lantern Lane** below the chapter to start or resume a conversation. Each stop teaches a few characters at a time, checks the meanings of the written forms, and rehearses the exchange before the independent conversation. The lesson remembers your exact step, including a pending answer. **Review the character lessons** reopens the preparation during a conversation or from its results.
 
 Choose **No pinyin**, **New words**, or **All words** in any scene. New words starts on by default and fades readings for words recognized on a first try and individual characters already familiar from spaced recall. The preference carries across scenes and both writing systems.
 

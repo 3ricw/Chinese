@@ -26,6 +26,39 @@ def finish_prep(page):
     raise AssertionError('Preparation did not reach the conversation')
 
 
+def check_pinyin_choices(page):
+    group = page.get_by_role('group', name='Pinyin', exact=True)
+    expect(group.get_by_role('radio')).to_have_count(3)
+    original = page.evaluate('state.settings.theme')
+    try:
+        for mode in ['dark', 'light']:
+            page.evaluate("mode=>{state.settings.theme=mode;theme()}", mode)
+            for label in ['No pinyin', 'New words', 'All words']:
+                choice = group.get_by_role('radio', name=label, exact=True)
+                expect(choice).to_be_visible()
+                ratio = choice.evaluate("""input=>{
+                    const style=getComputedStyle(input.nextElementSibling);
+                    function luminance(color){
+                      const rgb=color.match(/[0-9.]+/g).slice(0,3).map(Number).map(n=>{
+                        const v=n/255; return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;
+                      });
+                      return .2126*rgb[0]+.7152*rgb[1]+.0722*rgb[2];
+                    }
+                    const a=luminance(style.color), b=luminance(style.backgroundColor);
+                    return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);
+                }""")
+                assert ratio>=4.5,(mode,label,ratio)
+            assert group.evaluate('el=>el.getBoundingClientRect().right<=innerWidth+1')
+        # A native radio group also works from the keyboard without opening a menu.
+        group.get_by_role('radio',name='New words').focus()
+        page.keyboard.press('ArrowRight')
+        expect(group.get_by_role('radio',name='All words')).to_be_checked()
+        expect(group.get_by_role('radio',name='All words')).to_be_focused()
+        group.get_by_role('radio',name='New words').check()
+    finally:
+        page.evaluate("mode=>{state.settings.theme=mode;theme()}", original)
+
+
 def run(engine, url, artifacts):
     artifacts.mkdir(parents=True, exist_ok=True)
     browser = engine.launch()
@@ -48,6 +81,7 @@ def run(engine, url, artifacts):
                 expect(page.get_by_role('heading', name='Meet your first character.')).to_be_visible()
                 expect(page.locator('.ln-word-card rt')).to_have_text('nǐ')
                 expect(page.get_by_role('button',name='Hear 你')).to_be_visible()
+                check_pinyin_choices(page)
                 page.screenshot(path=artifacts/f'{label}-welcome.png')
                 page.get_by_role('button',name='Build a greeting').click()
                 expect(page.locator('.ln-intro')).to_contain_text('nǐ hǎo')
@@ -64,21 +98,21 @@ def run(engine, url, artifacts):
                 page.get_by_role('button',name='Try reading them').click()
                 page.get_by_role('button',name='good',exact=True).click()
                 expect(page.locator('.ln-feedback')).to_contain_text('Look at the shape again')
-                page.get_by_role('combobox',name='Pinyin').select_option('none')
+                page.get_by_role('radio',name='No pinyin',exact=True).check()
                 expect(page.locator('.ln-round rt')).to_have_count(0)
                 page.get_by_role('button',name='Pause lesson and go Home').click()
                 page.reload()
                 page.locator('.ln-home-next .ln-button').click()
-                expect(page.get_by_role('combobox',name='Pinyin')).to_have_value('none')
+                expect(page.get_by_role('radio',name='No pinyin',exact=True)).to_be_checked()
                 expect(page.get_by_role('button',name='Try again')).to_be_visible()
                 page.get_by_role('button',name='Try again').click()
-                page.get_by_role('combobox',name='Pinyin').select_option('new')
+                page.get_by_role('radio',name='New words',exact=True).check()
                 finish_prep(page)
                 expect(page.locator('.ln-exercise h1')).to_have_text('Greet Lin back.')
-                page.get_by_role('combobox',name='Pinyin').select_option('all')
+                page.get_by_role('radio',name='All words',exact=True).check()
                 expect(page.locator('.ln-bubble rt')).to_have_text('nǐ hǎo')
                 page.locator('.ln-option').filter(has_text='你好').click()
-                page.get_by_role('combobox',name='Pinyin').select_option('none')
+                page.get_by_role('radio',name='No pinyin',exact=True).check()
                 expect(page.locator('.ln-round rt')).to_have_count(0)
                 expect(page.locator('.ln-option.is-selected')).to_contain_text('你好')
                 page.get_by_role('button',name='Check answer').click()
@@ -117,6 +151,12 @@ def run(engine, url, artifacts):
                 assert page.evaluate("document.documentElement.scrollWidth <= innerWidth+1")
                 page.screenshot(path=artifacts/f'{label}-stamp.png')
                 page.get_by_role('button',name='Back to my route').click()
+                home_order=page.evaluate("""['.rx-hero','.rx-home-chapter','.ln-home'].map(s=>document.querySelector(s).getBoundingClientRect().top)""")
+                assert home_order[0]<home_order[1]<home_order[2],home_order
+                expect(page.locator('.rx-hero').get_by_role('button',name='Open Scroll')).to_be_visible()
+                expect(page.locator('.ln-home-next').get_by_role('button',name='Practice scene')).to_be_visible()
+                page.locator('.rx-hero').scroll_into_view_if_needed()
+                page.screenshot(path=artifacts/f'{label}-chapter-home.png')
                 page.locator('.ln-map summary').click()
                 expect(page.locator('.ln-map-stop.is-stamped')).to_have_count(1)
                 expect(page.get_by_role('button',name='Replay welcome')).to_be_visible()
