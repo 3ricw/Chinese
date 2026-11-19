@@ -39,8 +39,10 @@ test('greeting Lin produces a reply once and respects pinyin and audio settings'
   assert.equal(run("greetSpoken.at(-1)"),'你好！我叫小林。');assert.equal(run('bx.xp'),run('initialXP'));
 });
 const direct=boot(), dr=direct.run;
-test('direct lesson entry bypasses the demo and profile setup and resumes after reload',()=>{
-  dr("laneWelcomeSetup(laneToken);trailSetupNext(trailViewToken);trailSetupStart(trailViewToken)");
+test('direct lesson entry presents personalization before starting the lesson',()=>{
+  dr("laneWelcomeSetup(laneToken);trailSetupNext(trailViewToken);trailSetupNext(trailViewToken)");
+  assert(dr("trailDraft.step===2&&!state.profile.setupDone"));
+  dr("trailSetupPick('companion',false,trailViewToken);trailSetupNext(trailViewToken)");
   assert(dr("currentView==='lane'&&laneSceneId==='gate'&&selectedCourseId==='chinese-1'&&state.profile.setupDone&&!state.companion.starter&&laneData().lessons.gate.at===0"));
   assert.equal(boot(Object.fromEntries(direct.storage)).run('onboardingStep'),null);
 });
@@ -140,6 +142,14 @@ test('an existing learner can review prerequisites and return to the same conver
   rr("switchCourse('chinese-2','home');laneStart('meeting');laneReviewLesson(laneToken);laneLessonNext(laneToken);navigate('home');laneStart('meeting')");
   assert(rr("laneData().lessons.meeting.at===1&&laneData().runs.meeting.tiles[0]===1"));finishPrep(rr);
   assert(rr("laneLive(laneToken).q===1&&laneLive(laneToken).r.tiles[0]===1"));
+});
+const multiple=boot(), mr=multiple.run;
+mr("laneWelcomeSkip(laneToken);openChapter('2');trailBegin('2');trailNext(trailRun().id,trailRun().pos,trailViewToken);trailPause();openChapter('1');trailBegin('1');");
+test('chapter buttons open the chapter requested and keep other guided lessons paused',()=>{
+  assert(mr("trailRun().lesson==='1'&&trailData().runs['2'].pos===1"));
+  const back=boot(Object.fromEntries(multiple.storage));back.run("openChapter('2');trailBegin('2')");
+  assert(back.run("trailRun().lesson==='2'&&trailRun().pos===1&&trailData().runs['1'].lesson==='1'"));
+  back.run("trailPause()");assert.equal(back.run('currentView'),'chapter');
 });
 const folder=path.join(__dirname,'results');fs.mkdirSync(folder,{recursive:true});
 fs.writeFileSync(path.join(folder,'lantern-lane-views.json'),JSON.stringify(views));

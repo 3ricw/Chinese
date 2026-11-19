@@ -8,7 +8,7 @@ const knowledge=()=>stable('JSON.stringify({cards:state.cards,writing:state.writ
 r("onboardingStep=null;state.profile.setupDone=true;closeModal();state.settings.soundEffects=false");
 for(const id of r('CHAPTERS.map(c=>c[0])')){
  r(`openChapter('${id}')`);let html=app.html();views.push({name:'lesson-scroll/'+id+'/learn',html});
- check(id+': Scroll is the single primary Learn action',()=>{assert.equal((html.match(/class="btn primary"/g)||[]).length,1);assert(html.includes(`class="btn primary" onclick="openLessonScroll('${id}')"`));assert(html.includes(`class="btn" onclick="startSession('all','${id}')">Practice full chapter`));assert(!html.includes('Write to answer'))});
+ check(id+': guided cards lead Learn with Scroll and full chapter available',()=>{assert.equal((html.match(/class="btn primary"/g)||[]).length,1);assert(html.includes(`class="btn primary" onclick="trailBegin('${id}')"`));assert(html.includes(`class="btn" onclick="openLessonScroll('${id}')"`));assert(html.includes(`class="btn" onclick="startSession('all','${id}')">Practice full chapter`));assert(!html.includes('Write to answer'))});
  const before=knowledge();r(`openLessonScroll('${id}')`);
  check(id+': entry selects only this lesson and its course',()=>{assert.equal(r('currentView'),'scroll');assert.equal(r('state.scrollSession.chapter'),id);assert(r(`currentCourse().lessons.includes('${id}')`));assert(r(`state.feed.mode==='chapter'&&state.feed.anchor==='${id}'`));assert(r(`state.scrollSession.targets.every(ch=>uniqueCards('${id}').some(c=>c.character===ch))`))});
  check(id+': entry and browsing create no learning or rewards',()=>assert.equal(knowledge(),before));

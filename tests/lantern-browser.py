@@ -103,7 +103,7 @@ def run(engine, url, artifacts):
                 expect(page.get_by_role('heading',name='Chinese 1: the beginner course')).to_be_visible()
                 expect(page.get_by_role('dialog')).not_to_contain_text('Chinese 2')
                 expect(page.locator('.ln-scene-preview')).to_contain_text('Lantern Lane is a street market')
-                page.get_by_role('button',name='Personalize name & companion').click()
+                page.get_by_role('button',name='Choose name & companion').click()
                 page.locator('#jy-name').fill('Eric')
                 page.locator('.jy-setup-actions .primary').click()
                 expect(page.locator('.ln-exercise h1')).to_have_text('Meet three characters.')
@@ -191,7 +191,28 @@ def run(engine, url, artifacts):
                 if width==320:
                     duration=page.locator('.ln-lights i').first.evaluate("el=>getComputedStyle(el).animationDuration")
                     assert duration=='0s', duration
-                page.evaluate("""switchCourse('chinese-1','home');trailBegin('I');
+                page.evaluate("switchCourse('chinese-1','learn')")
+                page.locator('.course-continue').get_by_role('button',name='Guided cards',exact=True).click()
+                expect(page.locator('.jy-question-card')).to_be_visible()
+                page.get_by_role('button',name='Pause and save lesson').click()
+                expect(page.locator('.course-polished')).to_be_visible()
+                page.evaluate("openChapter('2')")
+                page.locator('.flow-launch').get_by_role('button',name='Guided cards',exact=True).click()
+                assert page.evaluate("trailRun().lesson==='2'")
+                page.get_by_role('button',name='Pause and save lesson').click()
+                page.locator('.flow-launch').get_by_role('button',name='Start Scroll').click()
+                cards=page.locator('.jy-feed-cards')
+                if width>=800:
+                    expect(cards).to_be_visible()
+                    page.screenshot(path=artifacts/f'{label}-desktop-scroll.png')
+                    saved_scroll=page.evaluate("state.scrollSession.id")
+                    cards.click()
+                    assert page.evaluate("trailRun().lesson==='2'")
+                    page.get_by_role('button',name='Pause and save lesson').click()
+                    assert page.evaluate("currentView==='scroll' && state.scrollSession.id")==saved_scroll
+                else:
+                    expect(cards).to_be_hidden()
+                page.evaluate("""navigate('home');trailBegin('I');
                     for(let n=0;n<20 && trailStep().kind!=='recall';n++){
                       const r=trailRun(),s=trailStep(),args=[r.id,r.pos,trailViewToken];
                       if(s.kind==='choose'&&!r.feedback)trailChoose(s.ch,...args);else trailNext(...args);
@@ -209,6 +230,9 @@ def run(engine, url, artifacts):
                         quick.goto(url)
                         quick.get_by_role('button',name='Go straight to lessons').click()
                         quick.locator('.jy-setup-actions .primary').click()
+                        quick.get_by_role('button',name='Choose name & companion').click()
+                        expect(quick.locator('#jy-name')).to_be_visible()
+                        quick.get_by_role('button',name='Study without a companion').click()
                         quick.get_by_role('button',name='Start with characters').click()
                         expect(quick.locator('.ln-exercise h1')).to_have_text('Meet three characters.')
                         assert quick.evaluate("selectedCourseId==='chinese-1'&&state.profile.setupDone&&!state.companion.starter")
