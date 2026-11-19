@@ -224,6 +224,17 @@ def run(engine, url, artifacts):
                     gap=page.evaluate("document.querySelector('.jy-dock').getBoundingClientRect().top-document.querySelector('.jy-study-tools').getBoundingClientRect().bottom")
                     assert gap<=40,gap
                 page.screenshot(path=artifacts/f'{label}-recall.png')
+                before=page.evaluate("({id:trailRun().id,chars:trailRun().steps.map(s=>s.ch)})")
+                page.evaluate("""while(!trailRun().done){
+                  const r=trailRun(),s=trailStep(),args=[r.id,r.pos,trailViewToken];
+                  if(s.kind==='recall'&&!r.revealed)trailReveal(...args);
+                  else if(s.kind==='recall'&&!r.feedback)trailRate('good',...args);
+                  else trailNext(...args);
+                }""")
+                page.get_by_role('button',name='Next set',exact=True).click()
+                expect(page.locator('.jy-question-card')).to_be_visible()
+                assert page.evaluate("old=>currentView==='trail'&&trailRun().lesson==='I'&&trailRun().id!==old.id&&trailRun().steps.every(s=>!old.chars.includes(s.ch))",before)
+
                 if width==320:
                     quick=browser.new_page(viewport={'width':320,'height':568})
                     try:

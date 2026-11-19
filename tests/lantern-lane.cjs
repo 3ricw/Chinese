@@ -115,6 +115,26 @@ c("laneWelcomeNext(laneToken);laneWelcomeNext(laneToken);trailSetupPick('intent'
 test('class learners start their actual chapter and can pause a character trail',()=>assert(c("currentView==='trail'&&trailRun().lesson==='c2-13'&&selectedCourseId==='chinese-2'")));
 c("while(!trailRun().done){const r=trailRun(),s=trailStep(),args=[r.id,r.pos,trailViewToken];if(s.kind==='choose'&&!r.feedback)trailChoose(s.ch,...args);else if(s.kind==='recall'&&!r.revealed)trailReveal(...args);else if(s.kind==='recall'&&!r.feedback)trailRate('good',...args);else trailNext(...args)}");
 test('a full character trail finishes with scheduled character reviews',()=>assert(c('trailRun().done&&Object.values(state.cards).some(s=>s.due>Date.now())')));
+test('two more sets continue in the selected chapter without repeating the preceding set or awarding completion twice',()=>{
+  c("trailPause();openChapter('c2-13');trailBegin('c2-13')");
+  for(let n=0;n<2;n++){
+    c(`while(!trailRun().done){
+      const r=trailRun(),s=trailStep(),args=[r.id,r.pos,trailViewToken];
+      if(s.kind==='choose'&&!r.feedback)trailChoose(s.ch,...args);
+      else if(s.kind==='recall'&&!r.revealed)trailReveal(...args);
+      else if(s.kind==='recall'&&!r.feedback)trailRate('good',...args);else trailNext(...args);
+    }`);
+    const completed=c('trailRun().id'),token=c('trailViewToken'),xp=c('bx.xp'),sessions=c('trailData().days[dayKey()].sessions');
+    const previous=new Set(Array.from(c('trailRun().steps.map(s=>s.ch)')));
+    c(`trailNextSet('${completed}',${token});trailNextSet('${completed}',${token})`);
+    assert(c("currentView==='trail' && trailRun().lesson==='c2-13' && !trailRun().done && trailRun().pos===0"));
+    assert(Array.from(c('trailRun().steps.map(s=>s.ch)')).every(ch=>!previous.has(ch)));
+    assert.equal(c('bx.xp'),xp);assert.equal(c('trailData().days[dayKey()].sessions'),sessions);
+  }
+  const resumed=boot(Object.fromEntries(classApp.storage));resumed.run("openChapter('c2-13');trailBegin('c2-13')");
+  assert.equal(resumed.run('trailRun().id'),c('trailRun().id'));
+  c('trailPause()');assert.equal(c('currentView'),'chapter');
+});
 const cross=boot(), cx=cross.run;
 cx("laneWelcomeSkip(laneToken);startSession('all','1',['你']);checkpointCurrent();navigate('home')");
 test('a paused chapter precedes the conversation in reading and tab order',()=>assert(cross.html().indexOf('class="rx-home-start"')<cross.html().indexOf('class="ln-home"')));
