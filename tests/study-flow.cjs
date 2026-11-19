@@ -75,7 +75,7 @@ check('direct retry retains helped status and zero new XP',()=>assert(r('labRun.
 check('new flows never start speech automatically',()=>assert.equal(r('spoken.length'),0));
 // Personalization follows the first guided greeting. Names and partners are optional.
 r("navigate('home');laneWelcome()");
-check('the first screen introduces both characters',()=>assert(app.nodes.get('overlay').innerHTML.includes('Meet two characters.')));
+check('the first screen introduces both characters',()=>assert(app.nodes.get('overlay').innerHTML.includes('Try it with “hello”')));
 r('laneWelcomeNext(laneToken);laneWelcomeNext(laneToken)');
 check('setup offers the learning purpose and a skip action',()=>assert(app.nodes.get('overlay').innerHTML.includes('What brings you here?')&&app.nodes.get('overlay').innerHTML.includes('Explore the app first')));
 r('trailSetupNext(trailViewToken);trailSetupNext(trailViewToken);trailSetupName("<invalid>",trailViewToken);trailSetupNext(trailViewToken)');

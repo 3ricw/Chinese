@@ -17,7 +17,7 @@ function finishPrep(run) {
 }
 test('both individual characters appear with readings, meanings and separate audio before the greeting',()=>{
   assert.equal(run('onboardingStep'),'lane-welcome');
-  assert(overlay().includes('Meet two characters.')&&overlay().includes('Explore the app'));
+  assert(overlay().includes('Learn to read Chinese')&&overlay().includes('Explore the app'));
   for(const value of ['nǐ','hǎo','>you<','>good<','Hear 你"','Hear 好"'])assert(overlay().includes(value),value);
   assert(!overlay().includes('Hear 你好"'));
   run("var greetSpoken=[];var originalSpeaker=speak;speak=word=>greetSpoken.push(word);laneWelcomeSound(0,laneToken);laneWelcomeSound(1,laneToken)");
@@ -26,15 +26,27 @@ test('both individual characters appear with readings, meanings and separate aud
 });
 run("var initialXP=bx.xp;var firstToken=laneToken;laneWelcomeNext(laneToken);laneWelcomeNext(firstToken)");
 test('the second screen models the combined word without crediting mastery',()=>{
-  assert(overlay().includes('Put them together.')&&overlay().includes('nǐ hǎo')&&overlay().includes('>hello<'));
+  assert(overlay().includes('Meet Lin')&&overlay().includes('nǐ hǎo')&&overlay().includes('>hello<'));
   assert.equal((overlay().match(/class="ln-word-card"/g)||[]).length,1);
   run("laneWelcomeSound(1,firstToken);laneWelcomeSound(0,laneToken);speak=originalSpeaker");
   assert.equal(run("greetSpoken.join('/')"),'你/好/你好');
   assert.equal(run('bx.xp'),run('initialXP'));assert.equal(run('Object.keys(state.cards).length'),0);
 });
+test('greeting Lin produces a reply once and respects pinyin and audio settings',()=>{
+  run("var beforeHello=laneToken;laneWelcomeGreet(beforeHello);laneWelcomeGreet(beforeHello);laneSetPinyin('none',laneToken)");
+  assert(run('laneWelcomeDraft.replied'));assert(overlay().includes('Hello! I’m Xiao Lin.')&&!overlay().includes('<rt'));
+  run("speak=word=>greetSpoken.push(word);laneWelcomeHearLin(laneToken);speak=originalSpeaker;laneSetPinyin('new',laneToken)");
+  assert.equal(run("greetSpoken.at(-1)"),'你好！我叫小林。');assert.equal(run('bx.xp'),run('initialXP'));
+});
+const direct=boot(), dr=direct.run;
+test('direct lesson entry bypasses the demo and profile setup and resumes after reload',()=>{
+  dr("laneWelcomeSetup(laneToken);trailSetupNext(trailViewToken);trailSetupStart(trailViewToken)");
+  assert(dr("currentView==='lane'&&laneSceneId==='gate'&&selectedCourseId==='chinese-1'&&state.profile.setupDone&&!state.companion.starter&&laneData().lessons.gate.at===0"));
+  assert.equal(boot(Object.fromEntries(direct.storage)).run('onboardingStep'),null);
+});
 run("laneWelcomeNext(laneToken);trailSetupNext(trailViewToken)");
 test('starting fresh shows only the Chinese 1 route',()=>{
-  assert(overlay().includes('Your first stop is Chinese 1.')&&!overlay().includes('Chinese 2'));
+  assert(overlay().includes('Chinese 1: the beginner course')&&!overlay().includes('Chinese 2'));
   assert.equal(run("trailSetupPick('course','chinese-2',trailViewToken)"),false);
   assert.equal(run("trailSetupPick('lesson','c2-13',trailViewToken)"),false);
 });

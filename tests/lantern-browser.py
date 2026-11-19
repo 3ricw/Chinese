@@ -78,7 +78,7 @@ def run(engine, url, artifacts):
             try:
                 page.wait_for_function("window.appBoot && appBoot.status()==='ready'")
                 expect(page.get_by_role('dialog')).to_be_visible()
-                expect(page.get_by_role('heading', name='Meet two characters.')).to_be_visible()
+                expect(page.get_by_role('heading', name='Learn to read Chinese')).to_be_visible()
                 expect(page.locator('.ln-intro .ln-word-card rt')).to_have_text(['nǐ','hǎo'])
                 expect(page.get_by_role('button',name='Hear 好',exact=True)).to_be_visible()
                 assert page.locator('.ln-intro .ln-word-card').evaluate_all("cards=>cards.length===2 && Math.abs(cards[0].offsetTop-cards[1].offsetTop)<2 && cards[0].offsetLeft<cards[1].offsetLeft")
@@ -92,12 +92,18 @@ def run(engine, url, artifacts):
                 expect(page.locator('.ln-intro')).to_contain_text('hello')
                 assert page.locator('.ln-intro').evaluate("el=>el.scrollWidth<=el.clientWidth+1")
                 page.screenshot(path=artifacts/f'{label}-greeting.png')
-                page.get_by_role('button', name='Choose my learning route').click()
+                page.get_by_role('button',name='Greet Lin',exact=True).click()
+                expect(page.locator('.ln-first-reply')).to_contain_text('Hello! I’m Xiao Lin.')
+                page.get_by_role('radio',name='No pinyin',exact=True).check()
+                expect(page.locator('.ln-first-reply rt')).to_have_count(0)
+                page.get_by_role('radio',name='New words',exact=True).check()
+                page.get_by_role('button', name='Choose a starting point').click()
                 page.get_by_role('button', name='I’m starting fresh', exact=False).click()
                 page.locator('.jy-setup-actions .primary').click()
-                expect(page.get_by_role('heading',name='Your first stop is Chinese 1.')).to_be_visible()
+                expect(page.get_by_role('heading',name='Chinese 1: the beginner course')).to_be_visible()
                 expect(page.get_by_role('dialog')).not_to_contain_text('Chinese 2')
-                page.locator('.jy-setup-actions .primary').click()
+                expect(page.locator('.ln-scene-preview')).to_contain_text('Lantern Lane is a street market')
+                page.get_by_role('button',name='Personalize name & companion').click()
                 page.locator('#jy-name').fill('Eric')
                 page.locator('.jy-setup-actions .primary').click()
                 expect(page.locator('.ln-exercise h1')).to_have_text('Meet three characters.')
@@ -197,6 +203,17 @@ def run(engine, url, artifacts):
                     gap=page.evaluate("document.querySelector('.jy-dock').getBoundingClientRect().top-document.querySelector('.jy-study-tools').getBoundingClientRect().bottom")
                     assert gap<=40,gap
                 page.screenshot(path=artifacts/f'{label}-recall.png')
+                if width==320:
+                    quick=browser.new_page(viewport={'width':320,'height':568})
+                    try:
+                        quick.goto(url)
+                        quick.get_by_role('button',name='Go straight to lessons').click()
+                        quick.locator('.jy-setup-actions .primary').click()
+                        quick.get_by_role('button',name='Start with characters').click()
+                        expect(quick.locator('.ln-exercise h1')).to_have_text('Meet three characters.')
+                        assert quick.evaluate("selectedCourseId==='chinese-1'&&state.profile.setupDone&&!state.companion.starter")
+                    finally:
+                        quick.close()
                 assert not errors, errors
                 assert not missing, missing
                 print(f'PASS {label}: onboarding, answer correction, tiles, pairs, resume, stamp, route, both courses and legacy destinations',flush=True)
