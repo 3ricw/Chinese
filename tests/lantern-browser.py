@@ -256,6 +256,7 @@ def run(engine, url, artifacts):
                 assert bounds and bar and bounds['x']>=bar['x']-2 and bounds['width']<280
                 shortcut.click()
                 expect(page.get_by_role('heading',name='Word flashcards')).to_be_visible()
+                expect(page.locator('#decks')).to_be_hidden()
                 for han in ['我','喝','茶']:
                     expect(page.locator('#face h2')).to_have_text(han)
                     expect(page.locator('.reading')).to_be_visible()
@@ -268,8 +269,20 @@ def run(engine, url, artifacts):
                     expect(page.locator('#face h2')).to_have_text(han)
                     page.get_by_role('button',name='Reveal pronunciation & meaning').click()
                     page.get_by_role('button',name='I remembered').click()
-                page.get_by_role('button',name='Next set').click()
+                page.get_by_role('button',name='Continue studying').click()
                 expect(page.locator('#face h2')).to_have_text('你')
+                for _ in range(3):
+                    page.locator('#actions .primary').click()
+                for _ in range(3):
+                    page.get_by_role('button',name='Reveal pronunciation & meaning').click()
+                    page.get_by_role('button',name='I remembered').click()
+                page.reload()
+                expect(page.locator('#deck')).to_have_text('Quick review')
+                expect(page.locator('#face h2')).to_have_text('我')
+                page.get_by_role('button',name='Reveal pronunciation & meaning').click()
+                page.get_by_role('button',name='I remembered').click()
+                expect(page.locator('#face h2')).to_have_text('他')
+                page.get_by_text('Browse other study material',exact=True).click()
                 page.locator('#decks').select_option(label='L15 · Seeing a Doctor')
                 expect(page.locator('.meaning')).to_be_visible()
                 page.get_by_role('link',name='Sentence lessons').click()
@@ -284,6 +297,7 @@ def run(engine, url, artifacts):
                 page.get_by_role('link',name='Exam practice').click()
                 expect(page.get_by_role('heading',name='Final practice desk')).to_be_visible()
                 for index in range(6):
+                    page.get_by_text('Browse exam sections',exact=True).click()
                     page.locator('#topics button').nth(index).click()
                     if index < 4:
                         page.locator('.answers button').first.click()

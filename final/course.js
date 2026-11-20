@@ -2,7 +2,7 @@ const storageKey = 'chinese.chi604.course.v1';
 const units = document.querySelector('#units');
 const lesson = document.querySelector('#lesson');
 const outline = document.querySelector('#outline');
-outline.open = matchMedia('(min-width:721px)').matches;
+outline.open = false;
 const cards = curriculum.flatMap(([title, rows], unit) => rows.map((row, position) => ({title, unit, position, row})));
 let state;
 try {state = JSON.parse(localStorage.getItem(storageKey))} catch {}

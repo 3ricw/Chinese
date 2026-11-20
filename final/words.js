@@ -20,7 +20,51 @@ const wordExamples = {
  '呢':['你呢？','Nǐ ne?','How about you?'], '吧':['走吧。','Zǒu ba.','Let’s go.']
 };
 if (!store.history || typeof store.history !== 'object' || Array.isArray(store.history)) store.history={};
+// A saved run from the original flashcards can predate the per-set history.
+for(const [g,run] of Object.entries(store.runs)){
+ if(wordGroups[g] && run && Number.isInteger(run.start))store.history[g+'-'+run.start]=run;
+}
+const route=[];
+const deckOrder=wordGroups.map((_,i)=>i).filter(i=>wordGroups[i][0]!=='Foundations');
+const foundations=wordGroups.findIndex(([title])=>title==='Foundations');
+if(foundations>=0)deckOrder.push(foundations);
+for(const deck of deckOrder){
+ for(let start=0;start<wordGroups[deck][1].length;start+=SIZE)route.push({deck,start,key:deck+'-'+start});
+}
+if(!store.misses || typeof store.misses!=='object' || Array.isArray(store.misses))store.misses={};
+function nextSet(){
+ // Resume unfinished work before introducing another set.
+ return route.find(({key})=>['learn','read'].includes(store.history[key]?.phase))
+     || route.find(({key})=>store.history[key]?.phase!=='done');
+}
+function finishedSets(){return route.filter(({key})=>store.history[key]?.phase==='done').length;}
+function markMiss(deck,index){
+ const id=deck+'-'+index;
+ store.misses[id]={deck,index,after:finishedSets()+2,tomorrow:Date.now()+86400000};
+}
+function dueReview(){
+ const count=finishedSets(),now=Date.now();
+ return Object.keys(store.misses).find(id=>{
+  const m=store.misses[id];
+  return wordGroups[m?.deck]?.[1]?.[m.index] && (m.after<=count || m.tomorrow<=now);
+ });
+}
+function pickNext(allowReview=true){
+ const review=allowReview && dueReview();
+ if(review){
+  store.review=review;store.reviewShown=false;refresh();return;
+ }
+ const target=nextSet();
+ if(!target){window.location.assign('grammar.html');return;}
+ group=target.deck;
+ store.runs[group]=store.history[target.key]||newSet(target.start);
+ refresh();
+}
+function leaveReview(){
+ delete store.review;delete store.reviewShown;
+}
 function openSet(start, repeat=false) {
+ leaveReview();
  const previous=current();
  store.history[group+'-'+previous.start]=previous;
  const stored=store.history[group+'-'+start];
@@ -74,6 +118,7 @@ function render() {
  const s=current(), [title,words]=wordGroups[group];
  const set=words.slice(s.start,s.start+SIZE);
  const face=el('face'),actions=el('actions'),bar=el('progress');
+ el('repeat-set').hidden=true;
  face.replaceChildren();actions.replaceChildren();select.value=group;
  el('deck').textContent=title;
  el('position').textContent='Set '+(1+s.start/SIZE)+' of '+Math.ceil(words.length/SIZE);
@@ -92,14 +137,39 @@ function render() {
  picker.value=s.start;picker.onchange=()=>openSet(Number(picker.value));
  el('coverage').textContent=total+' of '+words.length+' cards recalled in this deck.';
  bar.max=set.length*2;bar.value=s.phase==='learn'?s.at:set.length+passed;
+ const miss=store.misses[store.review];
+ if(miss && wordGroups[miss.deck]?.[1]?.[miss.index]){
+  const [word,reading,meaning]=wordGroups[miss.deck][1][miss.index];
+  el('deck').textContent='Quick review';
+  el('position').textContent='1 word';bar.max=1;bar.value=store.reviewShown?1:0;
+  el('guide-note').textContent='You marked this word for more practice. Try reading it once more.';
+  el('coverage').textContent='';
+  add(face,'small','READ FROM MEMORY');
+  add(face,'h2',word,word.length>3?'long':'').lang='zh-Hans';
+  if(!store.reviewShown){
+   add(face,'p','Say the word and its meaning.');
+   action('Reveal pronunciation & meaning',()=>{store.reviewShown=true;refresh();},true);
+  }else{
+   add(face,'p',reading,'reading');add(face,'p',meaning,'meaning');
+   action('Listen',()=>hear(word));
+   function finishReview(again){
+    if(again)markMiss(miss.deck,miss.index);else delete store.misses[store.review];
+    leaveReview();save();pickNext(false);
+   }
+   action('Study again',()=>finishReview(true));action('I remembered',()=>finishReview(false),true);
+  }
+  return;
+ }
+ el('guide-note').textContent=s.phase==='done'?'Your progress is saved.':s.phase==='read'?'Read each word from memory. Words you find difficult will come back.':group===0&&s.start===0?'Start with these three words. Your next set is picked for you.':'Pick up here. Learn these words, then try reading them on your own.';
  if(s.phase==='done'){
   add(face,'small','SET COMPLETE');add(face,'h2','You read these words','result');
   const list=add(face,'ul','','recap');
   set.forEach(([w,p,m])=>add(list,'li',w+' · '+p+' · '+m));
-  action('Repeat this set',()=>openSet(s.start,true));
-  if(s.start+SIZE<words.length)action('Next set →',()=>openSet(s.start+SIZE),true);
-  else if(group+1<wordGroups.length)action('Next deck →',()=>{group++;refresh();},true);
-  else {const link=add(actions,'a','Continue to sentence lessons →');link.href='grammar.html';}
+  const target=nextSet();
+  const next=dueReview()?'a word you marked for review':target?wordGroups[target.deck][0]+' · Set '+(1+target.start/SIZE):'sentence lessons';
+  add(face,'p','Up next: '+next,'result-next');
+  action('Continue studying →',()=>pickNext(),true);
+  el('repeat-set').hidden=false;el('repeat-set').onclick=()=>openSet(s.start,true);
   return;
  }
  const learning=s.phase==='learn';
@@ -123,10 +193,11 @@ function render() {
   },true);
  } else if(!s.revealed)action('Reveal pronunciation & meaning',()=>{s.revealed=true;refresh();},true);
  else {
-  action('Study again',()=>{s.queue.push(s.queue.shift());s.revealed=false;refresh();});
+  action('Study again',()=>{markMiss(group,s.start+s.queue[0]);s.queue.push(s.queue.shift());s.revealed=false;refresh();});
   action('I remembered',()=>{s.queue.shift();s.revealed=false;if(!s.queue.length)s.phase='done';refresh();},true);
  }
 }
 wordGroups.forEach(([name],i)=>{const opt=add(select,'option',name);opt.value=i;});
-select.onchange=()=>{group=Number(select.value);refresh();};
-render();
+select.onchange=()=>{leaveReview();group=Number(select.value);refresh();};
+if(current().phase==='done' && !store.misses[store.review] && (nextSet()||dueReview()))pickNext();
+else render();

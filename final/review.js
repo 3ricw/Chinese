@@ -76,14 +76,31 @@ function record(i){const k=field(section,i);return saved[k]&&typeof saved[k]==='
 function render(){
  topics.replaceChildren(...sections.map(([name,weight],s)=>{
  const btn=document.createElement('button');btn.innerHTML='<small>Part '+(s<4?'I':'II')+' · '+weight+'%</small>'+name;
- btn.setAttribute('aria-pressed',String(s===section));btn.onclick=()=>{section=s;saved.section=s;persist();render();focusWork()};return btn}));
+ btn.setAttribute('aria-pressed',String(s===section));btn.onclick=()=>{document.querySelector('#exam-sections').open=false;section=s;saved.section=s;persist();render();focusWork()};return btn}));
  const rows=bank[section], pos='position'+section;
  let i=saved[pos];if(!Number.isInteger(i)||i<0||i>rows.length)i=0;
  const done=rows.filter((_,j)=>record(j).passed===true).length;
  if(i===rows.length){
- work.innerHTML='<small>SECTION REVIEW</small><h2>'+sections[section][0]+'</h2><p>'+done+' of '+rows.length+' marked correct or self-checked.</p><button class="primary" id="again">'+(done<rows.length?'Practice items to revisit':'Practice this section again')+'</button> <button id="next">Next section</button>';
- work.querySelector('#again').onclick=()=>{rows.forEach((_,j)=>{const a=record(j);if(done===rows.length||!a.passed){delete a.answer;delete a.checked;delete a.passed}});saved[pos]=rows.findIndex((_,j)=>!record(j).passed);persist();render();focusWork()};
- work.querySelector('#next').onclick=()=>topics.children[(section+1)%sections.length].click();return}
+ const upcoming=bank.findIndex((questions,s)=>questions.some((_,j)=>saved[field(s,j)]?.passed!==true));
+ work.innerHTML='<small>SECTION REVIEW</small><h2>'+sections[section][0]+'</h2><p>'+done+' of '+rows.length+' marked correct or self-checked.</p><div class="controls"></div>';
+ const controls=work.querySelector('.controls');
+ function restartSection(){
+  rows.forEach((_,j)=>{const a=record(j);delete a.passed;delete a.checked;delete a.answer});
+  saved[pos]=0;persist();render();focusWork();
+ }
+ if(done<rows.length){
+  button(controls,'Continue · revisit missed items',()=>{
+   rows.forEach((_,j)=>{const a=record(j);if(!a.passed){delete a.answer;delete a.checked}});
+   saved[pos]=rows.findIndex((_,j)=>!record(j).passed);persist();render();focusWork();
+  },true);
+ }else if(upcoming>=0){
+  button(controls,'Continue · '+sections[upcoming][0],()=>topics.children[upcoming].click(),true);
+  button(controls,'Practice this section again',restartSection);
+ }else{
+  const message=document.createElement('p');message.textContent='You’ve completed all six exam sections.';controls.append(message);
+  button(controls,'Practice this section again',restartSection,true);
+ }
+ return}
  const row=rows[i],a=record(i),written=section>=4;
  work.innerHTML='<small>'+sections[section][0]+' · '+(i+1)+' / '+rows.length+'</small><h2>'+row[0]+'</h2><div class="answers"></div><div class="feedback" aria-live="polite"></div><div class="controls"></div>';
  const answers=work.querySelector('.answers'),feedback=work.querySelector('.feedback'),controls=work.querySelector('.controls');
