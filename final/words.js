@@ -99,9 +99,9 @@ function add(parent, tag, text, className) {
  if(className)node.className=className;
  parent.append(node); return node;
 }
-function action(label, fn, primary=false) {
- const b=add(el('actions'),'button',label,primary?'primary':'');
- b.type='button';b.onclick=fn;return b;
+function action(label, fn, primary=false, command=primary?'advance':null) {
+ const b=add(el('actions'),'button',label,primary?'btn primary':'btn');
+ b.type='button';b.onclick=fn;return Prep.bind(b,command);
 }
 function hear(word) {
  const synth=window.speechSynthesis;
@@ -114,11 +114,23 @@ function hear(word) {
  speech.onerror=e=>{if(!['interrupted','canceled'].includes(e.error))el('message').textContent='Mandarin audio is unavailable on this device. Use the pinyin on the card.';};
  synth.speak(speech);
 }
+function wordTools(word, hiddenPinyin) {
+ const tools=el('study-tools');
+ const listen=add(tools,'button','Listen','btn');
+ listen.onclick=()=>hear(word);Prep.bind(listen,'listen');
+ if(!hiddenPinyin)return;
+ const hint=add(tools,'button','Pinyin hint','btn');
+ Prep.bind(hint,'hint');
+ hint.onclick=()=>{
+  add(el('face'),'p',hiddenPinyin,'hint-reading');hint.disabled=true;
+  el('face').focus({preventScroll:true});
+ };
+}
 function render() {
  const s=current(), [title,words]=wordGroups[group];
  const set=words.slice(s.start,s.start+SIZE);
  const face=el('face'),actions=el('actions'),bar=el('progress');
- el('repeat-set').hidden=true;
+ el('repeat-set').hidden=true;el('study-tools').replaceChildren();
  face.replaceChildren();actions.replaceChildren();select.value=group;
  el('deck').textContent=title;
  el('position').textContent='Set '+(1+s.start/SIZE)+' of '+Math.ceil(words.length/SIZE);
@@ -138,31 +150,32 @@ function render() {
  el('coverage').textContent=total+' of '+words.length+' cards recalled in this deck.';
  bar.max=set.length*2;bar.value=s.phase==='learn'?s.at:set.length+passed;
  const miss=store.misses[store.review];
+ el('coach-title').textContent=miss?'Quick review':s.phase==='learn'?'Meet the word':s.phase==='done'?'Set complete':'Read from memory';
+ Prep.transition(face,!miss && s.phase==='done');
  if(miss && wordGroups[miss.deck]?.[1]?.[miss.index]){
   const [word,reading,meaning]=wordGroups[miss.deck][1][miss.index];
   el('deck').textContent='Quick review';
   el('position').textContent='1 word';bar.max=1;bar.value=store.reviewShown?1:0;
   el('guide-note').textContent='You marked this word for more practice. Try reading it once more.';
   el('coverage').textContent='';
-  add(face,'small','READ FROM MEMORY');
+  wordTools(word,store.reviewShown?null:reading);
   add(face,'h2',word,word.length>3?'long':'').lang='zh-Hans';
   if(!store.reviewShown){
    add(face,'p','Say the word and its meaning.');
    action('Reveal pronunciation & meaning',()=>{store.reviewShown=true;refresh();},true);
   }else{
    add(face,'p',reading,'reading');add(face,'p',meaning,'meaning');
-   action('Listen',()=>hear(word));
    function finishReview(again){
     if(again)markMiss(miss.deck,miss.index);else delete store.misses[store.review];
     leaveReview();save();pickNext(false);
    }
-   action('Study again',()=>finishReview(true));action('I remembered',()=>finishReview(false),true);
+   action('Study again',()=>finishReview(true),false,'1');action('I remembered',()=>finishReview(false),true,'3');
   }
   return;
  }
  el('guide-note').textContent=s.phase==='done'?'Your progress is saved.':s.phase==='read'?'Read each word from memory. Words you find difficult will come back.':group===0&&s.start===0?'Start with these three words. Your next set is picked for you.':'Pick up here. Learn these words, then try reading them on your own.';
  if(s.phase==='done'){
-  add(face,'small','SET COMPLETE');add(face,'h2','You read these words','result');
+  add(face,'span','✓','completion-seal').setAttribute('aria-hidden','true');add(face,'h2','You read these words','result');
   const list=add(face,'ul','','recap');
   set.forEach(([w,p,m])=>add(list,'li',w+' · '+p+' · '+m));
   const target=nextSet();
@@ -174,16 +187,16 @@ function render() {
  }
  const learning=s.phase==='learn';
  const [word,pinyin,meaning]=set[learning?s.at:s.queue[0]];
- add(face,'small',learning?'MEET THE WORD · '+(s.at+1)+' / '+set.length:'READ FROM MEMORY');
+ if(learning)add(face,'small','Word '+(s.at+1)+' of '+set.length);
+ wordTools(word,learning||s.revealed?null:pinyin);
  const han=add(face,'h2',word,word.length>3?'long':'');han.lang='zh-Hans';
  if(learning||s.revealed){
   add(face,'p',pinyin,'reading');add(face,'p',meaning,'meaning');
   if(wordExamples[word] && (group<7 || ['我','喝','茶'].includes(word))){
    const [zh,py,en]=wordExamples[word];
-   const detail=add(face,'details','');add(detail,'summary','See it in a phrase');
+   const detail=add(face,'details','');Prep.bind(add(detail,'summary','See it in a phrase'),'hint');
    add(detail,'p',zh).lang='zh-Hans';add(detail,'p',py);add(detail,'p',en);
   }
-  action('Listen',()=>hear(word));
  } else add(face,'p','Say the word and its meaning.');
  if(learning) {
   action(s.at+1===set.length?'Try reading these words →':'Meet the next word →',()=>{
@@ -193,8 +206,8 @@ function render() {
   },true);
  } else if(!s.revealed)action('Reveal pronunciation & meaning',()=>{s.revealed=true;refresh();},true);
  else {
-  action('Study again',()=>{markMiss(group,s.start+s.queue[0]);s.queue.push(s.queue.shift());s.revealed=false;refresh();});
-  action('I remembered',()=>{s.queue.shift();s.revealed=false;if(!s.queue.length)s.phase='done';refresh();},true);
+  action('Study again',()=>{markMiss(group,s.start+s.queue[0]);s.queue.push(s.queue.shift());s.revealed=false;refresh();},false,'1');
+  action('I remembered',()=>{s.queue.shift();s.revealed=false;if(!s.queue.length)s.phase='done';refresh();},true,'3');
  }
 }
 wordGroups.forEach(([name],i)=>{const opt=add(select,'option',name);opt.value=i;});

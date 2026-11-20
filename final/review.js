@@ -74,6 +74,7 @@ const topics=document.querySelector('#topics'), work=document.querySelector('#wo
 const field=(s,i)=>s+'-'+i;
 function record(i){const k=field(section,i);return saved[k]&&typeof saved[k]==='object'?saved[k]:(saved[k]={})}
 function render(){
+ Prep.transition(work);
  topics.replaceChildren(...sections.map(([name,weight],s)=>{
  const btn=document.createElement('button');btn.innerHTML='<small>Part '+(s<4?'I':'II')+' · '+weight+'%</small>'+name;
  btn.setAttribute('aria-pressed',String(s===section));btn.onclick=()=>{document.querySelector('#exam-sections').open=false;section=s;saved.section=s;persist();render();focusWork()};return btn}));
@@ -82,7 +83,7 @@ function render(){
  const done=rows.filter((_,j)=>record(j).passed===true).length;
  if(i===rows.length){
  const upcoming=bank.findIndex((questions,s)=>questions.some((_,j)=>saved[field(s,j)]?.passed!==true));
- work.innerHTML='<small>SECTION REVIEW</small><h2>'+sections[section][0]+'</h2><p>'+done+' of '+rows.length+' marked correct or self-checked.</p><div class="controls"></div>';
+ work.innerHTML='<small>SECTION REVIEW</small><h2>'+sections[section][0]+'</h2><p>'+done+' of '+rows.length+' marked correct or self-checked.</p><div class="controls jy-dock"></div>';
  const controls=work.querySelector('.controls');
  function restartSection(){
   rows.forEach((_,j)=>{const a=record(j);delete a.passed;delete a.checked;delete a.answer});
@@ -102,18 +103,24 @@ function render(){
  }
  return}
  const row=rows[i],a=record(i),written=section>=4;
- work.innerHTML='<small>'+sections[section][0]+' · '+(i+1)+' / '+rows.length+'</small><h2>'+row[0]+'</h2><div class="answers"></div><div class="feedback" aria-live="polite"></div><div class="controls"></div>';
+ work.innerHTML='<small>'+sections[section][0]+' · '+(i+1)+' / '+rows.length+'</small><h2>'+row[0]+'</h2><div class="answers"></div><div class="feedback" aria-live="polite"></div><div class="controls jy-dock"></div>';
  const answers=work.querySelector('.answers'),feedback=work.querySelector('.feedback'),controls=work.querySelector('.controls');
- function button(parent,label,action,primary=false){const b=document.createElement('button');b.textContent=label;if(primary)b.className='primary';b.onclick=action;parent.append(b);return b}
+ function button(parent,label,action,primary=false,command=primary?'advance':null){
+  const b=document.createElement('button');b.textContent=label;b.className=primary?'btn primary':'btn';
+  b.onclick=action;parent.append(b);return Prep.bind(b,command);
+ }
  function advance(){let n=i+1;while(n<rows.length&&record(n).passed)n++;saved[pos]=n;persist();render();focusWork()}
  if(written){
  answers.innerHTML='<label for="draft">Your answer in Chinese</label><textarea id="draft" lang="zh-Hans"></textarea><details><summary>Character-only word bank</summary><p>学校　同学　老师　图书馆　写字　中文　学习　上课　小时　昨天　周末　公园　天气　下雨　朋友　电影　商场　安静</p></details>';
+ Prep.bind(answers.querySelector('summary'),'hint');
  const input=answers.querySelector('textarea');input.value=typeof a.draft==='string'?a.draft:'';input.oninput=()=>{a.draft=input.value;persist()};
  if(!a.checked){const check=button(controls,'Compare my answer',()=>{a.checked=true;persist();render()},true);check.disabled=!input.value.trim();input.addEventListener('input',()=>check.disabled=!input.value.trim())}
- else{feedback.innerHTML='<aside><strong>One possible answer</strong><p lang="zh-Hans">'+row[1]+'</p>'+row[2]+'</aside>';for(const [label,pass] of [['Needs practice',false],['I used the structure',true]])button(controls,label,()=>{a.passed=pass;advance()},pass)}
+ else{feedback.innerHTML='<aside><strong>One possible answer</strong><p lang="zh-Hans">'+row[1]+'</p>'+row[2]+'</aside>';for(const [label,pass] of [['Needs practice',false],['I used the structure',true]])button(controls,label,()=>{a.passed=pass;advance()},pass,pass?'3':'1')}
  }else{
  const opts=row.slice(1,4);const shift=(i+section+1)%3;
- for(let j=0;j<3;j++){const answer=opts[(j+shift)%3];const b=button(answers,answer,()=>{a.answer=answer;a.passed=answer===row[1];persist();render()});b.disabled=!!a.answer}
+ for(let j=0;j<3;j++){const answer=opts[(j+shift)%3];const b=button(answers,answer,()=>{a.answer=answer;a.passed=answer===row[1];persist();render();focusWork()},false,String(j+1));b.disabled=!!a.answer;
+  if(a.answer && answer===row[1])b.classList.add('is-answer');
+  else if(a.answer===answer)b.classList.add('is-missed');}
  if(a.answer){feedback.innerHTML='<aside><strong>'+(a.passed?'Correct':'Review this one')+'</strong><p>'+row[1]+'</p>'+row[4]+'</aside>';button(controls,i===rows.length-1?'Section results':'Continue',advance,true)}
  }
 }

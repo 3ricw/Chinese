@@ -23,10 +23,10 @@ function save() {
 function go(index) {
  cursor=index; recall=false; finished=false; save(); draw(); lesson.focus();
 }
-function button(parent, label, action, primary=false) {
+function button(parent, label, action, primary=false, command=primary?'advance':null) {
  const b=document.createElement('button'); b.type='button'; b.textContent=label;
- if(primary)b.className='primary';
- b.onclick=action; parent.append(b); return b;
+ b.className=primary?'btn primary':'btn';
+ b.onclick=action; parent.append(b); return Prep.bind(b,command);
 }
 function next(revisit) {
  completed.add(cursor);
@@ -45,6 +45,7 @@ function startReview() {
  returnCard=cursor; reviewQueue=[...flagged]; reviewing=true;go(reviewQueue[0]);
 }
 function draw() {
+ Prep.transition(lesson,finished);
  const marks=document.querySelector('#bookmarks');
  marks.hidden=!flagged.size||reviewing;
  marks.textContent='Revisit saved cards ('+flagged.size+')';
@@ -65,29 +66,31 @@ function draw() {
   units.append(item);
  });
  if(finished){
-  lesson.innerHTML='<small>COURSE COMPLETE</small><h2>Put it together on paper</h2><p>You’ve worked through all '+cards.length+' cards. Try a sentence-structure response and a composition, then return to the constructions you needed help with.</p><div class="move"><a href="practice.html">Open the six exam sections →</a></div>';
+  lesson.innerHTML='<small>COURSE COMPLETE</small><h2>Put it together on paper</h2><p>You’ve worked through all '+cards.length+' cards. Try a sentence-structure response and a composition, then return to the constructions you needed help with.</p><div class="move jy-dock"><a href="practice.html">Open the six exam sections →</a></div>';
+  const onward=lesson.querySelector('.move a');onward.className='btn primary';Prep.bind(onward,'advance');
   if(flagged.size)button(lesson.querySelector('.move'),'Revisit saved cards ('+flagged.size+')',startReview);
   return;
  }
  const [heading,chinese,english,rule,prompt,model]=row;
  lesson.innerHTML='<small>UNIT '+(unit+1)+' · '+title+'</small><progress aria-label="Cards studied" value="'+completed.size+'" max="'+cards.length+'"></progress><p class="step">Card '+(position+1)+' of '+curriculum[unit][1].length+' in this unit</p><h2>'+heading+'</h2>';
  if(!recall){
-  lesson.innerHTML+='<div class="example"><p lang="zh-Hans">'+chinese+'</p><p>'+english+'</p><details><summary>Pinyin</summary><p>'+pronunciation[chinese]+'</p></details></div><h3>How it works</h3><p>'+rule+'</p><div class="move"></div>';
+  lesson.innerHTML+='<div class="example"><p lang="zh-Hans">'+chinese+'</p><p>'+english+'</p><details><summary>Pinyin</summary><p>'+pronunciation[chinese]+'</p></details></div><h3>How it works</h3><p>'+rule+'</p><div class="move jy-dock"></div>';
+  Prep.bind(lesson.querySelector('.example summary'),'hint');
   const actions=lesson.querySelector('.move');
-  if(cursor>0&&!reviewing)button(actions,'← Previous card',()=>go(cursor-1));
+  if(cursor>0&&!reviewing)button(actions,'← Previous card',()=>go(cursor-1),false,'previous');
   button(actions,'Try it with help →',()=>{recall=true;draw();lesson.focus()},true);
  }else{
-  lesson.innerHTML+='<h3>Your turn</h3><p>'+prompt+'</p><p>Say it aloud or write it on paper.</p><div class="move"></div>';
+  lesson.innerHTML+='<h3>Your turn</h3><p>'+prompt+'</p><p>Say it aloud or write it on paper.</p><div class="move jy-dock"></div>';
   const actions=lesson.querySelector('.move');
-  button(actions,'Read the explanation',()=>go(cursor));
+  button(actions,'Read the explanation',()=>go(cursor),false,'previous');
   button(actions,'Show a worked answer',()=>{
    actions.remove();
    const example=document.createElement('div'); example.className='example';
-   example.innerHTML='<small>ONE WAY TO SAY IT</small><p>'+model+'</p>';lesson.append(example);
-   const controls=document.createElement('div');controls.className='move';lesson.append(controls);
-   button(controls,'Save for review',()=>next(true));
-   button(controls,'Got it · Continue →',()=>next(false),true);
-   controls.querySelector('button').focus();
+   example.innerHTML='<small>ONE WAY TO SAY IT</small><p lang="zh-Hans">'+model+'</p>';lesson.append(example);
+   const controls=document.createElement('div');controls.className='move jy-dock';lesson.append(controls);
+   button(controls,'Save for review',()=>next(true),false,'1');
+   button(controls,'Got it · Continue →',()=>next(false),true,'3');
+   Prep.transition(example);lesson.focus();
   },true);
  }
 }
