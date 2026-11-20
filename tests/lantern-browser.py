@@ -249,11 +249,27 @@ def run(engine, url, artifacts):
                         assert quick.evaluate("selectedCourseId==='chinese-1'&&state.profile.setupDone&&!state.companion.starter")
                     finally:
                         quick.close()
+                page.evaluate("navigate('home')")
+                page.get_by_role('link',name='CHI 604 · Final exam practice').click()
+                expect(page.get_by_role('heading',name='Final practice desk')).to_be_visible()
+                for index in range(6):
+                    page.locator('#topics button').nth(index).click()
+                    if index < 4:
+                        page.locator('.answers button').first.click()
+                        expect(page.locator('.feedback aside')).to_be_visible()
+                        page.locator('.controls button').click()
+                    else:
+                        page.locator('textarea').fill('我正在学中文。')
+                        page.reload()
+                        expect(page.locator('textarea')).to_have_value('我正在学中文。')
+                        page.get_by_role('button',name='Compare my answer').click()
+                        expect(page.locator('.feedback aside')).to_be_visible()
+                        page.get_by_role('button',name='Needs practice').click()
                 assert not errors, errors
                 assert not missing, missing
                 print(f'PASS {label}: onboarding, answer correction, tiles, pairs, resume, stamp, route, both courses and legacy destinations',flush=True)
             except Exception as error:
-                state=page.evaluate("({view:currentView,scene:laneSceneId,heading:document.querySelector('#view h1')?.textContent,body:document.body.innerText.slice(-400)})")
+                state=page.evaluate("({view:typeof currentView==='string'?currentView:null,scene:typeof laneSceneId==='string'?laneSceneId:null,heading:document.querySelector('#view h1')?.textContent,body:document.body.innerText.slice(-400)})")
                 detail=(str(error)+' '+str(state)+' '+str(errors))[:2200].replace('%','%25').replace('\r','%0D').replace('\n','%0A')
                 print(f'::error::{label} {detail}',flush=True)
                 page.screenshot(path=artifacts/f'{label}-failure.png')
