@@ -250,7 +250,20 @@ def run(engine, url, artifacts):
                     finally:
                         quick.close()
                 page.evaluate("navigate('home')")
-                page.get_by_role('link',name='CHI 604 · Final exam practice').click()
+                shortcut=page.get_by_role('link',name='CHI 604 · Final study course')
+                bounds=shortcut.bounding_box()
+                bar=page.locator('.topbar').bounding_box()
+                assert bounds and bar and bounds['x']>=bar['x']-2 and bounds['width']<280
+                shortcut.click()
+                expect(page.get_by_role('heading',name='Final study course')).to_be_visible()
+                expect(page.get_by_text('我喝茶。',exact=True)).to_be_visible()
+                page.get_by_role('button',name='Try it with help').click()
+                page.get_by_role('button',name='Show a worked answer').click()
+                expect(page.get_by_text('她喝水。',exact=True)).to_be_visible()
+                page.get_by_role('button',name='Save for review').click()
+                page.reload()
+                expect(page.get_by_role('heading',name='Give the action a time and place')).to_be_visible()
+                page.get_by_role('link',name='Exam practice').click()
                 expect(page.get_by_role('heading',name='Final practice desk')).to_be_visible()
                 for index in range(6):
                     page.locator('#topics button').nth(index).click()
